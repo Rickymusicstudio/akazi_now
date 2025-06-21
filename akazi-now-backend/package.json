@@ -1,14 +1,14 @@
 {
   "name": "akazi-now-backend",
   "version": "1.0.0",
+  "description": "AkaziNow backend API using Express and Supabase",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+ "scripts": {
+  "start": "node src/index.js"
+}
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "@supabase/supabase-js": "^2.39.4",
     "cors": "^2.8.5",
