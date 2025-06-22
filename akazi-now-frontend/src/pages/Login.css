@@ -105,7 +105,8 @@
 
 /* ✅ Mobile responsiveness */
 /* ✅ Mobile responsiveness only (below 768px) */
-@media (max-width: 768px) {
+/* ✅ Mobile responsiveness (strictly <768px) */
+@media (max-width: 767px) {
   .login-container {
     flex-direction: column;
     height: auto;
@@ -140,3 +141,4 @@
     font-size: 16px;
   }
 }
+
