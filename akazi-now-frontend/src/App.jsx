@@ -18,17 +18,18 @@ function App() {
     <Router>
       <Routes>
         {/* 🔐 Auth Routes */}
+        <Route path="/" element={<Login />} /> {/* ✅ Default is Login now */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
 
         {/* 🏠 Main Job Routes */}
-        <Route path="/" element={<Gigs />} />
+        <Route path="/gigs" element={<Gigs />} /> {/* Optional: keep gigs accessible via /gigs */}
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/post-job" element={<PostGig />} />
         <Route path="/applications" element={<MyApplications />} />
         <Route path="/inbox" element={<ApplicationsInbox />} />
         <Route path="/my-jobs" element={<MyJobs />} />
-        <Route path="/jobs/:id" element={<JobDetails />} /> {/* ✅ Job Sharing Route */}
+        <Route path="/jobs/:id" element={<JobDetails />} />
 
         {/* 🚗 Carpool Routes */}
         <Route path="/carpools" element={<BrowseRides />} />
