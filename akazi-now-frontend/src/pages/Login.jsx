@@ -38,7 +38,9 @@ function Login() {
 
       if (user) {
         setSuccess('✅ Login successful!');
-        navigate('/'); // Redirect to home
+        setTimeout(() => {
+          navigate('/gigs'); // ✅ Redirect to homepage
+        }, 1000);
       } else {
         setError('❌ Login succeeded but user not found.');
       }
