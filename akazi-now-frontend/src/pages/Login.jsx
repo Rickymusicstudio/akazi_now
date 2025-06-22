@@ -52,7 +52,7 @@ function Login() {
 
   return (
     <div className="login-container">
-      <div className="login-left" />
+      <div className="login-left"></div>
 
       <div className="login-right">
         <form className="login-card" onSubmit={handleSubmit}>
