@@ -58,8 +58,8 @@ function Login() {
         <form className="login-card" onSubmit={handleSubmit}>
           <h2>Login</h2>
 
-          {error && <p className="error">{error}</p>}
-          {success && <p className="success">{success}</p>}
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+          {success && <p style={{ color: 'green' }}>{success}</p>}
 
           <label>Email</label>
           <input
@@ -79,18 +79,11 @@ function Login() {
             required
           />
 
-          <div className="options">
-            <label>
-              <input type="checkbox" /> Remember Me
-            </label>
-            <a href="#">Forgot Password?</a>
-          </div>
-
           <button type="submit" className="btn" disabled={loading}>
             {loading ? 'Logging in...' : 'Log In'}
           </button>
 
-          <p className="signup-link">
+          <p className="signin-link">
             Don't have an account? <a href="/signup">Sign up →</a>
           </p>
         </form>
