@@ -2,7 +2,6 @@ import './Login.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import signupImage from '../assets/signup.jpg';
 
 function Login() {
   const navigate = useNavigate();
@@ -39,7 +38,7 @@ function Login() {
       if (user) {
         setSuccess('✅ Login successful!');
         setTimeout(() => {
-          navigate('/gigs'); // ✅ Redirect to homepage
+          navigate('/gigs');
         }, 1000);
       } else {
         setError('❌ Login succeeded but user not found.');
@@ -52,17 +51,15 @@ function Login() {
   };
 
   return (
-    <div className="signup-container">
-      <div className="signup-left" style={{ backgroundImage: `url(${signupImage})` }}>
-        <div className="overlay" />
-      </div>
+    <div className="login-container">
+      <div className="login-left" />
 
-      <div className="signup-right slide-in">
-        <form className="signup-form" onSubmit={handleSubmit}>
+      <div className="login-right">
+        <form className="login-card" onSubmit={handleSubmit}>
           <h2>Login</h2>
 
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          {success && <p style={{ color: 'green' }}>{success}</p>}
+          {error && <p className="error">{error}</p>}
+          {success && <p className="success">{success}</p>}
 
           <label>Email</label>
           <input type="email" name="email" value={formData.email} onChange={handleChange} required />
@@ -70,12 +67,12 @@ function Login() {
           <label>Password</label>
           <input type="password" name="password" value={formData.password} onChange={handleChange} required />
 
-          <button type="submit" className="btn" disabled={loading}>
+          <button type="submit" disabled={loading}>
             {loading ? 'Logging in...' : 'Log In'}
           </button>
 
-          <p className="signin-link">
-            Don't have an account? <a href="/signup">Sign up →</a>
+          <p className="signup-link">
+            Don’t have an account? <a href="/signup">Sign up →</a>
           </p>
         </form>
       </div>
