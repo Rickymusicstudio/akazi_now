@@ -1,5 +1,4 @@
-import './Login.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 
@@ -10,6 +9,17 @@ function Login() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreenSize(); // run on load
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,16 +60,67 @@ function Login() {
     }
   };
 
+  // 🔧 Styles
+  const containerStyle = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    height: '100vh',
+    width: '100vw',
+    fontFamily: 'Segoe UI, sans-serif',
+    overflow: 'hidden',
+  };
+
+  const leftStyle = {
+    flex: 1,
+    height: isMobile ? '200px' : 'auto',
+    backgroundImage: `linear-gradient(to bottom right, rgba(117, 0, 255, 0.6), rgba(255, 0, 150, 0.6)), url('../assets/signup.jpg')`,
+    backgroundSize: 'cover',
+    backgroundPosition: isMobile ? 'center' : 'left center',
+    backgroundRepeat: 'no-repeat',
+  };
+
+  const rightStyle = {
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '2rem',
+    backgroundColor: '#fff',
+  };
+
+  const cardStyle = {
+    width: '100%',
+    maxWidth: '400px',
+    padding: isMobile ? '1.5rem' : '2.5rem',
+    backgroundColor: '#fff',
+    borderRadius: '20px',
+    boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1)',
+  };
+
+  const buttonStyle = {
+    background: 'linear-gradient(to right, #6e00ff, #ff007a)',
+    border: 'none',
+    padding: '12px',
+    color: 'white',
+    width: '100%',
+    fontWeight: 'bold',
+    borderRadius: '999px',
+    cursor: 'pointer',
+    fontSize: '16px',
+  };
+
   return (
-    <div className="login-container">
-      <div className="login-left"></div>
+    <div style={containerStyle}>
+      <div style={leftStyle}></div>
 
-      <div className="login-right">
-        <form className="login-card" onSubmit={handleSubmit}>
-          <h2>Login</h2>
+      <div style={rightStyle}>
+        <form style={cardStyle} onSubmit={handleSubmit}>
+          <h2 style={{ textAlign: 'center', marginBottom: '1rem', fontSize: isMobile ? '24px' : '28px' }}>
+            Login
+          </h2>
 
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          {success && <p style={{ color: 'green' }}>{success}</p>}
+          {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
+          {success && <p style={{ color: 'green', textAlign: 'center' }}>{success}</p>}
 
           <label>Email</label>
           <input
@@ -68,6 +129,7 @@ function Login() {
             value={formData.email}
             onChange={handleChange}
             required
+            style={{ width: '100%', padding: '12px', marginBottom: '1rem', borderRadius: '6px', border: '1px solid #ccc' }}
           />
 
           <label>Password</label>
@@ -77,14 +139,15 @@ function Login() {
             value={formData.password}
             onChange={handleChange}
             required
+            style={{ width: '100%', padding: '12px', marginBottom: '1.5rem', borderRadius: '6px', border: '1px solid #ccc' }}
           />
 
-          <button type="submit" className="btn" disabled={loading}>
+          <button type="submit" style={buttonStyle} disabled={loading}>
             {loading ? 'Logging in...' : 'Log In'}
           </button>
 
-          <p className="signin-link">
-            Don't have an account? <a href="/signup">Sign up →</a>
+          <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '14px' }}>
+            Don't have an account? <a href="/signup" style={{ color: '#6e00ff', fontWeight: 'bold', textDecoration: 'none' }}>Sign up →</a>
           </p>
         </form>
       </div>
