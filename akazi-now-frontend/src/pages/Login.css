@@ -12,7 +12,12 @@
 .login-left {
   width: 50%;
   height: 100%;
-  background-image: linear-gradient(to bottom right, rgba(117, 0, 255, 0.6), rgba(255, 0, 150, 0.6)), url('../assets/signup.jpg');
+  background-image: linear-gradient(
+      to bottom right,
+      rgba(117, 0, 255, 0.6),
+      rgba(255, 0, 150, 0.6)
+    ),
+    url('../assets/signup.jpg');
   background-size: cover;
   background-position: center left;
   background-repeat: no-repeat;
@@ -28,6 +33,7 @@
   align-items: center;
   justify-content: center;
   background-color: #fff;
+  padding: 2rem;
 }
 
 /* Login form */
@@ -85,4 +91,29 @@
   color: #6a00ff;
   font-weight: bold;
   text-decoration: none;
+}
+
+/* ✅ Mobile responsiveness */
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .login-left {
+    width: 100%;
+    height: 200px;
+    background-position: center;
+  }
+
+  .login-right {
+    width: 100%;
+    padding: 1.5rem;
+  }
+
+  .login-form {
+    padding: 1.5rem;
+    box-shadow: none;
+    border-radius: 0;
+  }
 }
