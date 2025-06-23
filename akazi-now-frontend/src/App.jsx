@@ -11,19 +11,21 @@ import Carpool from "./pages/Carpool";
 import BrowseRides from "./pages/BrowseRides";
 import CarpoolInbox from "./pages/CarpoolInbox";
 import NotificationsDetail from "./pages/NotificationsDetail";
-import JobDetails from "./pages/JobDetails"; // ✅ NEW
+import JobDetails from "./pages/JobDetails";
 
 function App() {
   return (
     <Router>
       <Routes>
         {/* 🔐 Auth Routes */}
-        <Route path="/" element={<Login />} /> {/* ✅ Default is Login now */}
-        <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
 
-        {/* 🏠 Main Job Routes */}
-        <Route path="/gigs" element={<Gigs />} /> {/* Optional: keep gigs accessible via /gigs */}
+        {/* 🏠 Home now shows Gigs */}
+        <Route path="/" element={<Gigs />} />  {/* ✅ Home is now Gigs */}
+
+        {/* 🧱 Main App Routes */}
+        <Route path="/gigs" element={<Gigs />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/post-job" element={<PostGig />} />
         <Route path="/applications" element={<MyApplications />} />
