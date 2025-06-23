@@ -1,12 +1,14 @@
-/* Default Desktop Layout – stay untouched */
+/* 🌐 Global Layout */
 .login-container {
   display: flex;
+  flex-direction: row;
   height: 100vh;
   width: 100vw;
   font-family: 'Segoe UI', sans-serif;
   overflow: hidden;
 }
 
+/* 🖼️ Left Side (Hidden on Mobile) */
 .login-left {
   flex: 1;
   background-image: linear-gradient(
@@ -16,10 +18,12 @@
     ),
     url('../assets/signup.jpg');
   background-size: cover;
-  background-position: center left;
+  background-position: center;
   background-repeat: no-repeat;
+  display: block;
 }
 
+/* 📱 Right Side */
 .login-right {
   flex: 1;
   background: #fff;
@@ -29,66 +33,107 @@
   padding: 2rem;
 }
 
+/* 🧾 Login Card */
 .login-card {
   width: 100%;
-  max-width: 400px;
-  padding: 2.5rem;
+  max-width: 420px;
   background: #fff;
+  padding: 2.5rem;
   border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
 }
 
 .login-card h2 {
   text-align: center;
-  margin-bottom: 1rem;
   font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.login-card p {
+  text-align: center;
+  color: #777;
+  font-size: 14px;
+  margin-bottom: 1.5rem;
 }
 
 .login-card label {
   display: block;
   margin-top: 1rem;
+  margin-bottom: 0.3rem;
   font-weight: 600;
+  color: #444;
 }
 
 .login-card input {
   width: 100%;
-  margin-top: 0.3rem;
-  margin-bottom: 1rem;
-  padding: 12px;
-  border-radius: 6px;
+  padding: 0.75rem;
+  font-size: 15px;
+  border-radius: 8px;
   border: 1px solid #ccc;
+  transition: border-color 0.2s ease;
 }
 
+.login-card input:focus {
+  outline: none;
+  border-color: #6e00ff;
+}
+
+/* 🔘 Button */
 .login-card button {
-  background: linear-gradient(to right, #6e00ff, #ff007a);
-  border: none;
-  padding: 12px;
-  color: white;
   width: 100%;
+  padding: 0.75rem;
+  background: linear-gradient(to right, #6a00ff, #ff007a);
+  color: #fff;
+  font-size: 16px;
   font-weight: bold;
+  border: none;
   border-radius: 999px;
   cursor: pointer;
-  font-size: 16px;
+  margin-top: 1.5rem;
+  transition: background 0.3s ease;
 }
 
-.login-card .signup-link {
-  text-align: center;
+.login-card button:hover {
+  opacity: 0.9;
+}
+
+/* 🔗 Signup Link */
+.login-card .signin-link {
   margin-top: 1.5rem;
   font-size: 14px;
+  text-align: center;
 }
 
-.login-card .signup-link a {
+.login-card .signin-link a {
   color: #6e00ff;
-  font-weight: bold;
+  font-weight: 600;
   text-decoration: none;
 }
 
-/* ✅ MOBILE (only below 768px) */
-@media (max-width: 767px) {
+/* 🛜 Messages */
+.login-card .error {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.login-card .success {
+  color: green;
+  font-size: 14px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* 📱 Mobile Styles */
+@media (max-width: 768px) {
   .login-container {
-    display: block;
+    flex-direction: column;
     background: linear-gradient(to bottom right, #7500ff, #ff0096);
-    padding: 2rem 1rem;
+    padding: 1.5rem 1rem;
     height: auto;
   }
 
@@ -103,18 +148,14 @@
   }
 
   .login-card {
-    background: #fff;
-    padding: 2rem 1.5rem;
-    margin-top: 4rem;
-    margin-bottom: 2rem;
-    border-radius: 24px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     max-width: 100%;
+    margin-top: 3rem;
+    padding: 2rem 1.25rem;
+    border-radius: 18px;
   }
 
   .login-card h2 {
     font-size: 24px;
-    text-align: left;
   }
 
   .login-card input {
@@ -122,11 +163,10 @@
   }
 
   .login-card button {
-    font-size: 16px;
-    margin-top: 1rem;
+    font-size: 15px;
   }
 
-  .login-card .signup-link {
+  .login-card .signin-link {
     font-size: 13px;
   }
 }
