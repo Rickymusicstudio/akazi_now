@@ -1,6 +1,6 @@
 import './Login.css';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 
 function Login() {
@@ -10,6 +10,17 @@ function Login() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // ✅ Auto-redirect if already logged in
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        navigate('/'); // or '/gigs'
+      }
+    };
+    checkSession();
+  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,7 +49,7 @@ function Login() {
       if (user) {
         setSuccess('✅ Login successful!');
         setTimeout(() => {
-          navigate('/gigs');
+          navigate('/');
         }, 1000);
       } else {
         setError('❌ Login succeeded but user not found.');
@@ -84,7 +95,7 @@ function Login() {
           </button>
 
           <p className="signin-link">
-            Don't have an account? <a href="/signup">Sign up →</a>
+            Don’t have an account? <Link to="/signup">Sign up →</Link>
           </p>
         </form>
       </div>
