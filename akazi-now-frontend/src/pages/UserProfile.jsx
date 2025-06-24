@@ -138,7 +138,7 @@ function UserProfile() {
     navigate('/login');
   };
 
-  if (!profile) return <div>Loading...</div>;
+if (!profile) return null;
 
   return (
     <div className="profile-container">
