@@ -101,7 +101,7 @@ function PostGig() {
     <div className="postgig-container">
       {/* ✅ MOBILE TOP BAR */}
       <div className="mobile-top-bar">
-        <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>☰</div>
+        <div className="mobile-hamburger" style={{ color: 'white' }} onClick={() => setMobileNavOpen(true)}>☰</div>
         <div className="mobile-title">Post a Job</div>
         <NotificationBell />
       </div>
