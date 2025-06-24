@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
+import { FaBars } from "react-icons/fa"; // ✅ NEW
 import "./PostGig.css";
 
 function PostGig() {
@@ -31,7 +32,6 @@ function PostGig() {
     setMessage("");
 
     const { data: { user } } = await supabase.auth.getUser();
-
     if (!user) {
       setMessage("❌ Not authenticated");
       return;
@@ -45,10 +45,7 @@ function PostGig() {
 
       const { error: uploadError } = await supabase.storage
         .from("job-images")
-        .upload(filePath, imageFile, {
-          cacheControl: "3600",
-          upsert: true,
-        });
+        .upload(filePath, imageFile, { cacheControl: "3600", upsert: true });
 
       if (uploadError) {
         setMessage("❌ Failed to upload image: " + uploadError.message);
@@ -99,14 +96,13 @@ function PostGig() {
 
   return (
     <div className="postgig-container">
-      {/* ✅ MOBILE TOP BAR */}
+      {/* ✅ Mobile Header */}
       <div className="mobile-top-bar">
-        <div className="mobile-hamburger" style={{ color: 'white' }} onClick={() => setMobileNavOpen(true)}>☰</div>
+        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} /> {/* ✅ NEW */}
         <div className="mobile-title">Post a Job</div>
         <NotificationBell />
       </div>
 
-      {/* ✅ MOBILE FULLSCREEN NAV */}
       {mobileNavOpen && (
         <div className="mobile-nav-overlay">
           <ul>
@@ -121,7 +117,7 @@ function PostGig() {
         </div>
       )}
 
-      {/* ✅ DESKTOP LEFT PANEL */}
+      {/* ✅ Desktop Navigation */}
       <div className="gigs-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -136,7 +132,7 @@ function PostGig() {
         <NotificationBell />
       </div>
 
-      {/* ✅ FORM PANEL */}
+      {/* ✅ Form Area */}
       <div className="gigs-right">
         <form className="signup-form" onSubmit={handleSubmit}>
           {message && (
