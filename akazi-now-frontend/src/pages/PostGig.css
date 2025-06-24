@@ -1,3 +1,4 @@
+/* PostGig.css – Updated for white hamburger icon */
 .postgig-container {
   display: flex;
   height: 100vh;
@@ -49,7 +50,6 @@
 .signup-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
 }
 
 .signup-form label {
@@ -63,17 +63,24 @@
 .signup-form input[type="file"],
 .signup-form textarea {
   width: 100%;
-  padding: 0.75rem;
+  padding: 1rem;
   border-radius: 12px;
   border: 1px solid #ccc;
   font-size: 1rem;
-  background: #fff;
   box-sizing: border-box;
+  margin-bottom: 1.2rem;
+  background-color: #fff; /* ✅ Ensures input fields are white */
 }
 
 .signup-form textarea {
-  height: 100px;
+  height: 80px;
   resize: vertical;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  box-sizing: border-box;
+  margin-bottom: 1.2rem;
 }
 
 .signup-form .btn {
@@ -132,8 +139,7 @@
     width: 100%;
     height: auto;
     overflow-y: visible;
-    padding: 1.5rem;
-    padding-top: 6rem;
+    padding: 1rem;
   }
 
   .mobile-top-bar {
@@ -152,12 +158,16 @@
     font-size: 1.8rem;
     font-weight: bold;
     cursor: pointer;
-    color: white;
+    color: white; /* ✅ Ensures hamburger icon is white */
   }
 
   .mobile-title {
     font-size: 1.4rem;
     font-weight: bold;
+    color: white;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   @keyframes slideIn {
@@ -172,7 +182,6 @@
   }
 }
 
-/* Notification Bell */
 .notification-bell-container {
   position: absolute;
   top: 1rem;
@@ -193,9 +202,36 @@
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
 }
 
-.mobile-hamburger {
-  font-size: 1.8rem;
-  font-weight: bold;
+.notification-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 300px;
+  background: white;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 999;
+}
+
+.notification-item {
+  border-bottom: 1px solid #eee;
+  padding: 0.5rem 0;
   cursor: pointer;
-  color: white; /* ✅ Fix to make the bars white */
+}
+
+.notification-item p {
+  margin: 0;
+}
+
+.notification-message {
+  font-weight: bold;
+  color: #333;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: #888;
 }
