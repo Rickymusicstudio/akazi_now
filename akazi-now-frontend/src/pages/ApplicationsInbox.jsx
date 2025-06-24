@@ -3,13 +3,13 @@ import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../assets/avatar.png";
 import NotificationBell from "../components/NotificationBell.jsx";
-import "./Inbox.css"; // ✅ New consistent style
+import { FaBars } from "react-icons/fa";
+import "./Inbox.css";
 
 function ApplicationsInbox() {
   const [applications, setApplications] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [isPoster, setIsPoster] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -18,13 +18,8 @@ function ApplicationsInbox() {
   }, []);
 
   const fetchInbox = async () => {
-    setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      navigate("/login");
-      return;
-    }
+    if (!user) return navigate("/login");
 
     const { data: appsData } = await supabase
       .from("applications")
@@ -54,16 +49,10 @@ function ApplicationsInbox() {
         .order("created_at", { ascending: false });
       setNotifications(notes || []);
     }
-
-    setLoading(false);
   };
 
   const handleUpdateStatus = async (applicationId, newStatus) => {
-    const { error: updateError } = await supabase
-      .from("applications")
-      .update({ status: newStatus })
-      .eq("id", applicationId);
-    if (updateError) return;
+    await supabase.from("applications").update({ status: newStatus }).eq("id", applicationId);
 
     const { data: appData } = await supabase
       .from("applications")
@@ -101,7 +90,7 @@ function ApplicationsInbox() {
     <div className="inbox-container">
       {/* ✅ MOBILE TOP NAV */}
       <div className="mobile-top-bar">
-        <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>☰</div>
+        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <h2 className="mobile-title">Inbox</h2>
         <NotificationBell />
       </div>
@@ -121,7 +110,7 @@ function ApplicationsInbox() {
       )}
 
       {/* ✅ DESKTOP LEFT NAV */}
-      <div className="inbox-left" style={{ background: 'white' }}>
+      <div className="inbox-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
           <button onClick={() => navigate("/post-job")}>Post a Job</button>
@@ -138,7 +127,7 @@ function ApplicationsInbox() {
       </div>
 
       <div className="inbox-right">
-        {!loading && isPoster ? (
+        {isPoster ? (
           applications.length === 0 ? (
             <p>No one has applied yet.</p>
           ) : (
@@ -166,7 +155,7 @@ function ApplicationsInbox() {
               );
             })
           )
-        ) : !loading && notifications.length > 0 ? (
+        ) : notifications.length > 0 ? (
           notifications.map((note) => {
             const color = note.message.includes("accepted") ? "green" : note.message.includes("rejected") ? "red" : "#333";
             return (
@@ -176,9 +165,9 @@ function ApplicationsInbox() {
               </div>
             );
           })
-        ) : !loading ? (
+        ) : (
           <p>You have no notifications yet.</p>
-        ) : null}
+        )}
       </div>
     </div>
   );

@@ -147,6 +147,13 @@ body {
     font-weight: bold;
   }
 
+  .mobile-hamburger {
+    font-size: 1.8rem;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
   .inbox-right {
     width: 100%;
     min-height: 100vh;
