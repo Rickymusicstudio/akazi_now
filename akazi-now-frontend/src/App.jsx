@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import UserProfile from "./pages/UserProfile";
@@ -12,6 +12,7 @@ import BrowseRides from "./pages/BrowseRides";
 import CarpoolInbox from "./pages/CarpoolInbox";
 import NotificationsDetail from "./pages/NotificationsDetail";
 import JobDetails from "./pages/JobDetails";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -21,26 +22,106 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* 🏠 Home now shows Gigs */}
-        <Route path="/" element={<Gigs />} />  {/* ✅ Home is now Gigs */}
+        {/* 🏁 Default: redirect "/" to login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
 
-        {/* 🧱 Main App Routes */}
-        <Route path="/gigs" element={<Gigs />} />
-        <Route path="/profile" element={<UserProfile />} />
-        <Route path="/post-job" element={<PostGig />} />
-        <Route path="/applications" element={<MyApplications />} />
-        <Route path="/inbox" element={<ApplicationsInbox />} />
-        <Route path="/my-jobs" element={<MyJobs />} />
-        <Route path="/jobs/:id" element={<JobDetails />} />
-
-        {/* 🚗 Carpool Routes */}
-        <Route path="/carpools" element={<BrowseRides />} />
-        <Route path="/post-ride" element={<Carpool />} />
-        <Route path="/carpool" element={<Carpool />} />
-        <Route path="/carpool-inbox" element={<CarpoolInbox />} />
-
-        {/* 🔔 Notifications */}
-        <Route path="/notifications/:id" element={<NotificationsDetail />} />
+        {/* 🧱 Protected Routes */}
+        <Route
+          path="/gigs"
+          element={
+            <ProtectedRoute>
+              <Gigs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/post-job"
+          element={
+            <ProtectedRoute>
+              <PostGig />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/applications"
+          element={
+            <ProtectedRoute>
+              <MyApplications />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/inbox"
+          element={
+            <ProtectedRoute>
+              <ApplicationsInbox />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-jobs"
+          element={
+            <ProtectedRoute>
+              <MyJobs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/jobs/:id"
+          element={
+            <ProtectedRoute>
+              <JobDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/carpools"
+          element={
+            <ProtectedRoute>
+              <BrowseRides />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/post-ride"
+          element={
+            <ProtectedRoute>
+              <Carpool />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/carpool"
+          element={
+            <ProtectedRoute>
+              <Carpool />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/carpool-inbox"
+          element={
+            <ProtectedRoute>
+              <CarpoolInbox />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notifications/:id"
+          element={
+            <ProtectedRoute>
+              <NotificationsDetail />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );
