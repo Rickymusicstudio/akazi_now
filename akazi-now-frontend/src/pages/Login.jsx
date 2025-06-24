@@ -8,19 +8,18 @@ function Login() {
 
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [alreadyLoggedIn, setAlreadyLoggedIn] = useState(false);
 
-  // ✅ Auto-redirect if already logged in
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
-        navigate('/'); // or '/gigs'
+        setAlreadyLoggedIn(true);
       }
     };
     checkSession();
-  }, [navigate]);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,7 +29,6 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setSuccess('');
     setLoading(true);
 
     try {
@@ -47,10 +45,7 @@ function Login() {
       const { data: { user } } = await supabase.auth.getUser();
 
       if (user) {
-        setSuccess('✅ Login successful!');
-        setTimeout(() => {
-          navigate('/');
-        }, 1000);
+        navigate('/gigs'); // ✅ Redirect to main dashboard
       } else {
         setError('❌ Login succeeded but user not found.');
       }
@@ -69,8 +64,12 @@ function Login() {
         <form className="login-card" onSubmit={handleSubmit}>
           <h2>Login</h2>
 
+          {alreadyLoggedIn && (
+            <p style={{ color: 'blue' }}>
+              You are already logged in. <Link to="/gigs">Go to Home →</Link>
+            </p>
+          )}
           {error && <p style={{ color: 'red' }}>{error}</p>}
-          {success && <p style={{ color: 'green' }}>{success}</p>}
 
           <label>Email</label>
           <input
