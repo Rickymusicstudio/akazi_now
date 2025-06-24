@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
+import { FaBars } from "react-icons/fa"; // ✅ Use icon for white bars
 import "./MyJobs.css";
 
 function MyJobs() {
   const [jobs, setJobs] = useState([]);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,7 +16,9 @@ function MyJobs() {
   }, []);
 
   const fetchMyJobs = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
       navigate("/login");
@@ -32,6 +36,7 @@ function MyJobs() {
     } else {
       setJobs(data || []);
     }
+    setLoading(false);
   };
 
   const handleDelete = async (id) => {
@@ -65,7 +70,7 @@ function MyJobs() {
     <div className="myjobs-container">
       {/* MOBILE NAV HEADER */}
       <div className="mobile-top-bar">
-        <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>☰</div>
+        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <h2 className="mobile-title">My Jobs</h2>
         <NotificationBell />
       </div>
@@ -94,7 +99,15 @@ function MyJobs() {
           <button onClick={() => navigate("/profile")}>Profile</button>
           <button onClick={() => navigate("/inbox")}>Inbox</button>
           <button onClick={() => navigate("/carpools")}>Car Pooling</button>
-          <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
+          <button
+            onClick={async () => {
+              await supabase.auth.signOut();
+              navigate("/login");
+            }}
+            style={{ color: "#ffcccc" }}
+          >
+            Logout
+          </button>
         </div>
         <h2 style={{ fontSize: "32px", fontWeight: "bold", marginTop: "3rem" }}>My Jobs</h2>
         <NotificationBell />
@@ -102,7 +115,7 @@ function MyJobs() {
 
       {/* RIGHT CONTENT */}
       <div className="myjobs-right">
-        {jobs.length === 0 ? (
+        {loading ? null : jobs.length === 0 ? (
           <p className="empty-message">You haven't posted any jobs yet.</p>
         ) : (
           <div className="job-list">
