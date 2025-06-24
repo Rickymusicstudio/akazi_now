@@ -1,7 +1,7 @@
 // Gigs.jsx
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { FaPhone, FaBars } from "react-icons/fa"; // ✅ Updated here
+import { FaPhone, FaBars } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../assets/avatar.png";
 import NotificationBell from "../components/NotificationBell.jsx";
@@ -9,6 +9,7 @@ import "./Gigs.css";
 
 function Gigs() {
   const [jobs, setJobs] = useState([]);
+  const [jobsFetched, setJobsFetched] = useState(false); // ✅ Added
   const [applyingJobId, setApplyingJobId] = useState(null);
   const [applicationMessage, setApplicationMessage] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
@@ -22,6 +23,7 @@ function Gigs() {
 
   const fetchJobs = async () => {
     const { data, error } = await supabase.from("jobs").select("*");
+    setJobsFetched(true); // ✅ Mark fetch complete
     if (error) {
       console.error("❌ Failed to fetch jobs:", error.message);
     } else {
@@ -88,7 +90,7 @@ function Gigs() {
     <div className="gigs-container">
       {/* ✅ Mobile Header */}
       <div className="mobile-top-bar">
-        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} /> {/* ✅ Updated */}
+        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <h2 className="mobile-title">Available Jobs</h2>
         <NotificationBell />
       </div>
@@ -122,7 +124,7 @@ function Gigs() {
       </div>
 
       <div className="gigs-right">
-        {jobs.length === 0 ? (
+        {!jobsFetched ? null : jobs.length === 0 ? (
           <p style={{ textAlign: "center", color: "#555" }}>No jobs available right now.</p>
         ) : (
           <div className="job-list">
