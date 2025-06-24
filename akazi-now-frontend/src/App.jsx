@@ -22,8 +22,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* 🏁 Default: redirect "/" to login */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        {/* 🏁 Default: redirect "/" to gigs */}
+        <Route path="/" element={<Navigate to="/gigs" replace />} />
 
         {/* 🧱 Protected Routes */}
         <Route
