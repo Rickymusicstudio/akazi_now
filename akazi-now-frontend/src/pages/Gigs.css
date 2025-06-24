@@ -57,8 +57,8 @@
 .job-card {
   background: #fff;
   padding: 1.5rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
@@ -179,20 +179,14 @@
     height: auto;
     overflow-y: visible;
     padding: 1.5rem;
-    padding-top: 6rem; /* space for sticky nav */
-  }
-
-  .job-card {
-    border-radius: 14px;
-    padding: 1.25rem;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.07);
+    padding-top: 6rem; /* accounts for fixed mobile nav */
   }
 
   .mobile-top-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: env(safe-area-inset-top) 1rem 1rem 1rem;
+    padding: 1rem;
     background: linear-gradient(135deg, #6a00ff, #ff007a);
     color: white;
     position: sticky;
@@ -206,6 +200,8 @@
     font-weight: bold;
     cursor: pointer;
     z-index: 1;
+    padding: 0.5rem;
+    color: white; /* ✅ Fix: visible on gradient */
   }
 
   .mobile-title {
@@ -221,7 +217,7 @@
   .mobile-nav-overlay {
     position: fixed;
     inset: 0;
-    background: linear-gradient(135deg, #6a00ff, #ff007a);
+    background: #ffffff; /* ✅ clean dropdown nav */
     z-index: 999;
     display: flex;
     justify-content: center;
@@ -231,7 +227,7 @@
 
   .mobile-nav-overlay ul {
     list-style: none;
-    color: white;
+    color: #333;
     font-weight: bold;
     font-size: 1.6rem;
     display: flex;
