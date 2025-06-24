@@ -65,6 +65,18 @@ html, body, #root {
   border-radius: 12px;
   border: 1px solid #ccc;
   font-size: 1rem;
+
+  /* 👇 Added fix for Android dark autofill */
+  background-color: #fff !important;
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  caret-color: auto;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  -webkit-text-fill-color: #000 !important;
 }
 
 .login-card .btn {
