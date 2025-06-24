@@ -45,7 +45,7 @@ function Login() {
       const { data: { user } } = await supabase.auth.getUser();
 
       if (user) {
-        navigate('/gigs'); // ✅ Redirect to main dashboard
+        navigate('/gigs'); // ✅ Redirect fixed here
       } else {
         setError('❌ Login succeeded but user not found.');
       }
