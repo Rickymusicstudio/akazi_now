@@ -58,7 +58,7 @@
   font-size: 14px;
 }
 
-/* Mobile Top Bar */
+/* ✅ Mobile Top Bar */
 .mobile-top-bar {
   display: none;
   width: 100%;
@@ -73,7 +73,8 @@
 }
 
 .mobile-hamburger {
-  font-size: 24px;
+  font-size: 1.6rem;
+  color: white; /* ✅ Ensure icon is white */
   cursor: pointer;
 }
 
