@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
-import NotificationBell from "../components/NotificationBell.jsx"; // ✅ Imported NotificationBell
+import NotificationBell from "../components/NotificationBell.jsx";
+import "./PostGig.css";
 
 function PostGig() {
   const [form, setForm] = useState({
@@ -13,6 +14,7 @@ function PostGig() {
   });
   const [imageFile, setImageFile] = useState(null);
   const [message, setMessage] = useState("");
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -28,9 +30,7 @@ function PostGig() {
     e.preventDefault();
     setMessage("");
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
       setMessage("❌ Not authenticated");
@@ -72,17 +72,15 @@ function PostGig() {
     const employerName = userProfile?.full_name || "Unknown";
     const contactInfo = userProfile?.phone || "N/A";
 
-    const { error } = await supabase.from("jobs").insert([
-      {
-        user_id: user.id,
-        ...form,
-        status: "open",
-        image_url: imageUrl,
-        poster_image: posterImage,
-        employer_name: employerName,
-        contact_info: contactInfo,
-      },
-    ]);
+    const { error } = await supabase.from("jobs").insert([{
+      user_id: user.id,
+      ...form,
+      status: "open",
+      image_url: imageUrl,
+      poster_image: posterImage,
+      employer_name: employerName,
+      contact_info: contactInfo,
+    }]);
 
     if (error) {
       setMessage("❌ Failed to post job: " + error.message);
@@ -100,65 +98,46 @@ function PostGig() {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", width: "100vw", fontFamily: "Segoe UI, sans-serif" }}>
-      {/* LEFT PANEL */}
-      <div
-        style={{
-          width: "50%",
-          background: "linear-gradient(135deg, #6a00ff, #ff007a)",
-          color: "white",
-          padding: "2rem",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          position: "relative",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            top: "1rem",
-            left: "1.5rem",
-            display: "flex",
-            gap: "1rem",
-            flexWrap: "wrap",
-            fontWeight: "bold",
-            fontSize: "14px",
-          }}
-        >
-          <button onClick={() => navigate("/")} style={navButtonStyle}>Home</button>
-          <button onClick={() => navigate("/post-job")} style={navButtonStyle}>Post a Job</button>
-          <button onClick={() => navigate("/my-jobs")} style={navButtonStyle}>My Jobs</button>
-          <button onClick={() => navigate("/profile")} style={navButtonStyle}>Profile</button>
-          <button onClick={() => navigate("/inbox")} style={navButtonStyle}>Inbox</button>
-          <button onClick={() => navigate("/carpool")} style={navButtonStyle}>Car Pooling</button>
-          <button
-            onClick={async () => {
-              await supabase.auth.signOut();
-              navigate("/login");
-            }}
-            style={{ ...navButtonStyle, color: "#ffcccc" }}
-          >
-            Logout
-          </button>
-        </div>
-
-        <h2 style={{ fontSize: "32px", fontWeight: "bold", marginTop: "3rem" }}>Post a Job</h2>
-        <NotificationBell /> {/* ✅ Bell added like in Gigs */}
+    <div className="postgig-container">
+      {/* ✅ MOBILE TOP BAR */}
+      <div className="mobile-top-bar">
+        <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>☰</div>
+        <div className="mobile-title">Post a Job</div>
+        <NotificationBell />
       </div>
 
-      {/* RIGHT PANEL */}
-      <div
-        style={{
-          width: "50%",
-          height: "100vh",
-          overflowY: "auto",
-          padding: "1rem 2rem 2rem",
-          backgroundColor: "#fff",
-          boxSizing: "border-box",
-        }}
-      >
+      {/* ✅ MOBILE FULLSCREEN NAV */}
+      {mobileNavOpen && (
+        <div className="mobile-nav-overlay">
+          <ul>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/post-job") }}>Post a Job</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/my-jobs") }}>My Jobs</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/profile") }}>Profile</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/inbox") }}>Inbox</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Car Pooling</li>
+            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+          </ul>
+        </div>
+      )}
+
+      {/* ✅ DESKTOP LEFT PANEL */}
+      <div className="gigs-left">
+        <div className="nav-buttons">
+          <button onClick={() => navigate("/")}>Home</button>
+          <button onClick={() => navigate("/post-job")}>Post a Job</button>
+          <button onClick={() => navigate("/my-jobs")}>My Jobs</button>
+          <button onClick={() => navigate("/profile")}>Profile</button>
+          <button onClick={() => navigate("/inbox")}>Inbox</button>
+          <button onClick={() => navigate("/carpools")}>Car Pooling</button>
+          <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
+        </div>
+        <h2 style={{ fontSize: "32px", fontWeight: "bold", marginTop: "3rem" }}>Post a Job</h2>
+        <NotificationBell />
+      </div>
+
+      {/* ✅ FORM PANEL */}
+      <div className="gigs-right">
         <form className="signup-form" onSubmit={handleSubmit}>
           {message && (
             <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>{message}</p>
@@ -171,10 +150,10 @@ function PostGig() {
           <input type="text" name="address" value={form.address} onChange={handleChange} required />
 
           <label>Job Description</label>
-          <textarea name="job_description" value={form.job_description} onChange={handleChange} rows={4} required />
+          <textarea name="job_description" value={form.job_description} onChange={handleChange} required />
 
           <label>Requirement</label>
-          <textarea name="requirement" value={form.requirement} onChange={handleChange} rows={4} placeholder="E.g. must have a driving license" />
+          <textarea name="requirement" value={form.requirement} onChange={handleChange} placeholder="E.g. must have a driving license" />
 
           <label>Price (Frw)</label>
           <input type="number" name="price" value={form.price} onChange={handleChange} />
@@ -188,14 +167,5 @@ function PostGig() {
     </div>
   );
 }
-
-const navButtonStyle = {
-  background: "none",
-  border: "none",
-  color: "white",
-  fontWeight: "bold",
-  fontSize: "14px",
-  cursor: "pointer",
-};
 
 export default PostGig;

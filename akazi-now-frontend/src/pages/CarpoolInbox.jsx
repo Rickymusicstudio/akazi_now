@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../assets/avatar.png";
-import NotificationBell from "../components/NotificationBell"; // ✅ Import bell
+import NotificationBell from "../components/NotificationBell";
+import "./CarpoolInbox.css";
 
 function CarpoolInbox() {
   const [rides, setRides] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,81 +37,70 @@ function CarpoolInbox() {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", width: "100vw", fontFamily: "Segoe UI, sans-serif" }}>
-      {/* LEFT PANEL */}
-      <div style={{
-        width: "50%",
-        background: "linear-gradient(135deg, #6a00ff, #ff007a)",
-        color: "white",
-        padding: "2rem",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        position: "relative"
-      }}>
-        <div style={{
-          position: "absolute",
-          top: "1rem",
-          left: "1.5rem",
-          display: "flex",
-          gap: "1rem",
-          flexWrap: "wrap",
-          fontWeight: "bold",
-          fontSize: "14px"
-        }}>
-          <button onClick={() => navigate("/")} style={navStyle}>Home</button>
-          <button onClick={() => navigate("/carpools")} style={navStyle}>Browse Rides</button>
-          <button onClick={() => navigate("/post-ride")} style={navStyle}>Post Ride</button>
-          <button onClick={() => navigate("/carpool-inbox")} style={navStyle}>Carpool Inbox</button>
-          <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ ...navStyle, color: "#ffcccc" }}>Logout</button>
+    <>
+      {/* ✅ Mobile Top Bar */}
+      <div className="mobile-top-bar">
+        <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>☰</div>
+        <h2 className="mobile-title">Carpool Inbox</h2>
+        <NotificationBell />
+      </div>
+
+      {/* ✅ Mobile Fullscreen Nav Overlay */}
+      {mobileNavOpen && (
+        <div className="mobile-nav-overlay">
+          <ul>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Browse Rides</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/post-ride") }}>Post Ride</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox") }}>Carpool Inbox</li>
+            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+          </ul>
+        </div>
+      )}
+
+      <div className="carpool-inbox-container">
+        {/* ✅ Desktop Left Nav */}
+        <div className="carpool-inbox-left">
+          <div className="nav-buttons">
+            <button onClick={() => navigate("/")}>Home</button>
+            <button onClick={() => navigate("/carpools")}>Browse Rides</button>
+            <button onClick={() => navigate("/post-ride")}>Post Ride</button>
+            <button onClick={() => navigate("/carpool-inbox")}>Carpool Inbox</button>
+            <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
+          </div>
+          <h2 style={{ fontSize: "28px", fontWeight: "bold", marginTop: "3rem" }}>Carpool Inbox</h2>
+          <NotificationBell />
         </div>
 
-        <h2 style={{ fontSize: "28px", fontWeight: "bold", marginTop: "3rem" }}>Carpool Inbox</h2>
-        <NotificationBell /> {/* ✅ Added bell below heading */}
+        {/* ✅ Right Panel */}
+        <div className="carpool-inbox-right">
+          {loading ? (
+            <p>Loading...</p>
+          ) : rides.length === 0 ? (
+            <p>No rides found.</p>
+          ) : (
+            rides.map((ride) => (
+              <div key={ride.id} className="inbox-card">
+                <h3>{ride.origin} → {ride.destination}</h3>
+                <p><strong>Date/Time:</strong> {new Date(ride.datetime).toLocaleString()}</p>
+                <h4 style={{ marginTop: "1rem" }}>Reservations:</h4>
+                {ride.reservations?.length ? (
+                  <ul>
+                    {ride.reservations.map((r, idx) => (
+                      <li key={idx}>
+                        <strong>{r.user?.full_name || "Unknown"}</strong> — {r.user?.phone || "N/A"} — {r.seats_reserved} seat(s)
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p style={{ color: "#999" }}>No one has reserved this ride yet.</p>
+                )}
+              </div>
+            ))
+          )}
+        </div>
       </div>
-
-      {/* RIGHT PANEL */}
-      <div style={{
-        width: "50%",
-        height: "100vh",
-        overflowY: "auto",
-        padding: "2rem",
-        backgroundColor: "#fff",
-        boxSizing: "border-box"
-      }}>
-        {loading ? (
-          <p>Loading...</p>
-        ) : rides.length === 0 ? (
-          <p>No rides found.</p>
-        ) : (
-          rides.map((ride) => (
-            <div key={ride.id} style={{
-              background: "#fff",
-              padding: "1.5rem",
-              borderRadius: "16px",
-              boxShadow: "0 6px 12px rgba(0,0,0,0.08)",
-              marginBottom: "1rem"
-            }}>
-              <h3>{ride.origin} → {ride.destination}</h3>
-              <p><strong>Date/Time:</strong> {new Date(ride.datetime).toLocaleString()}</p>
-              <h4 style={{ marginTop: "1rem" }}>Reservations:</h4>
-              {ride.reservations?.length ? (
-                <ul>
-                  {ride.reservations.map((r, idx) => (
-                    <li key={idx}>
-                      <strong>{r.user?.full_name || "Unknown"}</strong> — {r.user?.phone || "N/A"} — {r.seats_reserved} seat(s)
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p style={{ color: "#999" }}>No one has reserved this ride yet.</p>
-              )}
-            </div>
-          ))
-        )}
-      </div>
-    </div>
+    </>
   );
 }
 

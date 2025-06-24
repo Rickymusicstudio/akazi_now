@@ -1,14 +1,20 @@
-/* 🌐 Global Layout */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* src/pages/Login.css */
+
 .login-container {
   display: flex;
-  flex-direction: row;
   height: 100vh;
   width: 100vw;
   font-family: 'Segoe UI', sans-serif;
   overflow: hidden;
 }
 
-/* 🖼️ Left Side (Hidden on Mobile) */
+/* Left image panel for desktop */
 .login-left {
   flex: 1;
   background-image: linear-gradient(
@@ -20,10 +26,9 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  display: block;
 }
 
-/* 📱 Right Side */
+/* Right login panel */
 .login-right {
   flex: 1;
   background: #fff;
@@ -31,110 +36,81 @@
   align-items: center;
   justify-content: center;
   padding: 2rem;
+  min-height: 100vh;
 }
 
-/* 🧾 Login Card */
+/* Login Card */
 .login-card {
   width: 100%;
-  max-width: 420px;
-  background: #fff;
-  padding: 2.5rem;
+  max-width: 380px;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
   border-radius: 20px;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.12);
-  transition: all 0.3s ease;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.6s ease;
 }
 
 .login-card h2 {
-  text-align: center;
-  font-size: 28px;
+  margin-bottom: 1.2rem;
+  font-size: 1.75rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
-  color: #333;
-}
-
-.login-card p {
-  text-align: center;
-  color: #777;
-  font-size: 14px;
-  margin-bottom: 1.5rem;
-}
-
-.login-card label {
-  display: block;
-  margin-top: 1rem;
-  margin-bottom: 0.3rem;
-  font-weight: 600;
-  color: #444;
 }
 
 .login-card input {
   width: 100%;
   padding: 0.75rem;
-  font-size: 15px;
-  border-radius: 8px;
+  margin-top: 0.25rem;
+  margin-bottom: 1rem;
+  border-radius: 12px;
   border: 1px solid #ccc;
-  transition: border-color 0.2s ease;
+  font-size: 1rem;
 }
 
-.login-card input:focus {
-  outline: none;
-  border-color: #6e00ff;
-}
-
-/* 🔘 Button */
-.login-card button {
+.login-card .btn {
   width: 100%;
   padding: 0.75rem;
-  background: linear-gradient(to right, #6a00ff, #ff007a);
-  color: #fff;
-  font-size: 16px;
+  background: linear-gradient(to right, #7f00ff, #e100ff);
+  color: white;
   font-weight: bold;
   border: none;
-  border-radius: 999px;
+  border-radius: 12px;
   cursor: pointer;
-  margin-top: 1.5rem;
-  transition: background 0.3s ease;
+  font-size: 1rem;
+  margin-top: 0.5rem;
 }
 
-.login-card button:hover {
-  opacity: 0.9;
-}
-
-/* 🔗 Signup Link */
 .login-card .signin-link {
-  margin-top: 1.5rem;
-  font-size: 14px;
+  margin-top: 1rem;
   text-align: center;
+  font-size: 0.95rem;
 }
 
-.login-card .signin-link a {
-  color: #6e00ff;
-  font-weight: 600;
-  text-decoration: none;
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* 🛜 Messages */
-.login-card .error {
-  color: red;
-  font-size: 14px;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-.login-card .success {
-  color: green;
-  font-size: 14px;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-/* 📱 Mobile Styles */
+/* Mobile Layout */
 @media (max-width: 768px) {
   .login-container {
     flex-direction: column;
-    background: linear-gradient(to bottom right, #7500ff, #ff0096);
-    padding: 1.5rem 1rem;
-    height: auto;
+    background-image: linear-gradient(
+        to bottom right,
+        rgba(117, 0, 255, 0.6),
+        rgba(255, 0, 150, 0.6)
+      ),
+      url('../assets/signup.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
   }
 
   .login-left {
@@ -142,31 +118,16 @@
   }
 
   .login-right {
-    width: 100%;
-    padding: 0;
+    flex: none;
     background: transparent;
+    padding: 2rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
   }
 
   .login-card {
-    max-width: 100%;
-    margin-top: 3rem;
-    padding: 2rem 1.25rem;
-    border-radius: 18px;
-  }
-
-  .login-card h2 {
-    font-size: 24px;
-  }
-
-  .login-card input {
-    font-size: 16px;
-  }
-
-  .login-card button {
-    font-size: 15px;
-  }
-
-  .login-card .signin-link {
-    font-size: 13px;
+    background: rgba(255, 255, 255, 0.92);
   }
 }

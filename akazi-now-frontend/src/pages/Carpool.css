@@ -1,0 +1,145 @@
+/* Base layout */
+.carpool-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Left nav (desktop) */
+.carpool-left {
+  width: 250px;
+  background: linear-gradient(to bottom right, #6a00ff, #ff007a);
+  color: white;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.nav-buttons button {
+  background: none;
+  border: none;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+/* Right panel */
+.carpool-right {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  background: #f9f9f9;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.carpool-form {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  margin-bottom: 1rem;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+/* Mobile Top Bar */
+.mobile-top-bar {
+  display: none;
+  width: 100%;
+  background: linear-gradient(to right, #6a00ff, #ff007a);
+  color: white;
+  padding: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+}
+
+.mobile-hamburger {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.mobile-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Fullscreen mobile nav */
+.mobile-nav-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(to bottom, #6a00ff, #ff007a);
+  color: white;
+  z-index: 999;
+  padding-top: 5rem;
+  text-align: center;
+}
+
+.mobile-nav-overlay ul {
+  list-style: none;
+  padding: 0;
+}
+
+.mobile-nav-overlay li {
+  padding: 1rem;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .carpool-container {
+    flex-direction: column;
+  }
+
+  .carpool-left {
+    display: none;
+  }
+
+  .carpool-right {
+    padding: 6rem 1rem 2rem;
+    width: 100%;
+    overflow-y: auto;
+  }
+
+  .mobile-top-bar {
+    display: flex;
+  }
+
+  .mobile-nav-overlay {
+    display: block;
+  }
+
+  .carpool-form {
+    margin-top: 1rem;
+    padding: 1.5rem;
+    box-shadow: none;
+  }
+
+  input[type="file"] {
+    margin-top: 0.5rem;
+  }
+}

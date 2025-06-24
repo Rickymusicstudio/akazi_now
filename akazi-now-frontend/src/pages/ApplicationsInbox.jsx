@@ -2,14 +2,15 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../assets/avatar.png";
-import NotificationBell from "../components/NotificationBell.jsx"; // ✅ Import bell
-import "./Signup.css";
+import NotificationBell from "../components/NotificationBell.jsx";
+import "./Inbox.css"; // ✅ New consistent style
 
 function ApplicationsInbox() {
   const [applications, setApplications] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [isPoster, setIsPoster] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,9 +19,7 @@ function ApplicationsInbox() {
 
   const fetchInbox = async () => {
     setLoading(true);
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
       navigate("/login");
@@ -64,7 +63,6 @@ function ApplicationsInbox() {
       .from("applications")
       .update({ status: newStatus })
       .eq("id", applicationId);
-
     if (updateError) return;
 
     const { data: appData } = await supabase
@@ -74,10 +72,7 @@ function ApplicationsInbox() {
       .single();
 
     if (newStatus === "accepted") {
-      await supabase
-        .from("jobs")
-        .update({ status: "closed" })
-        .eq("id", appData.gig_id);
+      await supabase.from("jobs").update({ status: "closed" }).eq("id", appData.gig_id);
     }
 
     const { data: jobData } = await supabase
@@ -103,55 +98,46 @@ function ApplicationsInbox() {
   };
 
   return (
-    <div className="signup-container">
-      {/* LEFT PANEL */}
-      <div
-        className="signup-left"
-        style={{
-          background: "linear-gradient(135deg, #6a00ff, #ff007a)",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100vh",
-          position: "relative",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            top: "1rem",
-            left: "1.5rem",
-            display: "flex",
-            gap: "1rem",
-            flexWrap: "wrap",
-            fontWeight: "bold",
-            fontSize: "14px",
-          }}
-        >
-          <button onClick={() => navigate("/")} style={navStyle}>Home</button>
-          <button onClick={() => navigate("/post-job")} style={navStyle}>Post a Job</button>
-          <button onClick={() => navigate("/my-jobs")} style={navStyle}>My Jobs</button>
-          <button onClick={() => navigate("/profile")} style={navStyle}>Profile</button>
-          <button onClick={() => navigate("/inbox")} style={navStyle}>Inbox</button>
-          <button onClick={() => navigate("/carpool")} style={navStyle}>Car Pooling</button>
-          <button
-            onClick={async () => {
-              await supabase.auth.signOut();
-              navigate("/login");
-            }}
-            style={{ ...navStyle, color: "#ffcccc" }}
-          >
+    <div className="inbox-container">
+      {/* ✅ MOBILE TOP NAV */}
+      <div className="mobile-top-bar">
+        <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>☰</div>
+        <h2 className="mobile-title">Inbox</h2>
+        <NotificationBell />
+      </div>
+
+      {mobileNavOpen && (
+        <div className="mobile-nav-overlay">
+          <ul>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/post-job") }}>Post a Job</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/my-jobs") }}>My Jobs</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/profile") }}>Profile</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/inbox") }}>Inbox</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Car Pooling</li>
+            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+          </ul>
+        </div>
+      )}
+
+      {/* ✅ DESKTOP LEFT NAV */}
+      <div className="inbox-left">
+        <div className="nav-buttons">
+          <button onClick={() => navigate("/")}>Home</button>
+          <button onClick={() => navigate("/post-job")}>Post a Job</button>
+          <button onClick={() => navigate("/my-jobs")}>My Jobs</button>
+          <button onClick={() => navigate("/profile")}>Profile</button>
+          <button onClick={() => navigate("/inbox")}>Inbox</button>
+          <button onClick={() => navigate("/carpools")}>Car Pooling</button>
+          <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>
             Logout
           </button>
         </div>
-
-        <h2 style={{ marginTop: "4rem", color: "white" }}>Inbox</h2>
-        <NotificationBell /> {/* ✅ Bell positioned right below the title like UserProfile */}
+        <h2>Inbox</h2>
+        <NotificationBell />
       </div>
 
-      {/* RIGHT PANEL */}
-      <div className="signup-right" style={containerRightStyle}>
+      <div className="inbox-right">
         {loading ? (
           <p>Loading...</p>
         ) : isPoster ? (
@@ -161,13 +147,9 @@ function ApplicationsInbox() {
             applications.map((app) => {
               const user = app.worker || {};
               return (
-                <div key={app.id} style={cardStyle}>
-                  <img
-                    src={user.image_url || defaultAvatar}
-                    alt="Profile"
-                    style={avatarStyle}
-                  />
-                  <div style={{ flex: 1 }}>
+                <div key={app.id} className="inbox-card">
+                  <img src={user.image_url || defaultAvatar} alt="Profile" className="inbox-avatar" />
+                  <div className="inbox-card-details">
                     <h3>{user.full_name}</h3>
                     <p><strong>Phone:</strong> {user.phone}</p>
                     <p><strong>District:</strong> {user.district?.name}</p>
@@ -176,87 +158,32 @@ function ApplicationsInbox() {
                     <p><strong>Village:</strong> {user.village}</p>
                     <p><strong>Message:</strong> {app.message}</p>
                     <p><strong>Status:</strong> {app.status}</p>
-                    <p style={{ fontSize: "12px", color: "#999" }}>
-                      Submitted: {new Date(app.applied_at).toLocaleString()}
-                    </p>
-                    <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
-                      <button onClick={() => handleUpdateStatus(app.id, "accepted")} style={buttonStyle}>Accept</button>
-                      <button onClick={() => handleUpdateStatus(app.id, "rejected")} style={buttonStyle}>Reject</button>
+                    <p className="timestamp">Submitted: {new Date(app.applied_at).toLocaleString()}</p>
+                    <div className="inbox-actions">
+                      <button onClick={() => handleUpdateStatus(app.id, "accepted")}>Accept</button>
+                      <button onClick={() => handleUpdateStatus(app.id, "rejected")}>Reject</button>
                     </div>
                   </div>
                 </div>
               );
             })
           )
+        ) : notifications.length > 0 ? (
+          notifications.map((note) => {
+            const color = note.message.includes("accepted") ? "green" : note.message.includes("rejected") ? "red" : "#333";
+            return (
+              <div key={note.id} className="inbox-card" style={{ borderLeft: `6px solid ${color}`, flexDirection: "column" }}>
+                <p style={{ fontWeight: "bold", color }}>{note.message}</p>
+                <p className="timestamp">Received: {new Date(note.created_at).toLocaleString()}</p>
+              </div>
+            );
+          })
         ) : (
-          notifications.length > 0 ? (
-            notifications.map((note) => {
-              const color = note.message.includes("accepted") ? "green" : note.message.includes("rejected") ? "red" : "#333";
-              return (
-                <div key={note.id} style={{ ...cardStyle, borderLeft: `6px solid ${color}`, flexDirection: "column", alignItems: "flex-start" }}>
-                  <p style={{ fontWeight: "bold", color }}>{note.message}</p>
-                  <p style={{ fontSize: "12px", color: "#888" }}>
-                    Received: {new Date(note.created_at).toLocaleString()}
-                  </p>
-                </div>
-              );
-            })
-          ) : (
-            <p>You have no notifications yet.</p>
-          )
+          <p>You have no notifications yet.</p>
         )}
       </div>
     </div>
   );
 }
-
-const navStyle = {
-  background: "none",
-  border: "none",
-  color: "white",
-  fontWeight: "bold",
-  fontSize: "14px",
-  cursor: "pointer",
-};
-
-const buttonStyle = {
-  background: "linear-gradient(to right, #6a00ff, #ff007a)",
-  color: "white",
-  border: "none",
-  borderRadius: "999px",
-  padding: "0.5rem 1.5rem",
-  fontWeight: "bold",
-  cursor: "pointer",
-};
-
-const avatarStyle = {
-  width: "80px",
-  height: "80px",
-  borderRadius: "50%",
-  objectFit: "cover",
-  marginRight: "1.5rem",
-};
-
-const cardStyle = {
-  display: "flex",
-  flexDirection: "row",
-  alignItems: "center",
-  background: "#fff",
-  padding: "1.5rem",
-  borderRadius: "16px",
-  boxShadow: "0 6px 12px rgba(0,0,0,0.08)",
-  marginBottom: "1.5rem",
-  width: "100%",
-  maxWidth: "700px",
-  marginInline: "auto",
-};
-
-const containerRightStyle = {
-  padding: "2rem",
-  display: "flex",
-  flexDirection: "column",
-  gap: "1rem",
-  alignItems: "center",
-};
 
 export default ApplicationsInbox;

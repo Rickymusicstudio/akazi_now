@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
-import './Signup.css';
+import './UserProfile.css';
 import defaultAvatar from '../assets/avatar.png';
 import { useNavigate } from 'react-router-dom';
-import NotificationBell from "../components/NotificationBell.jsx"; // ✅ Add bell
+import NotificationBell from "../components/NotificationBell.jsx";
 
 function UserProfile() {
   const [profile, setProfile] = useState(null);
@@ -12,6 +12,7 @@ function UserProfile() {
   const [districts, setDistricts] = useState([]);
   const [sectors, setSectors] = useState([]);
   const [message, setMessage] = useState('');
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -128,14 +129,7 @@ function UserProfile() {
       .update({ image_url: publicUrl })
       .eq('auth_user_id', profile.auth_user_id);
 
-    const { error: insertError } = await supabase
-      .from('pictures')
-      .insert([{ user_id: profile.auth_user_id, image_url: publicUrl }]);
-
-    if (userUpdateError || insertError) {
-      console.error('❌ Error saving image info:', userUpdateError || insertError);
-      setMessage('❌ Failed to update profile picture');
-    } else {
+    if (!userUpdateError) {
       setProfile((prev) => ({ ...prev, image_url: publicUrl }));
       setMessage('✅ Profile picture updated');
     }
@@ -151,74 +145,63 @@ function UserProfile() {
   if (!profile) return <div>Loading...</div>;
 
   return (
-    <div className="signup-container">
-      {/* LEFT PANEL */}
-      <div
-        className="signup-left"
-        style={{
-          background: 'linear-gradient(135deg, #6a00ff, #ff007a)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100vh',
-          position: 'relative',
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            top: '1rem',
-            left: '1.5rem',
-            display: 'flex',
-            gap: '1rem',
-            flexWrap: 'wrap',
-            fontWeight: 'bold',
-            fontSize: '14px',
-          }}
-        >
-          <button onClick={() => navigate("/")} style={navButtonStyle}>Home</button>
-          <button onClick={() => navigate("/post-job")} style={navButtonStyle}>Post a Job</button>
-          <button onClick={() => navigate("/my-jobs")} style={navButtonStyle}>My Jobs</button>
-          <button onClick={() => navigate("/profile")} style={navButtonStyle}>Profile</button>
-          <button onClick={() => navigate("/inbox")} style={navButtonStyle}>Inbox</button>
-          <button onClick={() => navigate("/carpool")} style={navButtonStyle}>Car Pooling</button>
-          <button onClick={handleLogout} style={{ ...navButtonStyle, color: "#ffcccc" }}>Logout</button>
+    <div className="profile-container">
+      {/* ✅ Mobile Top Bar */}
+      <div className="mobile-top-bar">
+  <div className="mobile-left-group">
+    <img
+      src={profile.image_url || defaultAvatar}
+      alt="avatar"
+      className="mobile-profile-pic"
+    />
+    <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>☰</div>
+  </div>
+  <div className="mobile-title">My Profile</div>
+  <NotificationBell />
+</div>
+
+      {mobileNavOpen && (
+        <div className="mobile-nav-overlay">
+          <ul>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/post-job") }}>Post a Job</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/my-jobs") }}>My Jobs</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/profile") }}>Profile</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/inbox") }}>Inbox</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool") }}>Car Pooling</li>
+            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+          </ul>
+        </div>
+      )}
+
+      {/* ✅ Desktop Left Panel */}
+      <div className="profile-left">
+        <div className="nav-buttons">
+          <button onClick={() => navigate("/")}>Home</button>
+          <button onClick={() => navigate("/post-job")}>Post a Job</button>
+          <button onClick={() => navigate("/my-jobs")}>My Jobs</button>
+          <button onClick={() => navigate("/profile")}>Profile</button>
+          <button onClick={() => navigate("/inbox")}>Inbox</button>
+          <button onClick={() => navigate("/carpool")}>Car Pooling</button>
+          <button onClick={handleLogout} style={{ color: "#ffcccc" }}>Logout</button>
         </div>
 
-        <h2 style={{ marginTop: '3rem', color: 'white' }}>My Profile</h2>
-        <NotificationBell /> {/* ✅ Bell Added Below Title */}
-
-        <div
-          style={{
-            backgroundColor: 'white',
-            borderRadius: '16px',
-            padding: '2rem',
-            width: '80%',
-            maxWidth: '320px',
-            textAlign: 'center',
-            marginTop: '1rem',
-            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
-          }}
-        >
-          <img
-            src={profile.image_url || defaultAvatar}
-            alt="avatar"
-            style={{ width: '120px', height: '120px', borderRadius: '50%', objectFit: 'cover' }}
-          />
-          <h2 style={{ marginTop: '1rem', color: '#333' }}>{profile.full_name}</h2>
-          <label className="btn" style={{ display: 'inline-block', marginTop: '1rem', cursor: 'pointer', padding: '12px 24px' }}>
+        <h2 style={{ color: 'white' }}>My Profile</h2>
+        <NotificationBell />
+        <div className="profile-card">
+          <img src={profile.image_url || defaultAvatar} alt="avatar" />
+          <h2 style={{ marginTop: '1rem' }}>{profile.full_name}</h2>
+          <label className="btn">
             {uploading ? 'Uploading...' : 'Change Picture'}
             <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
           </label>
         </div>
       </div>
 
-      {/* RIGHT PANEL */}
-      <div className="signup-right">
-        <form className="signup-form" onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
+      {/* ✅ Profile Form */}
+      <div className="profile-right">
+        <form className="profile-form" onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
           {message && <p style={{ color: message.startsWith('✅') ? 'green' : 'red' }}>{message}</p>}
-
           <label>Full Name</label>
           <input type="text" name="full_name" value={profile.full_name || ''} onChange={handleChange} disabled={!editing} />
 
@@ -247,24 +230,14 @@ function UserProfile() {
           <label>Village</label>
           <input type="text" name="village" value={profile.village || ''} onChange={handleChange} disabled={!editing} />
 
-          <button type="button" className="btn" onClick={handleEditToggle} style={{ marginTop: '10px' }}>
+          <button type="button" className="btn" onClick={handleEditToggle}>
             {editing ? 'Cancel' : 'Edit Profile'}
           </button>
-
           {editing && <button type="submit" className="btn">Save Changes</button>}
         </form>
       </div>
     </div>
   );
 }
-
-const navButtonStyle = {
-  background: "none",
-  border: "none",
-  color: "white",
-  fontWeight: "bold",
-  fontSize: "14px",
-  cursor: "pointer",
-};
 
 export default UserProfile;

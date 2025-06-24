@@ -15,73 +15,72 @@ body, html {
   display: flex;
   height: 100vh;
   width: 100vw;
+  overflow: hidden;
+  flex-direction: row;
 }
 
 .signup-left {
-  width: 50%;
+  flex: 1;
+  background-image: linear-gradient(
+      to bottom right,
+      rgba(128, 0, 255, 0.5),
+      rgba(255, 0, 128, 0.5)
+    ),
+    url('../assets/signup.jpg'); /* change to your background image */
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   position: relative;
 }
 
-.signup-left .overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(to bottom right, rgba(128, 0, 255, 0.4), rgba(255, 0, 128, 0.4));
-}
-
 .signup-right {
-  width: 50%;
+  flex: 1;
+  background-color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #fff;
   padding: 2rem;
 }
+
 .signup-form {
   width: 100%;
-  max-width: 400px;
-  padding: 1.5rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  background-color: #fff;
+  max-width: 420px;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  max-height: 90vh;         /* 👈 LIMIT height so it's not too long */
-  overflow-y: auto;         /* 👈 Scroll internally if needed */
-  margin-top: 1rem;
+  gap: 1rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: fadeIn 0.5s ease;
 }
 
 .signup-form h2 {
   text-align: center;
-  margin-bottom: 2rem;
-  font-size: 32px;
+  margin-bottom: 1rem;
+  font-size: 2rem;
   font-weight: 700;
   color: #111;
-  line-height: 1.2;
 }
 
 .signup-form label {
   font-weight: 600;
   font-size: 14px;
-  margin-bottom: 5px;
-  display: block;
+  margin-bottom: 4px;
 }
 
 .signup-form input[type="text"],
 .signup-form input[type="email"],
 .signup-form input[type="password"] {
   width: 100%;
-  display: block;
-  padding: 12px 14px;
-  margin-bottom: 1rem;
-  border-radius: 8px;
+  padding: 0.75rem;
+  border-radius: 10px;
   border: 1px solid #ccc;
-  font-size: 15px;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
   background: #fff;
 }
 
@@ -89,7 +88,6 @@ body, html {
   display: flex;
   align-items: center;
   font-size: 13px;
-  margin-bottom: 1rem;
 }
 
 .terms input {
@@ -104,14 +102,14 @@ body, html {
 .btn {
   background: linear-gradient(to right, #6a00ff, #ff007a);
   color: #fff;
-  padding: 12px 20px;
+  padding: 12px;
   font-size: 16px;
   width: 100%;
   border: none;
-  border-radius: 999px;
+  border-radius: 12px;
   cursor: pointer;
   transition: background 0.3s ease;
-  margin-bottom: 1rem;
+  margin-top: 0.5rem;
 }
 
 .btn:hover {
@@ -128,3 +126,96 @@ body, html {
   text-decoration: none;
   font-weight: 500;
 }
+
+/* ✨ Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ✅ Mobile Styles */
+/* ✅ Clean floating card design like login */
+@media screen and (max-width: 768px) {
+  .signup-container {
+    flex-direction: column;
+    background-image: linear-gradient(
+        to bottom right,
+        rgba(128, 0, 255, 0.6),
+        rgba(255, 0, 150, 0.6)
+      ),
+      url('../assets/signup.jpg'); /* ✅ Use full background */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1rem;
+  }
+
+  .signup-left {
+    display: none;
+  }
+
+  .signup-right {
+    width: 100%;
+    height: auto;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+  }
+
+  .signup-form {
+    width: 100%;
+    max-width: 380px;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(6px);
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+  }
+
+  .signup-form h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.75rem;
+  }
+
+  .signup-form input,
+  .signup-form select {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 1rem;
+    background: #fff;
+  }
+
+  .terms {
+    margin-bottom: 1rem;
+    font-size: 14px;
+  }
+
+  .btn {
+    border-radius: 12px;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  .signin-link {
+    text-align: center;
+    font-size: 14px;
+    margin-top: 1rem;
+  }
+}
+
+

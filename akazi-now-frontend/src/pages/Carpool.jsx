@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
-import NotificationBell from "../components/NotificationBell"; // ✅ Bell imported
+import NotificationBell from "../components/NotificationBell";
+import "./Carpool.css";
 
 function Carpool() {
   const [form, setForm] = useState({
@@ -16,15 +17,12 @@ function Carpool() {
   const [carImageFile, setCarImageFile] = useState(null);
   const [message, setMessage] = useState("");
   const [userProfile, setUserProfile] = useState({ full_name: "", contact_info: "" });
-
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
       const { data, error } = await supabase
@@ -33,11 +31,7 @@ function Carpool() {
         .eq("auth_user_id", user.id)
         .single();
 
-      if (error) {
-        console.error("❌ Failed to fetch profile:", error.message);
-      } else {
-        setUserProfile(data);
-      }
+      if (!error) setUserProfile(data);
     };
 
     fetchProfile();
@@ -52,45 +46,34 @@ function Carpool() {
     e.preventDefault();
     setMessage("");
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      setMessage("❌ Please login first.");
-      return;
-    }
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return setMessage("❌ Please login first.");
 
     let carImageUrl = null;
     if (carImageFile) {
       const ext = carImageFile.name.split(".").pop();
-      const fileName = `${Date.now()}.${ext}`; // ✅ fileName only, not full path
+      const fileName = `${Date.now()}.${ext}`;
+      const filePath = `carpool-images/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from("carpool-images")
-        .upload(fileName, carImageFile);
+        .upload(filePath, carImageFile);
 
       if (uploadError) {
-        setMessage("❌ Failed to upload car image.");
-        return;
+        return setMessage("❌ Failed to upload car image.");
       }
 
-      const { data: publicUrlData } = supabase.storage
-        .from("carpool-images")
-        .getPublicUrl(fileName); // ✅ Only the file name
-
-      carImageUrl = publicUrlData.publicUrl;
+      const { data } = supabase.storage.from("carpool-images").getPublicUrl(filePath);
+      carImageUrl = data.publicUrl;
     }
 
-    const { error } = await supabase.from("carpools").insert([
-      {
-        driver_id: user.id,
-        ...form,
-        car_image: carImageUrl,
-        contact_info: userProfile.contact_info,
-        driver_name: userProfile.full_name,
-      },
-    ]);
+    const { error } = await supabase.from("carpools").insert([{
+      driver_id: user.id,
+      ...form,
+      car_image: carImageUrl,
+      contact_info: userProfile.contact_info,
+      driver_name: userProfile.full_name,
+    }]);
 
     if (error) {
       setMessage("❌ Failed to post carpool: " + error.message);
@@ -109,90 +92,53 @@ function Carpool() {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", width: "100vw", fontFamily: "Segoe UI, sans-serif" }}>
-      {/* LEFT PANEL NAV */}
-      <div style={{ width: "50%", background: "linear-gradient(135deg, #6a00ff, #ff007a)", color: "white", padding: "2rem", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative" }}>
-        <div style={{ position: "absolute", top: "1rem", left: "1.5rem", display: "flex", gap: "1rem", flexWrap: "wrap", fontWeight: "bold", fontSize: "14px" }}>
-          <button onClick={() => navigate("/")} style={navStyle}>Home</button>
-          <button onClick={() => navigate("/carpools")} style={navStyle}>Browse Rides</button>
-          <button onClick={() => navigate("/carpool")} style={navStyle}>Post Ride</button>
-          <button onClick={() => navigate("/carpool-inbox")} style={navStyle}>Carpool Inbox</button>
-          <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ ...navStyle, color: "#ffcccc" }}>Logout</button>
-        </div>
+    <div className="carpool-container">
+      {/* Mobile Top Bar */}
+      <div className="mobile-top-bar">
+        <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>☰</div>
+        <h2 className="mobile-title">Post Carpool</h2>
+        <NotificationBell />
+      </div>
 
+      {/* Mobile Fullscreen Nav */}
+      {mobileNavOpen && (
+        <div className="mobile-nav-overlay">
+          <ul>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Browse Rides</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool") }}>Post Ride</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox") }}>Carpool Inbox</li>
+            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+          </ul>
+        </div>
+      )}
+
+      {/* Left Nav (Desktop) */}
+      <div className="carpool-left">
+        <div className="nav-buttons">
+          <button onClick={() => navigate("/")}>Home</button>
+          <button onClick={() => navigate("/carpools")}>Browse Rides</button>
+          <button onClick={() => navigate("/carpool")}>Post Ride</button>
+          <button onClick={() => navigate("/carpool-inbox")}>Carpool Inbox</button>
+          <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
+        </div>
         <h2 style={{ fontSize: "28px", fontWeight: "bold", marginTop: "3rem" }}>Post Carpool Offer</h2>
         <NotificationBell />
       </div>
 
-      {/* RIGHT FORM PANEL */}
-      <div style={{ width: "50%", padding: "2rem", backgroundColor: "#fff" }}>
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      {/* Form Panel */}
+      <div className="carpool-right">
+        <form onSubmit={handleSubmit} className="carpool-form">
           {message && <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>{message}</p>}
 
-          <input
-            type="text"
-            name="origin"
-            placeholder="Origin (e.g. Kigali)"
-            value={form.origin}
-            onChange={handleChange}
-            required
-            className="input"
-          />
-
-          <input
-            type="text"
-            name="destination"
-            placeholder="Destination (e.g. Huye)"
-            value={form.destination}
-            onChange={handleChange}
-            required
-            className="input"
-          />
-
-          <input
-            type="number"
-            name="available_seats"
-            placeholder="Available Seats"
-            value={form.available_seats}
-            onChange={handleChange}
-            required
-            className="input"
-          />
-
-          <input
-            type="datetime-local"
-            name="datetime"
-            value={form.datetime}
-            onChange={handleChange}
-            required
-            className="input"
-          />
-
-          <input
-            type="number"
-            name="price"
-            placeholder="Price (Frw)"
-            value={form.price}
-            onChange={handleChange}
-            className="input"
-          />
-
-          <textarea
-            name="notes"
-            placeholder="Extra Message (Optional)"
-            value={form.notes}
-            onChange={handleChange}
-            rows={4}
-            className="input"
-          />
-
+          <input type="text" name="origin" placeholder="Origin (e.g. Kigali)" value={form.origin} onChange={handleChange} required className="input" />
+          <input type="text" name="destination" placeholder="Destination (e.g. Huye)" value={form.destination} onChange={handleChange} required className="input" />
+          <input type="number" name="available_seats" placeholder="Available Seats" value={form.available_seats} onChange={handleChange} required className="input" />
+          <input type="datetime-local" name="datetime" value={form.datetime} onChange={handleChange} required className="input" />
+          <input type="number" name="price" placeholder="Price (Frw)" value={form.price} onChange={handleChange} className="input" />
+          <textarea name="notes" placeholder="Extra Message (Optional)" value={form.notes} onChange={handleChange} rows={4} className="input" />
           <label>Upload Car Picture</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setCarImageFile(e.target.files[0])}
-          />
-
+          <input type="file" accept="image/*" onChange={(e) => setCarImageFile(e.target.files[0])} />
           <button type="submit" style={btnStyle}>Post Ride</button>
         </form>
       </div>

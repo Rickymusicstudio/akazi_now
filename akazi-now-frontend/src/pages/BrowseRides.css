@@ -1,0 +1,153 @@
+/* Base layout */
+.browse-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  font-family: 'Segoe UI', sans-serif;
+  overflow: hidden;
+}
+
+/* Left panel (desktop nav) */
+.browse-left {
+  width: 50%;
+  background: linear-gradient(to bottom right, #6a00ff, #ff007a);
+  color: white;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.browse-left .nav-buttons {
+  position: absolute;
+  top: 1rem;
+  left: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.browse-left .nav-buttons button {
+  background: none;
+  border: none;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Right panel (rides listing) */
+.browse-right {
+  width: 50%;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 2rem;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+/* Ride card */
+.ride-card {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Mobile Top Bar */
+.mobile-top-bar {
+  display: none;
+  width: 100%;
+  background: linear-gradient(to right, #6a00ff, #ff007a);
+  color: white;
+  padding: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+}
+
+.mobile-hamburger {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.mobile-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Fullscreen dropdown nav */
+.mobile-nav-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(to bottom, #6a00ff, #ff007a);
+  color: white;
+  z-index: 999;
+  padding-top: 5rem;
+  text-align: center;
+}
+
+.mobile-nav-overlay ul {
+  list-style: none;
+  padding: 0;
+}
+
+.mobile-nav-overlay li {
+  padding: 1rem;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .browse-container {
+    flex-direction: column;
+    overflow: auto;
+  }
+
+  .browse-left {
+    display: none;
+  }
+
+  .browse-right {
+    width: 100%;
+    padding: 6rem 1rem 2rem;
+    height: auto;
+  }
+
+  .mobile-top-bar {
+    display: flex;
+  }
+
+  .mobile-nav-overlay {
+    display: block;
+  }
+
+  .ride-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ride-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+  }
+
+  .ride-card input[type="number"] {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+}
