@@ -121,7 +121,7 @@ function ApplicationsInbox() {
       )}
 
       {/* ✅ DESKTOP LEFT NAV */}
-      <div className="inbox-left">
+      <div className="inbox-left" style={{ background: 'white' }}>
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
           <button onClick={() => navigate("/post-job")}>Post a Job</button>
@@ -138,9 +138,7 @@ function ApplicationsInbox() {
       </div>
 
       <div className="inbox-right">
-        {loading ? (
-          <p>Loading...</p>
-        ) : isPoster ? (
+        {!loading && isPoster ? (
           applications.length === 0 ? (
             <p>No one has applied yet.</p>
           ) : (
@@ -168,7 +166,7 @@ function ApplicationsInbox() {
               );
             })
           )
-        ) : notifications.length > 0 ? (
+        ) : !loading && notifications.length > 0 ? (
           notifications.map((note) => {
             const color = note.message.includes("accepted") ? "green" : note.message.includes("rejected") ? "red" : "#333";
             return (
@@ -178,9 +176,9 @@ function ApplicationsInbox() {
               </div>
             );
           })
-        ) : (
+        ) : !loading ? (
           <p>You have no notifications yet.</p>
-        )}
+        ) : null}
       </div>
     </div>
   );
