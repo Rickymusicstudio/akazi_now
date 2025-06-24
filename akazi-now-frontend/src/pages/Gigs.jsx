@@ -1,7 +1,7 @@
 // Gigs.jsx
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { FaPhone } from "react-icons/fa";
+import { FaPhone, FaBars } from "react-icons/fa"; // ✅ Updated here
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../assets/avatar.png";
 import NotificationBell from "../components/NotificationBell.jsx";
@@ -86,9 +86,9 @@ function Gigs() {
 
   return (
     <div className="gigs-container">
-      {/* Mobile Header */}
+      {/* ✅ Mobile Header */}
       <div className="mobile-top-bar">
-        <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>☰</div>
+        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} /> {/* ✅ Updated */}
         <h2 className="mobile-title">Available Jobs</h2>
         <NotificationBell />
       </div>
