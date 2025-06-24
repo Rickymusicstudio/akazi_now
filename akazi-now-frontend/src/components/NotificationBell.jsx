@@ -36,8 +36,8 @@ function NotificationBell() {
   return (
     <div className="notification-bell-container">
       <button
-        onClick={() => setShowDropdown(!showDropdown)}
         className="notification-bell-button"
+        onClick={() => setShowDropdown(!showDropdown)}
       >
         <FaBell color="#6a00ff" size={20} />
       </button>
@@ -50,8 +50,8 @@ function NotificationBell() {
             notifications.map((note) => (
               <div
                 key={note.id}
-                onClick={() => goToDetail(note)}
                 className="notification-item"
+                onClick={() => goToDetail(note)}
               >
                 <p className="notification-message">{note.message}</p>
                 <p className="notification-time">
