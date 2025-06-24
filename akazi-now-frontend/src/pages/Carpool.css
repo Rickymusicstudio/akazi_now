@@ -8,13 +8,24 @@
 
 /* Left nav (desktop) */
 .carpool-left {
-  width: 250px;
+  width: 50%;
   background: linear-gradient(to bottom right, #6a00ff, #ff007a);
   color: white;
-  padding: 2rem 1rem;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.nav-buttons {
+  position: absolute;
+  top: 1rem;
+  left: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .nav-buttons button {
@@ -24,19 +35,19 @@
   font-weight: bold;
   font-size: 14px;
   cursor: pointer;
-  margin-bottom: 1rem;
-  text-align: left;
 }
 
 /* Right panel */
 .carpool-right {
-  flex: 1;
+  width: 50%;
+  height: 100vh;
   overflow-y: auto;
   padding: 2rem;
   background: #f9f9f9;
   display: flex;
   justify-content: center;
   align-items: flex-start;
+  box-sizing: border-box;
 }
 
 .carpool-form {
@@ -56,9 +67,11 @@
   border: 1px solid #ccc;
   border-radius: 10px;
   font-size: 14px;
+  background: white;
+  color: #333;
 }
 
-/* ✅ Mobile Top Bar */
+/* Mobile Top Bar */
 .mobile-top-bar {
   display: none;
   width: 100%;
@@ -70,50 +83,69 @@
   position: fixed;
   top: 0;
   z-index: 1000;
+  gap: 1rem;
 }
 
 .mobile-hamburger {
   font-size: 1.6rem;
-  color: white; /* ✅ Ensure icon is white */
+  color: white;
   cursor: pointer;
 }
 
 .mobile-title {
-  font-size: 18px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.2rem;
   font-weight: bold;
 }
 
 /* Fullscreen mobile nav */
 .mobile-nav-overlay {
-  display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
+  inset: 0;
   background: linear-gradient(to bottom, #6a00ff, #ff007a);
   color: white;
   z-index: 999;
   padding-top: 5rem;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: slideIn 0.3s ease-out;
 }
 
 .mobile-nav-overlay ul {
   list-style: none;
-  padding: 0;
+  font-size: 1.6rem;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .mobile-nav-overlay li {
-  padding: 1rem;
-  font-size: 18px;
-  font-weight: bold;
   cursor: pointer;
+}
+
+/* Animation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Mobile Styles */
 @media (max-width: 768px) {
   .carpool-container {
     flex-direction: column;
+    min-height: 100vh;
   }
 
   .carpool-left {
@@ -121,26 +153,15 @@
   }
 
   .carpool-right {
-    padding: 6rem 1rem 2rem;
     width: 100%;
-    overflow-y: auto;
+    padding: 6rem 1rem 2rem;
+    height: auto;
   }
 
   .mobile-top-bar {
     display: flex;
   }
 
-  .mobile-nav-overlay {
-    display: block;
-  }
-
   .carpool-form {
     margin-top: 1rem;
     padding: 1.5rem;
-    box-shadow: none;
-  }
-
-  input[type="file"] {
-    margin-top: 0.5rem;
-  }
-}
