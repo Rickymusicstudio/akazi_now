@@ -1,3 +1,4 @@
+/* Container Layout */
 .postgig-container {
   display: flex;
   height: 100vh;
@@ -5,6 +6,7 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
+/* Left Panel - Desktop Nav */
 .gigs-left {
   width: 50%;
   background: linear-gradient(135deg, #6a00ff, #ff007a);
@@ -37,6 +39,7 @@
   cursor: pointer;
 }
 
+/* Right Panel - Form */
 .gigs-right {
   width: 50%;
   height: 100vh;
@@ -46,10 +49,10 @@
   box-sizing: border-box;
 }
 
+/* Form Styling */
 .signup-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
 }
 
 .signup-form label {
@@ -63,19 +66,27 @@
 .signup-form input[type="file"],
 .signup-form textarea {
   width: 100%;
-  padding: 0.75rem;
+  padding: 1rem;
   border-radius: 12px;
   border: 1px solid #ccc;
   font-size: 1rem;
-  background: #fff;
   box-sizing: border-box;
+  margin-bottom: 1.2rem;
 }
 
+/* ✅ Textareas specifically taller */
 .signup-form textarea {
-  height: 100px;
+  height: 80px;
   resize: vertical;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  box-sizing: border-box;
+  margin-bottom: 1.2rem;
 }
 
+/* Submit Button */
 .signup-form .btn {
   width: 100%;
   padding: 1rem;
@@ -88,10 +99,12 @@
   margin-top: 1rem;
 }
 
+/* ✅ Mobile Header */
 .mobile-top-bar {
   display: none;
 }
 
+/* ✅ Mobile Nav Overlay */
 .mobile-nav-overlay {
   position: fixed;
   inset: 0;
@@ -117,6 +130,7 @@
   cursor: pointer;
 }
 
+/* ✅ Mobile Only Adjustments */
 @media (max-width: 768px) {
   .postgig-container {
     flex-direction: column;
@@ -132,8 +146,7 @@
     width: 100%;
     height: auto;
     overflow-y: visible;
-    padding: 1.5rem;
-    padding-top: 6rem;
+    padding: 1rem;
   }
 
   .mobile-top-bar {
@@ -152,7 +165,7 @@
     font-size: 1.8rem;
     font-weight: bold;
     cursor: pointer;
-    color: white;
+    color: white; /* ✅ Force white color for ☰ */
   }
 
   .mobile-title {
@@ -170,25 +183,4 @@
       transform: translateY(0);
     }
   }
-}
-
-/* Notification Bell */
-.notification-bell-container {
-  position: absolute;
-  top: 1rem;
-  right: 1.5rem;
-  z-index: 10;
-}
-
-.notification-bell-button {
-  background: #fff;
-  border: 2px solid #fff;
-  border-radius: 50%;
-  width: 42px;
-  height: 42px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
 }
