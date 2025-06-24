@@ -173,3 +173,14 @@
     }
   }
 }
+
+.signup-form input[type="text"],
+.signup-form input[type="number"],
+.signup-form input[type="file"],
+.signup-form textarea {
+  background-color: #fff !important; /* force white */
+  color: #000 !important;           /* force black text */
+  -webkit-text-fill-color: #000 !important; /* fix for Android autofill */
+  caret-color: #000;
+  transition: background-color 0.3s ease;
+}
