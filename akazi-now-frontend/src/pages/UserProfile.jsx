@@ -4,6 +4,7 @@ import './UserProfile.css';
 import defaultAvatar from '../assets/avatar.png';
 import { useNavigate } from 'react-router-dom';
 import NotificationBell from "../components/NotificationBell.jsx";
+import { FaBars } from "react-icons/fa"; // ✅ White bar icon
 
 function UserProfile() {
   const [profile, setProfile] = useState(null);
@@ -21,10 +22,7 @@ function UserProfile() {
   }, []);
 
   const loadProfile = async () => {
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
+    const { data: { user }, error } = await supabase.auth.getUser();
     if (error || !user) {
       setMessage('❌ Not authenticated.');
       return;
@@ -42,10 +40,8 @@ function UserProfile() {
       return;
     }
 
-    if (profileData) {
-      setProfile(profileData);
-      if (profileData.district_id) loadSectors(profileData.district_id);
-    }
+    setProfile(profileData);
+    if (profileData?.district_id) loadSectors(profileData.district_id);
   };
 
   const loadDistricts = async () => {
@@ -61,8 +57,6 @@ function UserProfile() {
     setSectors(data || []);
   };
 
-  const handleEditToggle = () => setEditing(!editing);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfile((prev) => ({ ...prev, [name]: value }));
@@ -72,6 +66,8 @@ function UserProfile() {
       loadSectors(value);
     }
   };
+
+  const handleEditToggle = () => setEditing(!editing);
 
   const handleSave = async () => {
     if (!profile?.auth_user_id) {
@@ -148,18 +144,19 @@ function UserProfile() {
     <div className="profile-container">
       {/* ✅ Mobile Top Bar */}
       <div className="mobile-top-bar">
-  <div className="mobile-left-group">
-    <img
-      src={profile.image_url || defaultAvatar}
-      alt="avatar"
-      className="mobile-profile-pic"
-    />
-    <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>☰</div>
-  </div>
-  <div className="mobile-title">My Profile</div>
-  <NotificationBell />
-</div>
+        <div className="mobile-left-group">
+          <img
+            src={profile.image_url || defaultAvatar}
+            alt="avatar"
+            className="mobile-profile-pic"
+          />
+          <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
+        </div>
+        <div className="mobile-title">My Profile</div>
+        <NotificationBell />
+      </div>
 
+      {/* ✅ Mobile Full Nav */}
       {mobileNavOpen && (
         <div className="mobile-nav-overlay">
           <ul>
@@ -174,7 +171,7 @@ function UserProfile() {
         </div>
       )}
 
-      {/* ✅ Desktop Left Panel */}
+      {/* ✅ Desktop Left */}
       <div className="profile-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -198,7 +195,7 @@ function UserProfile() {
         </div>
       </div>
 
-      {/* ✅ Profile Form */}
+      {/* ✅ Right Form Panel */}
       <div className="profile-right">
         <form className="profile-form" onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
           {message && <p style={{ color: message.startsWith('✅') ? 'green' : 'red' }}>{message}</p>}
