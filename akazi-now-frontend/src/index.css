@@ -1,3 +1,11 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: linear-gradient(135deg, #6a00ff, #ff007a); /* fallback for safe area gap */
+}
+
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -66,3 +74,4 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+

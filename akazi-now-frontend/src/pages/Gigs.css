@@ -188,18 +188,19 @@
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.07);
   }
 
-  .mobile-top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: env(safe-area-inset-top) 1rem 1rem 1rem;
-    background: linear-gradient(135deg, #6a00ff, #ff007a);
-    color: white;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    gap: 1rem;
-  }
+.mobile-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: env(safe-area-inset-top); /* ✅ push content below status bar */
+  padding: env(safe-area-inset-top) 1rem 1rem 1rem;
+  background: linear-gradient(135deg, #6a00ff, #ff007a);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 1rem;
+}
 
   .mobile-hamburger {
     font-size: 1.8rem;
