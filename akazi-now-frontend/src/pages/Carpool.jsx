@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell";
-import { FaBars } from "react-icons/fa"; // ✅ Added
 import "./Carpool.css";
 
 function Carpool() {
@@ -94,14 +93,14 @@ function Carpool() {
 
   return (
     <div className="carpool-container">
-      {/* ✅ Mobile Top Bar */}
+      {/* Mobile Top Bar */}
       <div className="mobile-top-bar">
-        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
+        <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>☰</div>
         <h2 className="mobile-title">Post Carpool</h2>
         <NotificationBell />
       </div>
 
-      {/* ✅ Mobile Fullscreen Nav */}
+      {/* Mobile Fullscreen Nav */}
       {mobileNavOpen && (
         <div className="mobile-nav-overlay">
           <ul>
@@ -114,7 +113,7 @@ function Carpool() {
         </div>
       )}
 
-      {/* ✅ Desktop Nav */}
+      {/* Left Nav (Desktop) */}
       <div className="carpool-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -127,7 +126,7 @@ function Carpool() {
         <NotificationBell />
       </div>
 
-      {/* ✅ Form Panel */}
+      {/* Form Panel */}
       <div className="carpool-right">
         <form onSubmit={handleSubmit} className="carpool-form">
           {message && <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>{message}</p>}
@@ -146,6 +145,15 @@ function Carpool() {
     </div>
   );
 }
+
+const navStyle = {
+  background: "none",
+  border: "none",
+  color: "white",
+  fontWeight: "bold",
+  fontSize: "14px",
+  cursor: "pointer",
+};
 
 const btnStyle = {
   background: "linear-gradient(to right, #6a00ff, #ff007a)",
