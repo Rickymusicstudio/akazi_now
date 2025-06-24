@@ -87,7 +87,7 @@ body {
 
 .mobile-hamburger {
   font-size: 1.6rem;
-  color: white;
+  color: white;       /* ✅ ensure it's white */
   cursor: pointer;
 }
 
@@ -179,4 +179,3 @@ body {
     margin-top: 0.5rem;
   }
 }
-

@@ -3,6 +3,7 @@ import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../assets/avatar.png";
 import NotificationBell from "../components/NotificationBell";
+import { FaBars } from "react-icons/fa"; // ✅ NEW
 import "./BrowseRides.css";
 
 function BrowseRides() {
@@ -34,12 +35,9 @@ function BrowseRides() {
       `)
       .order("datetime", { ascending: true });
 
-    if (error) {
-      console.error("❌ Failed to fetch rides:", error.message);
-    } else {
+    if (!error) {
       setRides(data || []);
     }
-
     setLoading(false);
   };
 
@@ -82,11 +80,11 @@ function BrowseRides() {
       .delete()
       .match({ carpool_id: carpoolId, user_id: userId });
 
-    if (error) {
-      alert("❌ Failed to cancel: " + error.message);
-    } else {
+    if (!error) {
       alert("🗑️ Reservation cancelled.");
       fetchRides();
+    } else {
+      alert("❌ Failed to cancel: " + error.message);
     }
   };
 
@@ -94,12 +92,11 @@ function BrowseRides() {
     <>
       {/* ✅ Mobile Top Bar */}
       <div className="mobile-top-bar">
-        <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>☰</div>
+        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} /> {/* ✅ Updated */}
         <h2 className="mobile-title">Browse Rides</h2>
         <NotificationBell />
       </div>
 
-      {/* ✅ Mobile Fullscreen Nav */}
       {mobileNavOpen && (
         <div className="mobile-nav-overlay">
           <ul>
@@ -113,7 +110,6 @@ function BrowseRides() {
       )}
 
       <div className="browse-container">
-        {/* ✅ Left Nav (Desktop) */}
         <div className="browse-left">
           <div className="nav-buttons">
             <button onClick={() => navigate("/")}>Home</button>
@@ -126,7 +122,6 @@ function BrowseRides() {
           <NotificationBell />
         </div>
 
-        {/* ✅ Right Panel */}
         <div className="browse-right">
           {loading ? (
             <p>Loading rides...</p>
