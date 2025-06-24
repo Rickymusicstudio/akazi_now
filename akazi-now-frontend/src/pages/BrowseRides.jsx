@@ -3,6 +3,7 @@ import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../assets/avatar.png";
 import NotificationBell from "../components/NotificationBell";
+import { FaBars } from "react-icons/fa";
 import "./BrowseRides.css";
 
 function BrowseRides() {
@@ -27,27 +28,17 @@ function BrowseRides() {
     setLoading(true);
     const { data, error } = await supabase
       .from("carpools")
-      .select(`
-        *,
-        driver:driver_id(full_name, phone, image_url),
-        reservations:carpool_reservations(user_id, seats_reserved)
-      `)
+      .select(`*, driver:driver_id(full_name, phone, image_url), reservations:carpool_reservations(user_id, seats_reserved)`)
       .order("datetime", { ascending: true });
 
-    if (error) {
-      console.error("❌ Failed to fetch rides:", error.message);
-    } else {
-      setRides(data || []);
-    }
+    if (!error) setRides(data || []);
+    else console.error("❌ Failed to fetch rides:", error.message);
 
     setLoading(false);
   };
 
   const handleSeatChange = (carpoolId, value) => {
-    setReservationCounts(prev => ({
-      ...prev,
-      [carpoolId]: value
-    }));
+    setReservationCounts(prev => ({ ...prev, [carpoolId]: value }));
   };
 
   const reserveSeat = async (carpoolId, seatsRequested) => {
@@ -64,11 +55,7 @@ function BrowseRides() {
     }]);
 
     if (error) {
-      if (error.message.includes("duplicate key")) {
-        alert("You already reserved a seat.");
-      } else {
-        alert("❌ Reservation failed: " + error.message);
-      }
+      alert(error.message.includes("duplicate key") ? "You already reserved a seat." : "❌ Reservation failed: " + error.message);
     } else {
       alert("✅ Reservation successful!");
       fetchRides();
@@ -82,19 +69,17 @@ function BrowseRides() {
       .delete()
       .match({ carpool_id: carpoolId, user_id: userId });
 
-    if (error) {
-      alert("❌ Failed to cancel: " + error.message);
-    } else {
+    if (!error) {
       alert("🗑️ Reservation cancelled.");
       fetchRides();
-    }
+    } else alert("❌ Failed to cancel: " + error.message);
   };
 
   return (
     <>
       {/* ✅ Mobile Top Bar */}
       <div className="mobile-top-bar">
-        <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>☰</div>
+        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <h2 className="mobile-title">Browse Rides</h2>
         <NotificationBell />
       </div>
@@ -142,14 +127,9 @@ function BrowseRides() {
 
                 return (
                   <div key={ride.id} className="ride-card">
-                    <img
-                      src={ride.driver?.image_url || defaultAvatar}
-                      alt="Driver"
-                      style={{ width: "70px", height: "70px", borderRadius: "50%", objectFit: "cover" }}
-                    />
-
-                    <div style={{ flex: 1 }}>
-                      <h3 style={{ marginBottom: "0.25rem" }}>{ride.origin} → {ride.destination}</h3>
+                    <img src={ride.driver?.image_url || defaultAvatar} alt="Driver" className="ride-avatar" />
+                    <div className="ride-details">
+                      <h3>{ride.origin} → {ride.destination}</h3>
                       <p><strong>Seats:</strong> {ride.available_seats} | <strong>Left:</strong> {seatsLeft}</p>
                       <p><strong>Date/Time:</strong> {new Date(ride.datetime).toLocaleString()}</p>
                       {ride.price && <p><strong>Price:</strong> {ride.price} RWF</p>}
@@ -158,35 +138,17 @@ function BrowseRides() {
                       <p><strong>Contact:</strong> {ride.driver?.phone || "N/A"}</p>
 
                       {hasReserved ? (
-                        <button onClick={() => cancelReservation(ride.id)} style={{ ...reserveBtnStyle, background: "#ccc", color: "#333" }}>
-                          Cancel Reservation
-                        </button>
+                        <button onClick={() => cancelReservation(ride.id)} className="btn cancel">Cancel Reservation</button>
                       ) : seatsLeft > 0 ? (
-                        <div style={{ marginTop: "0.5rem" }}>
-                          <input
-                            type="number"
-                            min="1"
-                            max={seatsLeft}
-                            value={selectedSeats}
-                            onChange={(e) => handleSeatChange(ride.id, parseInt(e.target.value))}
-                            style={{ width: "60px", marginRight: "10px" }}
-                          />
-                          <button onClick={() => reserveSeat(ride.id, selectedSeats)} style={reserveBtnStyle}>
-                            Reserve
-                          </button>
+                        <div className="reservation-box">
+                          <input type="number" min="1" max={seatsLeft} value={selectedSeats} onChange={(e) => handleSeatChange(ride.id, parseInt(e.target.value))} />
+                          <button onClick={() => reserveSeat(ride.id, selectedSeats)} className="btn reserve">Reserve</button>
                         </div>
                       ) : (
-                        <p style={{ color: "red", fontWeight: "bold" }}>No seats left</p>
+                        <p className="no-seats">No seats left</p>
                       )}
                     </div>
-
-                    {ride.car_image && (
-                      <img
-                        src={ride.car_image}
-                        alt="Car"
-                        style={{ width: "140px", height: "90px", objectFit: "cover", borderRadius: "10px" }}
-                      />
-                    )}
+                    {ride.car_image && <img src={ride.car_image} alt="Car" className="car-image" />}
                   </div>
                 );
               })}
@@ -197,14 +159,5 @@ function BrowseRides() {
     </>
   );
 }
-
-const reserveBtnStyle = {
-  padding: "8px 16px",
-  borderRadius: "8px",
-  background: "linear-gradient(to right, #6a00ff, #ff007a)",
-  color: "white",
-  border: "none",
-  cursor: "pointer",
-};
 
 export default BrowseRides;

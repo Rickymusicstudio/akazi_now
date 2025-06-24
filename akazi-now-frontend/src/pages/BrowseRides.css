@@ -1,13 +1,24 @@
-/* Base layout */
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* DESKTOP LAYOUT */
 .browse-container {
   display: flex;
   height: 100vh;
   width: 100vw;
-  font-family: 'Segoe UI', sans-serif;
   overflow: hidden;
 }
 
-/* Left panel (desktop nav) */
 .browse-left {
   width: 50%;
   background: linear-gradient(to bottom right, #6a00ff, #ff007a);
@@ -38,7 +49,6 @@
   cursor: pointer;
 }
 
-/* Right panel (rides listing) */
 .browse-right {
   width: 50%;
   height: 100vh;
@@ -48,7 +58,7 @@
   box-sizing: border-box;
 }
 
-/* Ride card */
+/* RIDE CARD */
 .ride-card {
   background: #fff;
   padding: 1.5rem;
@@ -57,9 +67,10 @@
   display: flex;
   align-items: center;
   gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
-/* Mobile Top Bar */
+/* === MOBILE NAV TOP === */
 .mobile-top-bar {
   display: none;
   width: 100%;
@@ -71,50 +82,69 @@
   position: fixed;
   top: 0;
   z-index: 1000;
+  gap: 1rem;
 }
 
 .mobile-hamburger {
-  font-size: 24px;
+  font-size: 1.6rem;
+  color: white;
   cursor: pointer;
 }
 
 .mobile-title {
-  font-size: 18px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.2rem;
   font-weight: bold;
 }
 
-/* Fullscreen dropdown nav */
+/* FULLSCREEN NAV OVERLAY */
 .mobile-nav-overlay {
-  display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
+  inset: 0;
   background: linear-gradient(to bottom, #6a00ff, #ff007a);
   color: white;
   z-index: 999;
   padding-top: 5rem;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: slideIn 0.3s ease-out;
 }
 
 .mobile-nav-overlay ul {
   list-style: none;
-  padding: 0;
+  font-size: 1.6rem;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .mobile-nav-overlay li {
-  padding: 1rem;
-  font-size: 18px;
-  font-weight: bold;
   cursor: pointer;
 }
 
-/* Mobile styles */
+/* ANIMATION */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === RESPONSIVE STYLES === */
 @media (max-width: 768px) {
   .browse-container {
     flex-direction: column;
-    overflow: auto;
+    overflow-y: auto;
+    min-height: 100vh;
   }
 
   .browse-left {
@@ -125,19 +155,17 @@
     width: 100%;
     padding: 6rem 1rem 2rem;
     height: auto;
+    box-sizing: border-box;
   }
 
   .mobile-top-bar {
     display: flex;
   }
 
-  .mobile-nav-overlay {
-    display: block;
-  }
-
   .ride-card {
     flex-direction: column;
     align-items: flex-start;
+    gap: 1rem;
   }
 
   .ride-card img {
