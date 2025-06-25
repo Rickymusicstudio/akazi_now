@@ -1,25 +1,28 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 
-function ChatBox({ currentUserId, peerUserId, jobId = null, carpoolId = null, context = "job" }) {
+function ChatBox({ currentUserId, peerUserId, jobId = null, carpoolId = null, context = "general" }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
 
   useEffect(() => {
-    fetchMessages();
+    if (currentUserId && peerUserId) {
+      fetchMessages();
+    }
   }, [currentUserId, peerUserId, jobId, carpoolId]);
 
   const fetchMessages = async () => {
+    if (!currentUserId || !peerUserId) return;
+
     let query = supabase
       .from("messages")
       .select("*")
-      .or(
-        `and(sender_id.eq.${currentUserId},receiver_id.eq.${peerUserId}),and(sender_id.eq.${peerUserId},receiver_id.eq.${currentUserId})`
-      )
+      .or(`and(sender_id.eq.${currentUserId},receiver_id.eq.${peerUserId}),and(sender_id.eq.${peerUserId},receiver_id.eq.${currentUserId})`)
       .order("created_at", { ascending: true });
 
     if (context === "job") query = query.eq("job_id", jobId);
     if (context === "carpool") query = query.eq("carpool_id", carpoolId);
+    if (context === "notification") query = query.is("job_id", null).is("carpool_id", null);
 
     const { data, error } = await query;
     if (error) {
@@ -32,15 +35,18 @@ function ChatBox({ currentUserId, peerUserId, jobId = null, carpoolId = null, co
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
 
-    const { error } = await supabase.from("messages").insert([
-      {
-        sender_id: currentUserId,
-        receiver_id: peerUserId,
-        message: newMessage, // ✅ Corrected field
-        job_id: context === "job" ? jobId : null,
-        carpool_id: context === "carpool" ? carpoolId : null,
-      },
-    ]);
+    const messagePayload = {
+      sender_id: currentUserId,
+      receiver_id: peerUserId,
+      content: newMessage,
+      topic: context,
+      extension: "text",
+      private: true,
+      job_id: context === "job" ? jobId : null,
+      carpool_id: context === "carpool" ? carpoolId : null,
+    };
+
+    const { error } = await supabase.from("messages").insert([messagePayload]);
 
     if (error) {
       alert("❌ Failed to send message: " + error.message);
@@ -53,7 +59,7 @@ function ChatBox({ currentUserId, peerUserId, jobId = null, carpoolId = null, co
   return (
     <div style={{ border: "1px solid #ddd", borderRadius: "10px", padding: "1rem", marginTop: "2rem" }}>
       <h4>💬 Chat</h4>
-      <div style={{ maxHeight: "200px", overflowY: "auto", marginBottom: "1rem" }}>
+      <div style={{ maxHeight: "250px", overflowY: "auto", marginBottom: "1rem" }}>
         {messages.length === 0 ? (
           <p style={{ color: "#777" }}>No messages yet.</p>
         ) : (
@@ -69,7 +75,7 @@ function ChatBox({ currentUserId, peerUserId, jobId = null, carpoolId = null, co
                   marginBottom: "6px",
                 }}
               >
-                {msg.message} {/* ✅ Fixed field */}
+                {msg.content}
               </div>
               <div style={{ fontSize: "12px", color: "#999" }}>{new Date(msg.created_at).toLocaleString()}</div>
             </div>
@@ -85,10 +91,7 @@ function ChatBox({ currentUserId, peerUserId, jobId = null, carpoolId = null, co
           onChange={(e) => setNewMessage(e.target.value)}
           style={{ flex: 1, padding: "0.5rem", borderRadius: "6px", border: "1px solid #ccc" }}
         />
-        <button
-          onClick={sendMessage}
-          style={{ background: "#6a00ff", color: "white", border: "none", padding: "0.5rem 1rem", borderRadius: "6px" }}
-        >
+        <button onClick={sendMessage} style={{ background: "#6a00ff", color: "white", border: "none", padding: "0.5rem 1rem", borderRadius: "6px" }}>
           Send
         </button>
       </div>
