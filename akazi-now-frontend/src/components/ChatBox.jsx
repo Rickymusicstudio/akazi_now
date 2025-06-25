@@ -38,11 +38,10 @@ function ChatBox({ senderId, receiverId, jobId = null, carpoolId = null, context
       {
         sender_id: senderId,
         receiver_id: receiverId,
-        content: newMessage,
+        message: newMessage, // ✅ Clean: use only message
         job_id: context === "job" ? jobId : null,
         carpool_id: context === "carpool" ? carpoolId : null,
         topic: "chat",
-        message: newMessage,
         private: true,
       },
     ]);
@@ -74,7 +73,7 @@ function ChatBox({ senderId, receiverId, jobId = null, carpoolId = null, context
                   marginBottom: "6px",
                 }}
               >
-                {msg.content || msg.message}
+                {msg.message}
               </div>
               <div style={{ fontSize: "12px", color: "#999" }}>
                 {new Date(msg.created_at).toLocaleString()}
