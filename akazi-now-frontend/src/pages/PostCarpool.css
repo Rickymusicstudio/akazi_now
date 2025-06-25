@@ -12,14 +12,14 @@ body, html {
   height: 100%;
 }
 
-.postcarpool-container {
+.postride-container {
   display: flex;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
 }
 
-.postcarpool-left {
+.postride-left {
   width: 50%;
   background: linear-gradient(to bottom right, #6a00ff, #ff007a);
   color: white;
@@ -51,7 +51,7 @@ body, html {
   cursor: pointer;
 }
 
-.postcarpool-form {
+.postride-form {
   width: 50%;
   height: 100vh;
   background: #fff;
@@ -63,7 +63,7 @@ body, html {
   align-items: center;
 }
 
-.postcarpool-form form {
+.postride-form form {
   width: 100%;
   max-width: 400px;
   display: flex;
@@ -71,8 +71,8 @@ body, html {
   gap: 1rem;
 }
 
-.postcarpool-form input,
-.postcarpool-form textarea {
+.postride-form input,
+.postride-form textarea {
   padding: 0.75rem;
   border-radius: 10px;
   border: 1px solid #ccc;
@@ -80,12 +80,12 @@ body, html {
   width: 100%;
 }
 
-.postcarpool-form label {
+.postride-form label {
   font-weight: 600;
   font-size: 14px;
 }
 
-.postcarpool-form button {
+.postride-form button {
   background: linear-gradient(to right, #6a00ff, #ff007a);
   color: white;
   padding: 12px;
@@ -101,15 +101,15 @@ body, html {
 }
 
 @media (max-width: 768px) {
-  .postcarpool-container {
+  .postride-container {
     flex-direction: column;
   }
 
-  .postcarpool-left {
+  .postride-left {
     display: none;
   }
 
-  .postcarpool-form {
+  .postride-form {
     width: 100%;
     padding: 6rem 1rem 2rem;
     height: auto;
@@ -180,4 +180,3 @@ body, html {
     }
   }
 }
- 

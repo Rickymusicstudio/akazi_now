@@ -58,8 +58,9 @@ function PostCarpool() {
 
     const { error } = await supabase.from("carpools").insert([{
       ...form,
-      driver_id: user.id,
-      car_image: imageUrl,
+      user_id: user.id,  // ✅ REQUIRED to match RLS policy
+      driver_name: user.user_metadata.full_name || "", // optional
+      car_image: imageUrl
     }]);
 
     if (error) {
@@ -112,7 +113,7 @@ function PostCarpool() {
 
       <div className="postride-right">
         <form className="postride-form" onSubmit={handleSubmit}>
-          {message && <p style={{ color: message.startsWith("\u2705") ? "green" : "red" }}>{message}</p>}
+          {message && <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>{message}</p>}
 
           <label>Origin</label>
           <input type="text" name="origin" value={form.origin} onChange={handleChange} placeholder="e.g. Kigali" required />
