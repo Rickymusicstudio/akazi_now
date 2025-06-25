@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import NotificationBell from "../components/NotificationBell.jsx";
-import "./Signup.css";
+import { FaBars } from "react-icons/fa";
+import "./NotificationsDetail.css"; // ✅ Mobile-only styles
 
 function NotificationsDetail() {
   const { id } = useParams();
   const [notification, setNotification] = useState(null);
   const [currentUserId, setCurrentUserId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,7 +43,7 @@ function NotificationsDetail() {
 
   return (
     <div className="signup-container">
-      {/* Left Panel */}
+      {/* Desktop Left Panel */}
       <div className="signup-left" style={{
         background: "linear-gradient(135deg, #6a00ff, #ff007a)",
         padding: "2rem",
@@ -82,15 +84,36 @@ function NotificationsDetail() {
       </div>
 
       {/* Right Panel */}
-      <div className="signup-right" style={{ padding: "2rem" }}>
+      <div className="signup-right notifications-right">
+        {/* ✅ Mobile Top Nav */}
+        <div className="notification-mobile-nav">
+          <FaBars className="notification-hamburger" onClick={() => setMobileNavOpen(!mobileNavOpen)} />
+          <h3 style={{ flex: 1, textAlign: "center" }}>Notification</h3>
+          <NotificationBell />
+        </div>
+
+        {/* ✅ Mobile Dropdown */}
+        {mobileNavOpen && (
+          <div className="notification-dropdown">
+            <button onClick={() => navigate("/")}>Home</button>
+            <button onClick={() => navigate("/post-job")}>Post a Job</button>
+            <button onClick={() => navigate("/my-jobs")}>My Jobs</button>
+            <button onClick={() => navigate("/profile")}>Profile</button>
+            <button onClick={() => navigate("/inbox")}>Inbox</button>
+            <button onClick={() => navigate("/carpool")}>Car Pooling</button>
+            <button onClick={async () => {
+              await supabase.auth.signOut();
+              navigate("/login");
+            }} style={{ color: "#ffcccc" }}>Logout</button>
+          </div>
+        )}
+
         <div style={cardStyle}>
           <p style={{ fontWeight: "bold", fontSize: "16px" }}>{notification.message}</p>
           <p style={{ fontSize: "12px", color: "#888" }}>
             Received: {new Date(notification.created_at).toLocaleString()}
           </p>
         </div>
-
-        {/* 🟣 ChatBox was removed here */}
       </div>
     </div>
   );

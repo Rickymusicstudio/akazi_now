@@ -1,0 +1,61 @@
+/* 📱 Mobile-only styles for Notification Detail */
+
+.notification-mobile-nav {
+  display: none;
+}
+
+.notification-dropdown {
+  display: none;
+  flex-direction: column;
+  background: linear-gradient(135deg, #6a00ff, #ff007a);
+  padding: 1rem;
+}
+
+.notification-hamburger {
+  font-size: 20px;
+  color: white;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+  .signup-container {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .signup-left {
+    display: none;
+  }
+
+  .signup-right {
+    width: 100%;
+    padding: 1rem;
+    background-color: white;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .notification-mobile-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #6a00ff, #ff007a);
+    padding: 1rem;
+    border-bottom: 2px solid #fff;
+    color: white;
+  }
+
+  .notification-dropdown {
+    display: flex;
+  }
+
+  .notification-dropdown button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 14px;
+    padding: 0.5rem 0;
+    text-align: left;
+  }
+}
