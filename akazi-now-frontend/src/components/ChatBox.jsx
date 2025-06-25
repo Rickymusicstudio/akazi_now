@@ -1,10 +1,25 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 
-function ChatBox({ senderId, receiverId, jobId = null, carpoolId = null, context = "job" }) {
+function ChatBox({ receiverId, jobId = null, carpoolId = null, context = "job" }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [senderId, setSenderId] = useState(null);
 
+  // Load sender ID from Supabase Auth
+  useEffect(() => {
+    const getUserId = async () => {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error || !user) {
+        console.error("❌ User not authenticated");
+        return;
+      }
+      setSenderId(user.id);
+    };
+    getUserId();
+  }, []);
+
+  // Fetch messages when both IDs are ready
   useEffect(() => {
     if (senderId && receiverId) {
       fetchMessages();
@@ -53,7 +68,7 @@ function ChatBox({ senderId, receiverId, jobId = null, carpoolId = null, context
       {
         sender_id: senderId,
         receiver_id: receiverId,
-        message: newMessage,
+        message: newMessage, // ✅ Use correct column
         job_id: context === "job" ? jobId : null,
         carpool_id: context === "carpool" ? carpoolId : null,
         topic: "chat",
