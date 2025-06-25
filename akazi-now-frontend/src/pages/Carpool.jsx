@@ -68,7 +68,7 @@ function Carpool() {
     }
 
     const { error } = await supabase.from("carpools").insert([{
-      driver_id: user.id,
+      user_id: user.id, // ✅ Correct field for RLS
       ...form,
       car_image: carImageUrl,
       contact_info: userProfile.contact_info,
@@ -100,7 +100,7 @@ function Carpool() {
         <NotificationBell />
       </div>
 
-      {/* Mobile Fullscreen Nav */}
+      {/* Mobile Nav Overlay */}
       {mobileNavOpen && (
         <div className="mobile-nav-overlay">
           <ul>
@@ -113,7 +113,7 @@ function Carpool() {
         </div>
       )}
 
-      {/* Left Nav (Desktop) */}
+      {/* Desktop Left Panel */}
       <div className="carpool-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -126,7 +126,7 @@ function Carpool() {
         <NotificationBell />
       </div>
 
-      {/* Form Panel */}
+      {/* Right Panel Form */}
       <div className="carpool-right">
         <form onSubmit={handleSubmit} className="carpool-form">
           {message && <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>{message}</p>}
@@ -145,15 +145,6 @@ function Carpool() {
     </div>
   );
 }
-
-const navStyle = {
-  background: "none",
-  border: "none",
-  color: "white",
-  fontWeight: "bold",
-  fontSize: "14px",
-  cursor: "pointer",
-};
 
 const btnStyle = {
   background: "linear-gradient(to right, #6a00ff, #ff007a)",
