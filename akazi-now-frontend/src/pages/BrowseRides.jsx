@@ -147,7 +147,7 @@ function BrowseRides() {
                   ? ride.reservations.reduce((sum, r) => sum + (r.seats_reserved ?? 0), 0)
                   : 0;
                 const seatsLeft = Math.max(0, ride.available_seats - reservedCount);
-                const selectedSeats = reservationCounts[ride.id] || 1;
+                const selectedSeats = reservationCounts[ride.id] ?? ""; // Updated line
                 const hasReserved = ride.reservations?.some(r => r.user_id === userId);
 
                 return (
@@ -178,6 +178,7 @@ function BrowseRides() {
                             min="1"
                             max={seatsLeft}
                             value={selectedSeats}
+                            placeholder="Seats"
                             onChange={(e) => handleSeatChange(ride.id, parseInt(e.target.value), seatsLeft)}
                             style={{ width: "60px", marginRight: "10px" }}
                           />
