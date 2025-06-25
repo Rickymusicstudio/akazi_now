@@ -3,19 +3,16 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import NotificationBell from "../components/NotificationBell.jsx";
 import { FaBars } from "react-icons/fa";
-import "./NotificationsDetail.css"; // ✅ Mobile-only styles
+import "./NotificationsDetail.css"; // ⬅️ New mobile-only styling
 
 function NotificationsDetail() {
   const { id } = useParams();
   const [notification, setNotification] = useState(null);
-  const [currentUserId, setCurrentUserId] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchNotification();
-    fetchCurrentUser();
   }, [id]);
 
   const fetchNotification = async () => {
@@ -30,85 +27,62 @@ function NotificationsDetail() {
     } else {
       setNotification(data);
     }
-    setLoading(false);
   };
 
-  const fetchCurrentUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) setCurrentUserId(user.id);
-  };
-
-  if (loading) return <p style={{ padding: "2rem" }}>Loading...</p>;
-  if (!notification) return <p style={{ padding: "2rem" }}>Notification not found.</p>;
+  if (!notification) return <p style={{ padding: "2rem" }}>Loading...</p>;
 
   return (
     <div className="signup-container">
-      {/* Desktop Left Panel */}
-      <div className="signup-left" style={{
-        background: "linear-gradient(135deg, #6a00ff, #ff007a)",
-        padding: "2rem",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        position: "relative",
-        color: "white",
-      }}>
-        <div style={{
-          position: "absolute",
-          top: "1rem",
-          left: "1.5rem",
-          display: "flex",
-          gap: "1rem",
-          flexWrap: "wrap",
-          fontWeight: "bold",
-          fontSize: "14px",
-        }}>
-          <button onClick={() => navigate("/")} style={navStyle}>Home</button>
-          <button onClick={() => navigate("/post-job")} style={navStyle}>Post a Job</button>
-          <button onClick={() => navigate("/my-jobs")} style={navStyle}>My Jobs</button>
-          <button onClick={() => navigate("/profile")} style={navStyle}>Profile</button>
-          <button onClick={() => navigate("/inbox")} style={navStyle}>Inbox</button>
-          <button onClick={() => navigate("/carpool")} style={navStyle}>Car Pooling</button>
-          <button onClick={async () => {
-            await supabase.auth.signOut();
-            navigate("/login");
-          }} style={{ ...navStyle, color: "#ffcccc" }}>
+      {/* Mobile Nav */}
+      <div className="notification-mobile-top">
+        <FaBars className="notification-hamburger" onClick={() => setMobileNavOpen(true)} />
+        <h2 className="notification-title">Notification</h2>
+        <NotificationBell />
+      </div>
+
+      {mobileNavOpen && (
+        <div className="notification-mobile-nav-overlay">
+          <ul>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/post-job") }}>Post a Job</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/my-jobs") }}>My Jobs</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/profile") }}>Profile</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/inbox") }}>Inbox</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool") }}>Car Pooling</li>
+            <li onClick={async () => {
+              await supabase.auth.signOut();
+              navigate("/login");
+            }}>Logout</li>
+          </ul>
+        </div>
+      )}
+
+      {/* Left Panel (Desktop) */}
+      <div className="signup-left">
+        <div className="nav-buttons">
+          <button onClick={() => navigate("/")}>Home</button>
+          <button onClick={() => navigate("/post-job")}>Post a Job</button>
+          <button onClick={() => navigate("/my-jobs")}>My Jobs</button>
+          <button onClick={() => navigate("/profile")}>Profile</button>
+          <button onClick={() => navigate("/inbox")}>Inbox</button>
+          <button onClick={() => navigate("/carpool")}>Car Pooling</button>
+          <button
+            onClick={async () => {
+              await supabase.auth.signOut();
+              navigate("/login");
+            }}
+            style={{ color: "#ffcccc" }}
+          >
             Logout
           </button>
         </div>
-        <h2 style={{ marginTop: "4rem" }}>Notification</h2>
-        <div style={{ marginTop: "1rem" }}>
-          <NotificationBell />
-        </div>
+        <h2 style={{ fontSize: "32px", fontWeight: "bold", marginTop: "3rem" }}>Notification</h2>
+        <NotificationBell />
       </div>
 
       {/* Right Panel */}
-      <div className="signup-right notifications-right">
-        {/* ✅ Mobile Top Nav */}
-        <div className="notification-mobile-nav">
-          <FaBars className="notification-hamburger" onClick={() => setMobileNavOpen(!mobileNavOpen)} />
-          <h3 style={{ flex: 1, textAlign: "center" }}>Notification</h3>
-          <NotificationBell />
-        </div>
-
-        {/* ✅ Mobile Dropdown */}
-        {mobileNavOpen && (
-          <div className="notification-dropdown">
-            <button onClick={() => navigate("/")}>Home</button>
-            <button onClick={() => navigate("/post-job")}>Post a Job</button>
-            <button onClick={() => navigate("/my-jobs")}>My Jobs</button>
-            <button onClick={() => navigate("/profile")}>Profile</button>
-            <button onClick={() => navigate("/inbox")}>Inbox</button>
-            <button onClick={() => navigate("/carpool")}>Car Pooling</button>
-            <button onClick={async () => {
-              await supabase.auth.signOut();
-              navigate("/login");
-            }} style={{ color: "#ffcccc" }}>Logout</button>
-          </div>
-        )}
-
-        <div style={cardStyle}>
+      <div className="signup-right notification-right-panel">
+        <div className="notification-card">
           <p style={{ fontWeight: "bold", fontSize: "16px" }}>{notification.message}</p>
           <p style={{ fontSize: "12px", color: "#888" }}>
             Received: {new Date(notification.created_at).toLocaleString()}
@@ -118,21 +92,5 @@ function NotificationsDetail() {
     </div>
   );
 }
-
-const cardStyle = {
-  background: "#fff",
-  padding: "1.5rem",
-  borderRadius: "16px",
-  boxShadow: "0 6px 12px rgba(0,0,0,0.08)",
-};
-
-const navStyle = {
-  background: "none",
-  border: "none",
-  color: "white",
-  fontWeight: "bold",
-  fontSize: "14px",
-  cursor: "pointer",
-};
 
 export default NotificationsDetail;
