@@ -13,7 +13,9 @@ function ChatBox({ currentUserId, peerUserId, jobId = null, carpoolId = null, co
     let query = supabase
       .from("messages")
       .select("*")
-      .or(`and(sender_id.eq.${currentUserId},receiver_id.eq.${peerUserId}),and(sender_id.eq.${peerUserId},receiver_id.eq.${currentUserId})`)
+      .or(
+        `and(sender_id.eq.${currentUserId},receiver_id.eq.${peerUserId}),and(sender_id.eq.${peerUserId},receiver_id.eq.${currentUserId})`
+      )
       .order("created_at", { ascending: true });
 
     if (context === "job") query = query.eq("job_id", jobId);
@@ -34,7 +36,7 @@ function ChatBox({ currentUserId, peerUserId, jobId = null, carpoolId = null, co
       {
         sender_id: currentUserId,
         receiver_id: peerUserId,
-        content: newMessage,
+        message: newMessage, // ✅ Corrected field
         job_id: context === "job" ? jobId : null,
         carpool_id: context === "carpool" ? carpoolId : null,
       },
@@ -67,7 +69,7 @@ function ChatBox({ currentUserId, peerUserId, jobId = null, carpoolId = null, co
                   marginBottom: "6px",
                 }}
               >
-                {msg.content}
+                {msg.message} {/* ✅ Fixed field */}
               </div>
               <div style={{ fontSize: "12px", color: "#999" }}>{new Date(msg.created_at).toLocaleString()}</div>
             </div>
@@ -83,7 +85,10 @@ function ChatBox({ currentUserId, peerUserId, jobId = null, carpoolId = null, co
           onChange={(e) => setNewMessage(e.target.value)}
           style={{ flex: 1, padding: "0.5rem", borderRadius: "6px", border: "1px solid #ccc" }}
         />
-        <button onClick={sendMessage} style={{ background: "#6a00ff", color: "white", border: "none", padding: "0.5rem 1rem", borderRadius: "6px" }}>
+        <button
+          onClick={sendMessage}
+          style={{ background: "#6a00ff", color: "white", border: "none", padding: "0.5rem 1rem", borderRadius: "6px" }}
+        >
           Send
         </button>
       </div>
@@ -92,4 +97,3 @@ function ChatBox({ currentUserId, peerUserId, jobId = null, carpoolId = null, co
 }
 
 export default ChatBox;
- 
