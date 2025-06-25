@@ -2,7 +2,7 @@ import { useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
-import "./PostRide.css";
+import "./PostCarpool.css";
 import { FaBars } from "react-icons/fa";
 
 function PostCarpool() {
@@ -58,8 +58,8 @@ function PostCarpool() {
 
     const { error } = await supabase.from("carpools").insert([{
       ...form,
-      user_id: user.id,  // ✅ REQUIRED to match RLS policy
-      driver_name: user.user_metadata.full_name || "", // optional
+      user_id: user.id,
+      driver_name: user.user_metadata.full_name || "",
       car_image: imageUrl
     }]);
 
@@ -81,12 +81,14 @@ function PostCarpool() {
 
   return (
     <div className="postride-container">
+      {/* Mobile Top Nav */}
       <div className="mobile-top-bar">
         <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <h2 className="mobile-title">Post Ride</h2>
         <NotificationBell />
       </div>
 
+      {/* Mobile Nav Overlay */}
       {mobileNavOpen && (
         <div className="mobile-nav-overlay">
           <ul>
@@ -99,6 +101,7 @@ function PostCarpool() {
         </div>
       )}
 
+      {/* Left Gradient Panel */}
       <div className="postride-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -111,8 +114,9 @@ function PostCarpool() {
         <NotificationBell />
       </div>
 
+      {/* Right Form Panel */}
       <div className="postride-right">
-        <form className="postride-form" onSubmit={handleSubmit}>
+        <form className="signup-form" onSubmit={handleSubmit}>
           {message && <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>{message}</p>}
 
           <label>Origin</label>
