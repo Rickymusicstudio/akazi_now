@@ -14,15 +14,10 @@ html, body, #root {
   overflow: hidden;
 }
 
-/* Left image panel for desktop */
+/* ✅ Left image panel for desktop — gradient removed */
 .login-left {
   flex: 1;
-  background-image: linear-gradient(
-      to bottom right,
-      rgba(117, 0, 255, 0.6),
-      rgba(255, 0, 150, 0.6)
-    ),
-    url('../assets/signup.jpg');
+  background-image: url('../assets/signup.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
