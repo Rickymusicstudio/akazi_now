@@ -121,8 +121,10 @@
 
   .carpool-inbox-right {
     width: 100%;
-    padding: 6rem 1rem 2rem;
+    padding: 2rem 1rem;
+    margin-top: 4rem; /* ✅ Prevent content from being hidden under the top bar */
     height: auto;
+    box-sizing: border-box;
   }
 
   .mobile-top-bar {
@@ -137,4 +139,3 @@
     padding: 1.25rem;
   }
 }
- 

@@ -1,116 +1,91 @@
-import { useEffect, useState } from "react";
-import { supabase } from "../supabaseClient";
-import { useNavigate } from "react-router-dom";
-import defaultAvatar from "../assets/avatar.png";
-import NotificationBell from "../components/NotificationBell";
-import "./CarpoolInbox.css";
+// ApplicationsInbox.jsx
 
-function CarpoolInbox() {
-  const [rides, setRides] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const navigate = useNavigate();
+import { useEffect, useState } from 'react';
+import { supabase } from '../supabaseClient';
+import './Inbox.css';
+
+function ApplicationsInbox() {
+  const [applications, setApplications] = useState([]);
 
   useEffect(() => {
-    fetchDriverRides();
+    fetchApplications();
   }, []);
 
-  const fetchDriverRides = async () => {
+  const fetchApplications = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return navigate("/login");
+    if (!user) return;
 
     const { data, error } = await supabase
-      .from("carpools")
-      .select(`
-        *,
-        reservations:carpool_reservations(*, user:user_id(full_name, phone))
-      `)
-      .eq("driver_id", user.id)
-      .order("datetime", { ascending: true });
+      .from('applications')
+      .select('*')
+      .eq('employer_id', user.id);
 
-    if (error) {
-      console.error("❌ Failed to load inbox:", error.message);
-    } else {
-      setRides(data || []);
+    if (!error) setApplications(data);
+  };
+
+  const handleAccept = async (application) => {
+    const { id, user_id } = application;
+
+    const { error: updateError } = await supabase
+      .from('applications')
+      .update({ status: 'accepted' })
+      .eq('id', id);
+
+    if (updateError) {
+      console.error('❌ Failed to update status:', updateError.message);
+      return;
     }
-    setLoading(false);
+
+    const { error: notifError } = await supabase
+      .from('notifications')
+      .insert([
+        {
+          user_id: user_id,
+          type: 'application',
+          message: '🎉 Your application was accepted!',
+        },
+      ]);
+
+    if (notifError) {
+      console.warn('⚠️ Notification insert failed:', notifError.message);
+    }
+
+    setApplications((prev) =>
+      prev.map((app) =>
+        app.id === id ? { ...app, status: 'accepted' } : app
+      )
+    );
   };
 
   return (
-    <>
-      {/* ✅ Mobile Top Bar */}
-      <div className="mobile-top-bar">
-        <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>☰</div>
-        <h2 className="mobile-title">Carpool Inbox</h2>
-        <NotificationBell />
-      </div>
+    <div className="applications-inbox-wrapper">
+      <div className="inbox-title">Inbox</div>
+      <div className="applications-inbox-scroll">
+        {applications.map((app) => (
+          <div key={app.id} className="inbox-card">
+            <img src="/default-avatar.png" alt="avatar" className="avatar" />
+            <div><strong>{app.full_name}</strong></div>
+            <div><strong>District:</strong> {app.district}</div>
+            <div><strong>Sector:</strong> {app.sector}</div>
+            <div><strong>Cell:</strong> {app.cell}</div>
+            <div><strong>Village:</strong> {app.village}</div>
+            <div><strong>Message:</strong> {app.message}</div>
+            <div><strong>Status:</strong> {app.status}</div>
+            <div className="submitted-date">Submitted: {new Date(app.created_at).toLocaleString()}</div>
 
-      {/* ✅ Mobile Fullscreen Nav Overlay */}
-      {mobileNavOpen && (
-        <div className="mobile-nav-overlay">
-          <ul>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Browse Rides</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/post-ride") }}>Post Ride</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox") }}>Carpool Inbox</li>
-            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
-          </ul>
-        </div>
-      )}
-
-      <div className="carpool-inbox-container">
-        {/* ✅ Desktop Left Nav */}
-        <div className="carpool-inbox-left">
-          <div className="nav-buttons">
-            <button onClick={() => navigate("/")}>Home</button>
-            <button onClick={() => navigate("/carpools")}>Browse Rides</button>
-            <button onClick={() => navigate("/post-ride")}>Post Ride</button>
-            <button onClick={() => navigate("/carpool-inbox")}>Carpool Inbox</button>
-            <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
+            {app.status === 'accepted' ? (
+              <button className="btn accepted">Accepted</button>
+            ) : (
+              <>
+                <button className="btn" onClick={() => handleAccept(app)}>Accept</button>
+                <button className="btn reject">Reject</button>
+              </>
+            )}
           </div>
-          <h2 style={{ fontSize: "28px", fontWeight: "bold", marginTop: "3rem" }}>Carpool Inbox</h2>
-          <NotificationBell />
-        </div>
-
-        {/* ✅ Right Panel */}
-        <div className="carpool-inbox-right">
-          {loading ? (
-            <p>Loading...</p>
-          ) : rides.length === 0 ? (
-            <p>No rides found.</p>
-          ) : (
-            rides.map((ride) => (
-              <div key={ride.id} className="inbox-card">
-                <h3>{ride.origin} → {ride.destination}</h3>
-                <p><strong>Date/Time:</strong> {new Date(ride.datetime).toLocaleString()}</p>
-                <h4 style={{ marginTop: "1rem" }}>Reservations:</h4>
-                {ride.reservations?.length ? (
-                  <ul>
-                    {ride.reservations.map((r, idx) => (
-                      <li key={idx}>
-                        <strong>{r.user?.full_name || "Unknown"}</strong> — {r.user?.phone || "N/A"} — {r.seats_reserved} seat(s)
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p style={{ color: "#999" }}>No one has reserved this ride yet.</p>
-                )}
-              </div>
-            ))
-          )}
-        </div>
+        ))}
       </div>
-    </>
+    </div>
   );
 }
 
-const navStyle = {
-  background: "none",
-  border: "none",
-  color: "white",
-  fontWeight: "bold",
-  fontSize: "14px",
-  cursor: "pointer",
-};
-
-export default CarpoolInbox;
+export default ApplicationsInbox;

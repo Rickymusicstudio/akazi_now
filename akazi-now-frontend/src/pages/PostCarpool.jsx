@@ -112,7 +112,7 @@ function PostCarpool() {
 
       <div className="postride-right">
         <form className="postride-form" onSubmit={handleSubmit}>
-          {message && <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>{message}</p>}
+          {message && <p style={{ color: message.startsWith("\u2705") ? "green" : "red" }}>{message}</p>}
 
           <label>Origin</label>
           <input type="text" name="origin" value={form.origin} onChange={handleChange} placeholder="e.g. Kigali" required />
