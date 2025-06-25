@@ -6,39 +6,54 @@ function ChatBox({ senderId, receiverId, jobId = null, carpoolId = null, context
   const [newMessage, setNewMessage] = useState("");
 
   useEffect(() => {
-    fetchMessages();
+    if (senderId && receiverId) {
+      fetchMessages();
+    }
   }, [senderId, receiverId, jobId, carpoolId]);
 
   const fetchMessages = async () => {
-    if (!senderId || !receiverId) return;
+    if (!senderId || !receiverId) {
+      console.warn("⛔ senderId or receiverId is undefined", { senderId, receiverId });
+      return;
+    }
 
-    let query = supabase
-      .from("messages")
-      .select("*")
-      .or(
-        `and(sender_id.eq.${senderId},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${senderId})`
-      )
-      .order("created_at", { ascending: true });
+    try {
+      let query = supabase
+        .from("messages")
+        .select("*")
+        .or(
+          `and(sender_id.eq.${senderId},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${senderId})`
+        )
+        .order("created_at", { ascending: true });
 
-    if (context === "job") query = query.eq("job_id", jobId);
-    if (context === "carpool") query = query.eq("carpool_id", carpoolId);
+      if (context === "job") query = query.eq("job_id", jobId);
+      if (context === "carpool") query = query.eq("carpool_id", carpoolId);
 
-    const { data, error } = await query;
-    if (error) {
-      console.error("❌ Failed to fetch messages:", error.message);
-    } else {
-      setMessages(data);
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("❌ Failed to fetch messages:", error.message);
+      } else {
+        setMessages(data);
+      }
+    } catch (err) {
+      console.error("❌ Exception while fetching messages:", err);
     }
   };
 
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
 
+    if (!senderId || !receiverId) {
+      alert("❌ Cannot send message without sender and receiver");
+      return;
+    }
+
     const { error } = await supabase.from("messages").insert([
       {
         sender_id: senderId,
         receiver_id: receiverId,
-        message: newMessage, // ✅ Clean: use only message
+        message: newMessage,
         job_id: context === "job" ? jobId : null,
         carpool_id: context === "carpool" ? carpoolId : null,
         topic: "chat",
