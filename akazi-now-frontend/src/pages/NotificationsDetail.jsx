@@ -90,14 +90,7 @@ function NotificationsDetail() {
           </p>
         </div>
 
-        {/* ✅ Chat Box Here */}
-        <div style={{ marginTop: "2rem" }}>
-          <ChatBox
-            senderId={currentUserId}
-            receiverId={notification.sender_id} // assumes you store this in notifications table
-            context={`notification-${notification.id}`}
-          />
-        </div>
+        {/* 🟣 ChatBox was removed here */}
       </div>
     </div>
   );
