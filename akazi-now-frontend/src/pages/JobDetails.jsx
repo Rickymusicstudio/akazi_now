@@ -36,7 +36,7 @@ function JobDetails() {
     const { data, error } = await supabase
       .from("messages")
       .select("*")
-      .eq("gig_id", id)
+      .eq("job_id", id) // ✅ Fixed: used job_id instead of gig_id
       .order("sent_at", { ascending: true });
 
     if (error) {
@@ -57,9 +57,15 @@ function JobDetails() {
       return;
     }
 
+    console.log("Sending message with:", {
+      jobId: job.id,
+      sender: user.id,
+      receiver: job.user_id?.id,
+    });
+
     const { error } = await supabase.from("messages").insert([
       {
-        gig_id: job.id,
+        job_id: job.id, // ✅ Fixed
         sender_id: user.id,
         receiver_id: job.user_id?.id,
         topic: "job_chat",
@@ -83,7 +89,10 @@ function JobDetails() {
 
   return (
     <div style={{ padding: "2rem", fontFamily: "Segoe UI, sans-serif", maxWidth: "800px", margin: "auto" }}>
-      <button onClick={() => navigate("/")} style={{ marginBottom: "1rem", background: "none", border: "none", color: "#6a00ff", cursor: "pointer" }}>
+      <button
+        onClick={() => navigate("/")}
+        style={{ marginBottom: "1rem", background: "none", border: "none", color: "#6a00ff", cursor: "pointer" }}
+      >
         ← Back to Home
       </button>
 
@@ -111,7 +120,9 @@ function JobDetails() {
         <div style={{ maxHeight: "300px", overflowY: "auto", background: "#f9f9f9", padding: "1rem", borderRadius: "10px", border: "1px solid #ddd" }}>
           {messages.map((msg) => (
             <div key={msg.id} style={{ marginBottom: "0.75rem" }}>
-              <p style={{ margin: 0, fontWeight: "bold" }}>{msg.sender_id === job.user_id?.id ? "Poster" : "You"}</p>
+              <p style={{ margin: 0, fontWeight: "bold" }}>
+                {msg.sender_id === job.user_id?.id ? "Poster" : "You"}
+              </p>
               <p style={{ margin: 0 }}>{msg.message}</p>
               <p style={{ fontSize: "10px", color: "#888" }}>{new Date(msg.sent_at).toLocaleString()}</p>
             </div>
@@ -126,7 +137,12 @@ function JobDetails() {
             placeholder="Type your message..."
             style={{ flex: 1, padding: "0.5rem", borderRadius: "8px", border: "1px solid #ccc" }}
           />
-          <button onClick={sendMessage} style={{ background: "#6a00ff", color: "white", border: "none", borderRadius: "8px", padding: "0.5rem 1rem", cursor: "pointer" }}>Send</button>
+          <button
+            onClick={sendMessage}
+            style={{ background: "#6a00ff", color: "white", border: "none", borderRadius: "8px", padding: "0.5rem 1rem", cursor: "pointer" }}
+          >
+            Send
+          </button>
         </div>
       </div>
     </div>
