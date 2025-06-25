@@ -1,25 +1,49 @@
-/* Mobile nav and right panel for NotificationsDetail */
+/* NotificationsDetail.css */
 
-.notification-mobile-top {
-  display: none;
+/* Container */
+.notifications-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 100vw;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-.notification-hamburger {
-  font-size: 20px;
+/* LEFT PANEL - Desktop Nav */
+.notifications-left {
+  width: 50%;
+  background: linear-gradient(135deg, #6a00ff, #ff007a);
   color: white;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.nav-buttons {
+  position: absolute;
+  top: 1rem;
+  left: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.nav-buttons button {
+  background: none;
+  border: none;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
   cursor: pointer;
 }
 
-.notification-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 1.2rem;
-  font-weight: bold;
-  white-space: nowrap;
-}
-
-.notification-right-panel {
+/* RIGHT PANEL - Notification Display */
+.notifications-right {
   width: 50%;
   height: 100vh;
   overflow-y: auto;
@@ -32,70 +56,39 @@
 }
 
 .notification-card {
-  width: 100%;
-  max-width: 480px;
-  background: #fff;
-  padding: 2rem;
+  background: white;
+  padding: 1.5rem;
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 450px;
+  text-align: left;
 }
 
-.notification-mobile-nav-overlay {
-  position: fixed;
-  inset: 0;
-  background: linear-gradient(135deg, #6a00ff, #ff007a);
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  animation: slideIn 0.3s ease-out;
+.notification-card p {
+  margin: 0.5rem 0 0;
+  color: #555;
 }
 
-.notification-mobile-nav-overlay ul {
-  list-style: none;
-  color: white;
-  font-weight: bold;
-  font-size: 1.6rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+/* TOP BAR - Mobile Header */
+.mobile-top-bar {
+  display: none;
 }
 
-.notification-mobile-nav-overlay li {
-  cursor: pointer;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-100%);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ✅ Mobile override */
+/* RESPONSIVE */
 @media (max-width: 768px) {
-  .signup-container {
+  .notifications-container {
     flex-direction: column;
     height: 100vh;
     overflow: hidden;
-
-    /* ✅ Remove pink/purple background on mobile */
-    background: white !important;
-    background-image: none !important;
   }
 
-  .signup-left {
+  .notifications-left {
     display: none;
   }
 
-  .notification-mobile-top {
+  .mobile-top-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -109,7 +102,16 @@
     z-index: 999;
   }
 
-  .notification-right-panel {
+  .mobile-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.2rem;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+
+  .notifications-right {
     width: 100%;
     height: 100vh;
     overflow-y: auto;
@@ -124,8 +126,46 @@
   }
 
   .notification-card {
-    padding: 2rem;
+    width: 100%;
+    max-width: 450px;
+    padding: 1.5rem;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  .mobile-nav-overlay {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #6a00ff, #ff007a);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .mobile-nav-overlay ul {
+    list-style: none;
+    color: white;
+    font-weight: bold;
+    font-size: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .mobile-nav-overlay li {
+    cursor: pointer;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
