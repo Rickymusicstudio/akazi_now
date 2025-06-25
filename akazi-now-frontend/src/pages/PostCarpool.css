@@ -6,6 +6,7 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
+/* Left Gradient Section */
 .postride-left {
   width: 50%;
   background: linear-gradient(135deg, #6a00ff, #ff007a);
@@ -38,6 +39,7 @@
   cursor: pointer;
 }
 
+/* Right Form Section */
 .postride-right {
   width: 50%;
   height: 100vh;
@@ -47,6 +49,7 @@
   box-sizing: border-box;
 }
 
+/* Form Styling */
 .signup-form {
   display: flex;
   flex-direction: column;
@@ -68,7 +71,6 @@
   border-radius: 12px;
   border: 1px solid #ccc;
   font-size: 1rem;
-  box-sizing: border-box;
   margin-bottom: 1.2rem;
   background-color: #fff !important;
   color: #000 !important;
@@ -123,7 +125,7 @@
   cursor: pointer;
 }
 
-/* Mobile Adjustments */
+/* Responsive Mobile Styles */
 @media (max-width: 768px) {
   .postride-container {
     flex-direction: column;
@@ -138,7 +140,6 @@
   .postride-right {
     width: 100%;
     height: auto;
-    overflow-y: visible;
     padding: 1.5rem;
     padding-top: 6rem;
   }
