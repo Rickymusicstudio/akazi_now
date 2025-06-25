@@ -116,7 +116,7 @@ function PostCarpool() {
 
       {/* Right Form Panel */}
       <div className="postride-right">
-        <form className="signup-form" onSubmit={handleSubmit}>
+        <form className="postride-form" onSubmit={handleSubmit}>
           {message && <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>{message}</p>}
 
           <label>Origin</label>

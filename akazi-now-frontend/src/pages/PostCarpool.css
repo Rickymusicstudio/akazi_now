@@ -1,4 +1,4 @@
-/* PostCarpool.css — 50/50 split layout for desktop */
+/* PostCarpool.css — Clean 50/50 split layout with isolated styles */
 
 .postride-container {
   display: flex;
@@ -7,7 +7,7 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* Left gradient panel */
+/* Left gradient section */
 .postride-left {
   width: 50%;
   background: linear-gradient(135deg, #6a00ff, #ff007a);
@@ -40,7 +40,7 @@
   cursor: pointer;
 }
 
-/* Right form panel */
+/* Right panel with the form */
 .postride-right {
   width: 50%;
   height: 100vh;
@@ -50,20 +50,20 @@
   box-sizing: border-box;
 }
 
-/* Form layout */
-.signup-form {
+/* Form layout (renamed from .signup-form) */
+.postride-form {
   display: flex;
   flex-direction: column;
 }
 
-.signup-form label {
+.postride-form label {
   margin-bottom: 0.3rem;
   font-weight: bold;
   color: #333;
 }
 
-.signup-form input,
-.signup-form textarea {
+.postride-form input,
+.postride-form textarea {
   padding: 1rem;
   font-size: 1rem;
   border-radius: 12px;
@@ -73,12 +73,12 @@
   color: #000;
 }
 
-.signup-form textarea {
+.postride-form textarea {
   resize: vertical;
   height: 80px;
 }
 
-.signup-form .btn {
+.postride-form .btn {
   padding: 1rem;
   font-size: 1.1rem;
   font-weight: bold;
@@ -89,7 +89,7 @@
   cursor: pointer;
 }
 
-/* Hide mobile nav */
+/* Hide mobile nav elements on desktop */
 .mobile-top-bar,
 .mobile-nav-overlay {
   display: none;
