@@ -1,28 +1,27 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 
-function ChatBox({ currentUserId, peerUserId, jobId = null, carpoolId = null, context = "general" }) {
+function ChatBox({ senderId, receiverId, jobId = null, carpoolId = null, context = "job" }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
 
   useEffect(() => {
-    if (currentUserId && peerUserId) {
-      fetchMessages();
-    }
-  }, [currentUserId, peerUserId, jobId, carpoolId]);
+    fetchMessages();
+  }, [senderId, receiverId, jobId, carpoolId]);
 
   const fetchMessages = async () => {
-    if (!currentUserId || !peerUserId) return;
+    if (!senderId || !receiverId) return;
 
     let query = supabase
       .from("messages")
       .select("*")
-      .or(`and(sender_id.eq.${currentUserId},receiver_id.eq.${peerUserId}),and(sender_id.eq.${peerUserId},receiver_id.eq.${currentUserId})`)
+      .or(
+        `and(sender_id.eq.${senderId},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${senderId})`
+      )
       .order("created_at", { ascending: true });
 
     if (context === "job") query = query.eq("job_id", jobId);
     if (context === "carpool") query = query.eq("carpool_id", carpoolId);
-    if (context === "notification") query = query.is("job_id", null).is("carpool_id", null);
 
     const { data, error } = await query;
     if (error) {
@@ -35,18 +34,18 @@ function ChatBox({ currentUserId, peerUserId, jobId = null, carpoolId = null, co
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
 
-    const messagePayload = {
-      sender_id: currentUserId,
-      receiver_id: peerUserId,
-      content: newMessage,
-      topic: context,
-      extension: "text",
-      private: true,
-      job_id: context === "job" ? jobId : null,
-      carpool_id: context === "carpool" ? carpoolId : null,
-    };
-
-    const { error } = await supabase.from("messages").insert([messagePayload]);
+    const { error } = await supabase.from("messages").insert([
+      {
+        sender_id: senderId,
+        receiver_id: receiverId,
+        content: newMessage,
+        job_id: context === "job" ? jobId : null,
+        carpool_id: context === "carpool" ? carpoolId : null,
+        topic: "chat",
+        message: newMessage,
+        private: true,
+      },
+    ]);
 
     if (error) {
       alert("❌ Failed to send message: " + error.message);
@@ -59,25 +58,27 @@ function ChatBox({ currentUserId, peerUserId, jobId = null, carpoolId = null, co
   return (
     <div style={{ border: "1px solid #ddd", borderRadius: "10px", padding: "1rem", marginTop: "2rem" }}>
       <h4>💬 Chat</h4>
-      <div style={{ maxHeight: "250px", overflowY: "auto", marginBottom: "1rem" }}>
+      <div style={{ maxHeight: "200px", overflowY: "auto", marginBottom: "1rem" }}>
         {messages.length === 0 ? (
           <p style={{ color: "#777" }}>No messages yet.</p>
         ) : (
           messages.map((msg) => (
-            <div key={msg.id} style={{ textAlign: msg.sender_id === currentUserId ? "right" : "left" }}>
+            <div key={msg.id} style={{ textAlign: msg.sender_id === senderId ? "right" : "left" }}>
               <div
                 style={{
                   display: "inline-block",
-                  background: msg.sender_id === currentUserId ? "#6a00ff" : "#f1f1f1",
-                  color: msg.sender_id === currentUserId ? "white" : "#333",
+                  background: msg.sender_id === senderId ? "#6a00ff" : "#f1f1f1",
+                  color: msg.sender_id === senderId ? "white" : "#333",
                   padding: "8px 12px",
                   borderRadius: "12px",
                   marginBottom: "6px",
                 }}
               >
-                {msg.content}
+                {msg.content || msg.message}
               </div>
-              <div style={{ fontSize: "12px", color: "#999" }}>{new Date(msg.created_at).toLocaleString()}</div>
+              <div style={{ fontSize: "12px", color: "#999" }}>
+                {new Date(msg.created_at).toLocaleString()}
+              </div>
             </div>
           ))
         )}
@@ -91,7 +92,10 @@ function ChatBox({ currentUserId, peerUserId, jobId = null, carpoolId = null, co
           onChange={(e) => setNewMessage(e.target.value)}
           style={{ flex: 1, padding: "0.5rem", borderRadius: "6px", border: "1px solid #ccc" }}
         />
-        <button onClick={sendMessage} style={{ background: "#6a00ff", color: "white", border: "none", padding: "0.5rem 1rem", borderRadius: "6px" }}>
+        <button
+          onClick={sendMessage}
+          style={{ background: "#6a00ff", color: "white", border: "none", padding: "0.5rem 1rem", borderRadius: "6px" }}
+        >
           Send
         </button>
       </div>
