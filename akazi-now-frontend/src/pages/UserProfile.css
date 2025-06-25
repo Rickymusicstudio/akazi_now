@@ -5,10 +5,26 @@
   padding: 0;
 }
 
-body, html {
+html, body, #root {
   height: 100%;
-  width: 100%;
+  margin: 0;
+  padding: 0;
   font-family: 'Segoe UI', sans-serif;
+}
+
+/* Autofill fix */
+.profile-form input,
+.profile-form select {
+  background-color: #fff !important;
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  caret-color: auto;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  -webkit-text-fill-color: #000 !important;
 }
 
 .profile-container {
@@ -106,9 +122,9 @@ body, html {
   border-radius: 10px;
   border: 1px solid #ccc;
   font-size: 1rem;
-  background: #fff;
 }
 
+/* Buttons */
 .btn {
   background: linear-gradient(to right, #6a00ff, #ff007a);
   color: #fff;
@@ -136,7 +152,7 @@ body, html {
     background: linear-gradient(to bottom right, #6a00ff, #ff007a);
     height: auto;
     min-height: 100vh;
-    overflow-x: hidden; /* ✅ fix scroll bug */
+    overflow-x: hidden;
   }
 
   .profile-left {
@@ -159,7 +175,7 @@ body, html {
     padding: 2rem;
     border-radius: 20px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
-    padding-bottom: 120px; /* ✅ allow keyboard space */
+    padding-bottom: 120px; /* keyboard space */
   }
 
   .profile-form input,
