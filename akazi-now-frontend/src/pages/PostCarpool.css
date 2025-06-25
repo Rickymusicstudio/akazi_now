@@ -1,3 +1,4 @@
+/* PostCarpool.css */
 .postride-container {
   display: flex;
   height: 100vh;
@@ -41,22 +42,20 @@
   width: 50%;
   height: 100vh;
   overflow-y: auto;
-  padding: 2rem;
+  padding: 1rem 2rem 2rem;
   background-color: #fff;
   box-sizing: border-box;
 }
 
-/* Full-width form (no card look) */
 .signup-form {
   display: flex;
   flex-direction: column;
-  width: 100%;
 }
 
 .signup-form label {
+  margin-bottom: 0.3rem;
   font-weight: bold;
   color: #333;
-  margin-bottom: 0.3rem;
 }
 
 .signup-form input[type="text"],
@@ -69,10 +68,12 @@
   border-radius: 12px;
   border: 1px solid #ccc;
   font-size: 1rem;
-  margin-bottom: 1.2rem;
-  background: white;
-  color: black;
   box-sizing: border-box;
+  margin-bottom: 1.2rem;
+  background-color: #fff !important;
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  caret-color: #000;
 }
 
 .signup-form textarea {
@@ -89,9 +90,10 @@
   border: none;
   border-radius: 999px;
   cursor: pointer;
+  margin-top: 1rem;
 }
 
-/* Mobile adjustments */
+/* Mobile Top Bar */
 .mobile-top-bar {
   display: none;
 }
@@ -121,6 +123,7 @@
   cursor: pointer;
 }
 
+/* Mobile Adjustments */
 @media (max-width: 768px) {
   .postride-container {
     flex-direction: column;
@@ -134,8 +137,10 @@
 
   .postride-right {
     width: 100%;
-    padding: 6rem 1.5rem 2rem;
     height: auto;
+    overflow-y: visible;
+    padding: 1.5rem;
+    padding-top: 6rem;
   }
 
   .mobile-top-bar {
