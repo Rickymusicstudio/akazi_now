@@ -3,7 +3,7 @@ import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../assets/avatar.png";
 import NotificationBell from "../components/NotificationBell";
-import { FaBars } from "react-icons/fa"; // ✅ NEW
+import { FaBars } from "react-icons/fa";
 import "./BrowseRides.css";
 
 function BrowseRides() {
@@ -30,7 +30,7 @@ function BrowseRides() {
       .from("carpools")
       .select(`
         *,
-        driver:driver_id(full_name, phone, image_url),
+        driver:user_id(full_name, phone, image_url),
         reservations:carpool_reservations(user_id, seats_reserved)
       `)
       .order("datetime", { ascending: true });
@@ -41,17 +41,32 @@ function BrowseRides() {
     setLoading(false);
   };
 
-  const handleSeatChange = (carpoolId, value) => {
+  const handleSeatChange = (carpoolId, value, maxSeats) => {
+    const safeValue = Math.min(maxSeats, Math.max(1, value || 1));
     setReservationCounts(prev => ({
       ...prev,
-      [carpoolId]: value
+      [carpoolId]: safeValue
     }));
   };
 
-  const reserveSeat = async (carpoolId, seatsRequested) => {
+  const reserveSeat = async (ride, seatsRequested) => {
+    const carpoolId = ride.id;
+    const reservedCount = ride.reservations?.reduce((sum, r) => sum + (r.seats_reserved || 1), 0);
+    const seatsLeft = ride.available_seats - reservedCount;
+
     if (!userId) {
       alert("Please login to reserve a seat.");
       navigate("/login");
+      return;
+    }
+
+    if (ride.reservations?.some(r => r.user_id === userId)) {
+      alert("⚠️ You already reserved a seat.");
+      return;
+    }
+
+    if (seatsRequested > seatsLeft) {
+      alert("❌ Not enough seats left.");
       return;
     }
 
@@ -62,11 +77,7 @@ function BrowseRides() {
     }]);
 
     if (error) {
-      if (error.message.includes("duplicate key")) {
-        alert("You already reserved a seat.");
-      } else {
-        alert("❌ Reservation failed: " + error.message);
-      }
+      alert("❌ Reservation failed: " + error.message);
     } else {
       alert("✅ Reservation successful!");
       fetchRides();
@@ -92,7 +103,7 @@ function BrowseRides() {
     <>
       {/* ✅ Mobile Top Bar */}
       <div className="mobile-top-bar">
-        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} /> {/* ✅ Updated */}
+        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <h2 className="mobile-title">Browse Rides</h2>
         <NotificationBell />
       </div>
@@ -131,7 +142,7 @@ function BrowseRides() {
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               {rides.map((ride) => {
                 const reservedCount = ride.reservations?.reduce((sum, r) => sum + (r.seats_reserved || 1), 0);
-                const seatsLeft = ride.available_seats - reservedCount;
+                const seatsLeft = Math.max(0, ride.available_seats - reservedCount);
                 const selectedSeats = reservationCounts[ride.id] || 1;
                 const hasReserved = ride.reservations?.some(r => r.user_id === userId);
 
@@ -163,10 +174,10 @@ function BrowseRides() {
                             min="1"
                             max={seatsLeft}
                             value={selectedSeats}
-                            onChange={(e) => handleSeatChange(ride.id, parseInt(e.target.value))}
+                            onChange={(e) => handleSeatChange(ride.id, parseInt(e.target.value), seatsLeft)}
                             style={{ width: "60px", marginRight: "10px" }}
                           />
-                          <button onClick={() => reserveSeat(ride.id, selectedSeats)} style={reserveBtnStyle}>
+                          <button onClick={() => reserveSeat(ride, selectedSeats)} style={reserveBtnStyle}>
                             Reserve
                           </button>
                         </div>
