@@ -44,47 +44,43 @@
   padding: 2rem;
   background-color: #fff;
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 }
 
-.postride-form {
+/* Full-width form (no card look) */
+.signup-form {
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  display: flex;
-  flex-direction: column;
 }
 
-.postride-form label {
-  margin-bottom: 0.3rem;
+.signup-form label {
   font-weight: bold;
   color: #333;
+  margin-bottom: 0.3rem;
 }
 
-.postride-form input[type="text"],
-.postride-form input[type="number"],
-.postride-form input[type="file"],
-.postride-form input[type="datetime-local"],
-.postride-form textarea {
+.signup-form input[type="text"],
+.signup-form input[type="number"],
+.signup-form input[type="file"],
+.signup-form input[type="datetime-local"],
+.signup-form textarea {
   width: 100%;
   padding: 1rem;
   border-radius: 12px;
   border: 1px solid #ccc;
   font-size: 1rem;
-  box-sizing: border-box;
   margin-bottom: 1.2rem;
-  background-color: #fff !important;
-  color: #000 !important;
-  -webkit-text-fill-color: #000 !important;
-  caret-color: #000;
+  background: white;
+  color: black;
+  box-sizing: border-box;
 }
 
-.postride-form textarea {
+.signup-form textarea {
   height: 80px;
   resize: vertical;
 }
 
-.postride-form .btn {
+.signup-form .btn {
   width: 100%;
   padding: 1rem;
   font-size: 1.1rem;
@@ -93,10 +89,9 @@
   border: none;
   border-radius: 999px;
   cursor: pointer;
-  margin-top: 1rem;
 }
 
-/* Mobile Top Bar */
+/* Mobile adjustments */
 .mobile-top-bar {
   display: none;
 }
@@ -126,7 +121,6 @@
   cursor: pointer;
 }
 
-/* Mobile Adjustments */
 @media (max-width: 768px) {
   .postride-container {
     flex-direction: column;
@@ -140,10 +134,8 @@
 
   .postride-right {
     width: 100%;
+    padding: 6rem 1.5rem 2rem;
     height: auto;
-    overflow-y: visible;
-    padding: 1.5rem;
-    padding-top: 6rem;
   }
 
   .mobile-top-bar {
