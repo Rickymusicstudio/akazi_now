@@ -85,6 +85,10 @@
     flex-direction: column;
     height: 100vh;
     overflow: hidden;
+
+    /* ✅ Remove pink/purple background on mobile */
+    background: white !important;
+    background-image: none !important;
   }
 
   .signup-left {
