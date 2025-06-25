@@ -1,11 +1,11 @@
-.postgig-container {
+.postride-container {
   display: flex;
   height: 100vh;
   width: 100vw;
   font-family: 'Segoe UI', sans-serif;
 }
 
-.gigs-left {
+.postride-left {
   width: 50%;
   background: linear-gradient(135deg, #6a00ff, #ff007a);
   color: white;
@@ -37,7 +37,7 @@
   cursor: pointer;
 }
 
-.gigs-right {
+.postride-right {
   width: 50%;
   height: 100vh;
   overflow-y: auto;
@@ -46,22 +46,22 @@
   box-sizing: border-box;
 }
 
-/* Form */
-.signup-form {
+.postride-form {
   display: flex;
   flex-direction: column;
 }
 
-.signup-form label {
+.postride-form label {
   margin-bottom: 0.3rem;
   font-weight: bold;
   color: #333;
 }
 
-.signup-form input[type="text"],
-.signup-form input[type="number"],
-.signup-form input[type="file"],
-.signup-form textarea {
+.postride-form input[type="text"],
+.postride-form input[type="number"],
+.postride-form input[type="file"],
+.postride-form input[type="datetime-local"],
+.postride-form textarea {
   width: 100%;
   padding: 1rem;
   border-radius: 12px;
@@ -69,14 +69,18 @@
   font-size: 1rem;
   box-sizing: border-box;
   margin-bottom: 1.2rem;
+  background-color: #fff !important;
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  caret-color: #000;
 }
 
-.signup-form textarea {
+.postride-form textarea {
   height: 80px;
   resize: vertical;
 }
 
-.signup-form .btn {
+.postride-form .btn {
   width: 100%;
   padding: 1rem;
   font-size: 1.1rem;
@@ -120,17 +124,17 @@
 
 /* Mobile Adjustments */
 @media (max-width: 768px) {
-  .postgig-container {
+  .postride-container {
     flex-direction: column;
     height: 100vh;
     overflow-y: auto;
   }
 
-  .gigs-left {
+  .postride-left {
     display: none;
   }
 
-  .gigs-right {
+  .postride-right {
     width: 100%;
     height: auto;
     overflow-y: visible;
@@ -154,7 +158,7 @@
     font-size: 1.8rem;
     font-weight: bold;
     cursor: pointer;
-    color: white; /* ✅ make hamburger bars white */
+    color: white;
   }
 
   .mobile-title {
@@ -172,15 +176,4 @@
       transform: translateY(0);
     }
   }
-}
-
-.signup-form input[type="text"],
-.signup-form input[type="number"],
-.signup-form input[type="file"],
-.signup-form textarea {
-  background-color: #fff !important; /* force white */
-  color: #000 !important;           /* force black text */
-  -webkit-text-fill-color: #000 !important; /* fix for Android autofill */
-  caret-color: #000;
-  transition: background-color 0.3s ease;
 }
