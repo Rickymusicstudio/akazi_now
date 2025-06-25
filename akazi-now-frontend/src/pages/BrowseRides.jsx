@@ -51,7 +51,9 @@ function BrowseRides() {
 
   const reserveSeat = async (ride, seatsRequested) => {
     const carpoolId = ride.id;
-    const reservedCount = ride.reservations?.reduce((sum, r) => sum + (r.seats_reserved || 1), 0);
+    const reservedCount = Array.isArray(ride.reservations)
+      ? ride.reservations.reduce((sum, r) => sum + (r.seats_reserved ?? 0), 0)
+      : 0;
     const seatsLeft = ride.available_seats - reservedCount;
 
     if (!userId) {
@@ -141,7 +143,9 @@ function BrowseRides() {
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               {rides.map((ride) => {
-                const reservedCount = ride.reservations?.reduce((sum, r) => sum + (r.seats_reserved || 1), 0);
+                const reservedCount = Array.isArray(ride.reservations)
+                  ? ride.reservations.reduce((sum, r) => sum + (r.seats_reserved ?? 0), 0)
+                  : 0;
                 const seatsLeft = Math.max(0, ride.available_seats - reservedCount);
                 const selectedSeats = reservationCounts[ride.id] || 1;
                 const hasReserved = ride.reservations?.some(r => r.user_id === userId);
