@@ -4,7 +4,7 @@ import './UserProfile.css';
 import defaultAvatar from '../assets/avatar.png';
 import { useNavigate } from 'react-router-dom';
 import NotificationBell from "../components/NotificationBell.jsx";
-import { FaBars } from "react-icons/fa"; // ✅ White bar icon
+import { FaBars } from "react-icons/fa";
 
 function UserProfile() {
   const [profile, setProfile] = useState(null);
@@ -138,7 +138,7 @@ function UserProfile() {
     navigate('/login');
   };
 
-if (!profile) return null;
+  if (!profile) return null;
 
   return (
     <div className="profile-container">
@@ -199,6 +199,7 @@ if (!profile) return null;
       <div className="profile-right">
         <form className="profile-form" onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
           {message && <p style={{ color: message.startsWith('✅') ? 'green' : 'red' }}>{message}</p>}
+
           <label>Full Name</label>
           <input type="text" name="full_name" value={profile.full_name || ''} onChange={handleChange} disabled={!editing} />
 

@@ -134,8 +134,9 @@ body, html {
   .profile-container {
     flex-direction: column;
     background: linear-gradient(to bottom right, #6a00ff, #ff007a);
-    overflow-y: auto;
+    height: auto;
     min-height: 100vh;
+    overflow-x: hidden; /* ✅ fix scroll bug */
   }
 
   .profile-left {
@@ -158,6 +159,13 @@ body, html {
     padding: 2rem;
     border-radius: 20px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+    padding-bottom: 120px; /* ✅ allow keyboard space */
+  }
+
+  .profile-form input,
+  .profile-form select {
+    font-size: 1rem;
+    padding: 0.75rem;
   }
 
   /* === Mobile Top Bar === */
@@ -175,10 +183,10 @@ body, html {
   }
 
   .mobile-left-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
   .mobile-profile-pic {
     width: 36px;
