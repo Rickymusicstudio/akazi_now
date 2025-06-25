@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import NotificationBell from "../components/NotificationBell.jsx";
-import ChatBox from "../components/ChatBox.jsx"; // ✅ Import ChatBox
 import "./Signup.css";
 
 function NotificationsDetail() {
