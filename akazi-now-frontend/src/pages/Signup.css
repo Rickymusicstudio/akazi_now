@@ -1,13 +1,31 @@
+/* Signup.css */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-body, html {
+html, body, #root {
   height: 100%;
   width: 100%;
   font-family: 'Segoe UI', sans-serif;
+}
+
+/* Autofill/dark mode fixes */
+.signup-form input[type="text"],
+.signup-form input[type="email"],
+.signup-form input[type="password"],
+.signup-form select {
+  background-color: #fff !important;
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  caret-color: auto;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  -webkit-text-fill-color: #000 !important;
 }
 
 .signup-container {
@@ -69,28 +87,6 @@ body, html {
   font-weight: 600;
   font-size: 14px;
   margin-bottom: 4px;
-}
-
-.signup-form input[type="text"],
-.signup-form input[type="email"],
-.signup-form input[type="password"] {
-  width: 100%;
-  padding: 0.75rem;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  margin-bottom: 0.75rem;
-
-  /* 👇 Autofill/dark mode fixes */
-  background-color: #fff !important;
-  color: #000 !important;
-  -webkit-text-fill-color: #000 !important;
-  transition: background-color 9999s ease-in-out 0s;
-}
-
-input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
-  -webkit-text-fill-color: #000 !important;
 }
 
 .terms {
@@ -164,6 +160,9 @@ input:-webkit-autofill {
     justify-content: center;
     align-items: center;
     padding: 2rem 1rem;
+    height: auto;
+    min-height: 100vh;
+    overflow-x: hidden;
   }
 
   .signup-left {
@@ -188,6 +187,7 @@ input:-webkit-autofill {
     backdrop-filter: blur(6px);
     border-radius: 20px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+    padding-bottom: 120px; /* ✅ prevent keyboard overlap */
   }
 
   .signup-form h2 {
