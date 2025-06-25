@@ -1,64 +1,83 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { useParams } from "react-router-dom";
-import NotificationBell from "../components/NotificationBell";
+import NotificationBell from "../components/NotificationBell.jsx";
+import { useNavigate } from "react-router-dom";
 import { FaBars } from "react-icons/fa";
-import "./NotificationsDetail.css";
+import "./Notifications.css"; // assumes you have your CSS here
 
-function NotificationsDetail() {
+function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const { id } = useParams(); // optional: for deep linking
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchNotifications = async () => {
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
+
+      if (authError || !user) {
+        console.error("❌ Could not fetch user:", authError?.message || "No user found");
+        setNotifications([]);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("notifications")
+        .select("*")
+        .eq("receiver_id", user.id)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("❌ Supabase error fetching notifications:", error.message);
+        setNotifications([]);
+      } else {
+        setNotifications(data || []);
+      }
+    };
+
     fetchNotifications();
   }, []);
 
-  const fetchNotifications = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { data, error } = await supabase
-      .from("notifications")
-      .select("*")
-      .eq("recipient_id", user.id) // ✅ FIXED COLUMN NAME
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("❌ Error fetching notifications:", error.message);
-    } else {
-      setNotifications(data);
-    }
-  };
-
   return (
     <div className="notifications-container">
+      {/* Mobile Top Bar */}
       <div className="mobile-top-bar">
-        <FaBars className="hamburger" onClick={() => setMobileNavOpen(!mobileNavOpen)} />
-        <div className="mobile-title">Notification</div>
+        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
+        <h2 className="mobile-title">Notification</h2>
         <NotificationBell />
       </div>
 
+      {/* Mobile Navigation Overlay */}
       {mobileNavOpen && (
-        <div className="mobile-nav-overlay" onClick={() => setMobileNavOpen(false)}>
+        <div className="mobile-nav-overlay">
           <ul>
-            <li>Home</li>
-            <li>Post a Job</li>
-            <li>Profile</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/post-job") }}>Post a Job</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/my-jobs") }}>My Jobs</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/profile") }}>Profile</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/inbox") }}>Inbox</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Car Pooling</li>
+            <li onClick={async () => {
+              await supabase.auth.signOut();
+              navigate("/login");
+            }}>
+              Logout
+            </li>
           </ul>
         </div>
       )}
 
+      {/* Notifications Content */}
       <div className="notifications-right">
         {notifications.length === 0 ? (
-          <p style={{ textAlign: "center", marginTop: "2rem" }}>You have no notifications.</p>
+          <p className="empty-message">You have no notifications.</p>
         ) : (
-          notifications.map((notification) => (
-            <div key={notification.id} className="notification-card">
-              <p className="notification-message">{notification.message}</p>
-              <p className="notification-date">
-                Received: {new Date(notification.created_at).toLocaleString()}
-              </p>
+          notifications.map((note) => (
+            <div key={note.id} className="notification-card">
+              <p><span role="img" aria-label="party">🎉</span> <strong>Your application for <span style={{ color: "#6a00ff" }}>{note.topic}</span> has been accepted!</strong></p>
+              <p className="notification-date">Received: {new Date(note.created_at).toLocaleString()}</p>
             </div>
           ))
         )}
@@ -67,4 +86,4 @@ function NotificationsDetail() {
   );
 }
 
-export default NotificationsDetail;
+export default Notifications;
