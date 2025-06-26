@@ -11,10 +11,24 @@
   width: 50%;
   background: linear-gradient(to bottom right, #6a00ff, #ff007a);
   color: white;
-  padding: 2rem 1rem;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;         /* ✅ Center horizontally */
+  justify-content: center;     /* ✅ Center vertically */
+  position: relative;
+  text-align: center;
+}
+
+.nav-buttons {
+  position: absolute;
+  top: 1.5rem;
+  left: 2rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-weight: bold;
+  font-size: 14px;
 }
 
 .nav-buttons button {
@@ -24,8 +38,6 @@
   font-weight: bold;
   font-size: 14px;
   cursor: pointer;
-  margin-bottom: 1rem;
-  text-align: left;
 }
 
 /* Right panel (form container) */
