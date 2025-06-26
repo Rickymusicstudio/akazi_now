@@ -182,7 +182,7 @@ function Abasare() {
                   if (myEntry) toggleStatus(myEntry.user_id, myEntry.is_available);
                 }}
               >
-                Toggle Status
+                Change Status
               </button>
               <button
                 onClick={() => {
