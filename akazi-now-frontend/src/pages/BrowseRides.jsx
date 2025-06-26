@@ -44,7 +44,7 @@ function BrowseRides() {
   const handleSeatChange = (carpoolId, value, maxSeats) => {
     const numericValue = parseInt(value);
     const safeValue = isNaN(numericValue) || numericValue <= 0
-      ? ""  // ✅ keep it blank when empty or invalid
+      ? ""
       : Math.min(maxSeats, numericValue);
 
     setReservationCounts(prev => ({
@@ -60,13 +60,15 @@ function BrowseRides() {
       : 0;
     const seatsLeft = ride.available_seats - reservedCount;
 
+    const numericSeats = parseInt(seatsRequested);
+
     if (!userId) {
       alert("Please login to reserve a seat.");
       navigate("/login");
       return;
     }
 
-    if (!seatsRequested || seatsRequested <= 0) {
+    if (isNaN(numericSeats) || numericSeats <= 0) {
       alert("⚠️ Please enter a valid number of seats.");
       return;
     }
@@ -76,7 +78,7 @@ function BrowseRides() {
       return;
     }
 
-    if (seatsRequested > seatsLeft) {
+    if (numericSeats > seatsLeft) {
       alert("❌ Not enough seats left.");
       return;
     }
@@ -84,7 +86,7 @@ function BrowseRides() {
     const { error } = await supabase.from("carpool_reservations").insert([{
       carpool_id: carpoolId,
       user_id: userId,
-      seats_reserved: seatsRequested
+      seats_reserved: numericSeats,
     }]);
 
     if (error) {
