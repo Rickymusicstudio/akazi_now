@@ -68,7 +68,7 @@ function Carpool() {
     }
 
     const { error } = await supabase.from("carpools").insert([{
-      user_id: user.id, // ✅ Correct field for RLS
+      user_id: user.id,
       ...form,
       car_image: carImageUrl,
       contact_info: userProfile.contact_info,
