@@ -1,7 +1,7 @@
 // pages/Abasare.jsx
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell";
 import { FaBars } from "react-icons/fa";
 import "./BrowseRides.css";
@@ -134,13 +134,20 @@ function Abasare() {
             <tbody>
               {abasareList.map((item) => (
                 <tr key={item.id} style={{ textAlign: "center" }}>
-                  <td>{item.users?.full_name || "N/A"}</td>
+                  <td>
+                    <Link to={`/abasare/${item.user_id}`} style={{ color: "#6a00ff", textDecoration: "underline" }}>
+                      {item.users?.full_name || "N/A"}
+                    </Link>
+                  </td>
                   <td>{item.users?.phone || "N/A"}</td>
                   <td>{item.current_location || "N/A"}</td>
                   <td style={{ color: item.is_available ? "green" : "red" }}>
                     {item.is_available ? "Available" : "Unavailable"}
                   </td>
-                  <td>{item.average_rating || "N/A"}</td>
+                  <td>
+                    {"★".repeat(Math.round(item.average_rating || 0))}{" "}
+                    <span style={{ color: "gray" }}>({item.average_rating || "N/A"})</span>
+                  </td>
                 </tr>
               ))}
             </tbody>
