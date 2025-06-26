@@ -1,91 +1,99 @@
-// ApplicationsInbox.jsx
+import { useEffect, useState } from "react";
+import { supabase } from "../supabaseClient";
+import NotificationBell from "../components/NotificationBell";
+import { useNavigate } from "react-router-dom";
+import { FaBars } from "react-icons/fa";
+import "./CarpoolInbox.css";
 
-import { useEffect, useState } from 'react';
-import { supabase } from '../supabaseClient';
-import './Inbox.css';
-
-function ApplicationsInbox() {
-  const [applications, setApplications] = useState([]);
+function CarpoolInbox() {
+  const [reservations, setReservations] = useState([]);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchApplications();
+    fetchReservations();
   }, []);
 
-  const fetchApplications = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+  const fetchReservations = async () => {
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) return;
 
     const { data, error } = await supabase
-      .from('applications')
-      .select('*')
-      .eq('employer_id', user.id);
+      .from("reservations")
+      .select(`
+        *,
+        users(full_name, contact_info),
+        carpools(origin, destination, datetime, price, notes)
+      `)
+      .eq("carpools.user_id", user.id)
+      .order("reserved_at", { ascending: false });
 
-    if (!error) setApplications(data);
-  };
-
-  const handleAccept = async (application) => {
-    const { id, user_id } = application;
-
-    const { error: updateError } = await supabase
-      .from('applications')
-      .update({ status: 'accepted' })
-      .eq('id', id);
-
-    if (updateError) {
-      console.error('❌ Failed to update status:', updateError.message);
-      return;
+    if (error) {
+      console.error("❌ Failed to fetch reservations:", error.message);
+    } else {
+      setReservations(data);
     }
-
-    const { error: notifError } = await supabase
-      .from('notifications')
-      .insert([
-        {
-          user_id: user_id,
-          type: 'application',
-          message: '🎉 Your application was accepted!',
-        },
-      ]);
-
-    if (notifError) {
-      console.warn('⚠️ Notification insert failed:', notifError.message);
-    }
-
-    setApplications((prev) =>
-      prev.map((app) =>
-        app.id === id ? { ...app, status: 'accepted' } : app
-      )
-    );
   };
 
   return (
-    <div className="applications-inbox-wrapper">
-      <div className="inbox-title">Inbox</div>
-      <div className="applications-inbox-scroll">
-        {applications.map((app) => (
-          <div key={app.id} className="inbox-card">
-            <img src="/default-avatar.png" alt="avatar" className="avatar" />
-            <div><strong>{app.full_name}</strong></div>
-            <div><strong>District:</strong> {app.district}</div>
-            <div><strong>Sector:</strong> {app.sector}</div>
-            <div><strong>Cell:</strong> {app.cell}</div>
-            <div><strong>Village:</strong> {app.village}</div>
-            <div><strong>Message:</strong> {app.message}</div>
-            <div><strong>Status:</strong> {app.status}</div>
-            <div className="submitted-date">Submitted: {new Date(app.created_at).toLocaleString()}</div>
+    <div className="carpool-inbox-container">
+      {/* ✅ Mobile Top Nav */}
+      <div className="mobile-top-bar">
+        <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>
+          <FaBars />
+        </div>
+        <h2 className="mobile-title">Inbox</h2>
+        <NotificationBell />
+      </div>
 
-            {app.status === 'accepted' ? (
-              <button className="btn accepted">Accepted</button>
-            ) : (
-              <>
-                <button className="btn" onClick={() => handleAccept(app)}>Accept</button>
-                <button className="btn reject">Reject</button>
-              </>
-            )}
-          </div>
-        ))}
+      {/* ✅ Mobile Fullscreen Dropdown Nav */}
+      {mobileNavOpen && (
+        <div className="mobile-nav-overlay">
+          <ul>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Browse Rides</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool") }}>Post Ride</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox") }}>Carpool Inbox</li>
+            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+          </ul>
+        </div>
+      )}
+
+      {/* ✅ Left Panel (Desktop Nav) */}
+      <div className="carpool-inbox-left">
+        <div className="nav-buttons">
+          <button onClick={() => navigate("/")}>Home</button>
+          <button onClick={() => navigate("/carpools")}>Browse Rides</button>
+          <button onClick={() => navigate("/carpool")}>Post Ride</button>
+          <button onClick={() => navigate("/carpool-inbox")}>Carpool Inbox</button>
+          <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
+        </div>
+        <h2 style={{ fontSize: "28px", fontWeight: "bold", marginTop: "3rem" }}>Inbox</h2>
+        <NotificationBell />
+      </div>
+
+      {/* ✅ Right Panel (Inbox List) */}
+      <div className="carpool-inbox-right">
+        {reservations.length === 0 ? (
+          <p>No reservations yet.</p>
+        ) : (
+          reservations.map((res) => (
+            <div key={res.id} className="inbox-card">
+              <div><strong>Name:</strong> {res.users?.full_name || "N/A"}</div>
+              <div><strong>Contact:</strong> {res.users?.contact_info || "N/A"}</div>
+              <div><strong>From:</strong> {res.carpools?.origin}</div>
+              <div><strong>To:</strong> {res.carpools?.destination}</div>
+              <div><strong>Date/Time:</strong> {new Date(res.carpools?.datetime).toLocaleString()}</div>
+              <div><strong>Price:</strong> {res.carpools?.price} RWF</div>
+              <div><strong>Note:</strong> {res.carpools?.notes}</div>
+              <div><strong>Seats Reserved:</strong> {res.seats_reserved}</div>
+              <div><strong>Reserved At:</strong> {new Date(res.reserved_at).toLocaleString()}</div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
 }
 
-export default ApplicationsInbox;
+export default CarpoolInbox;

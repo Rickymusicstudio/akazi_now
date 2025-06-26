@@ -1,4 +1,4 @@
-/* Base container layout */
+/* Base layout */
 .carpool-inbox-container {
   display: flex;
   height: 100vh;
@@ -7,7 +7,7 @@
   overflow: hidden;
 }
 
-/* Left panel (Desktop navigation) */
+/* Left navigation panel for desktop */
 .carpool-inbox-left {
   width: 50%;
   background: linear-gradient(to bottom right, #6a00ff, #ff007a);
@@ -38,7 +38,7 @@
   cursor: pointer;
 }
 
-/* Right panel (Reservations) */
+/* Right content panel */
 .carpool-inbox-right {
   width: 50%;
   height: 100vh;
@@ -48,7 +48,7 @@
   box-sizing: border-box;
 }
 
-/* Reservation card */
+/* Ride card styling */
 .inbox-card {
   background: #fff;
   padding: 1.5rem;
@@ -57,7 +57,7 @@
   margin-bottom: 1.5rem;
 }
 
-/* Mobile Top Bar */
+/* Mobile top navigation bar */
 .mobile-top-bar {
   display: none;
   width: 100%;
@@ -69,50 +69,69 @@
   position: fixed;
   top: 0;
   z-index: 1000;
+  gap: 1rem;
 }
 
 .mobile-hamburger {
-  font-size: 24px;
+  font-size: 1.6rem;
+  color: white;
   cursor: pointer;
 }
 
 .mobile-title {
-  font-size: 18px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.2rem;
   font-weight: bold;
 }
 
-/* Mobile Fullscreen Dropdown Menu */
+/* Mobile nav overlay dropdown */
 .mobile-nav-overlay {
-  display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
+  inset: 0;
   background: linear-gradient(to bottom, #6a00ff, #ff007a);
   color: white;
   z-index: 999;
   padding-top: 5rem;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: slideIn 0.3s ease-out;
 }
 
 .mobile-nav-overlay ul {
   list-style: none;
-  padding: 0;
+  font-size: 1.6rem;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .mobile-nav-overlay li {
-  padding: 1rem;
-  font-size: 18px;
-  font-weight: bold;
   cursor: pointer;
 }
 
-/* Responsive Layout */
+/* Animation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile styles */
 @media (max-width: 768px) {
   .carpool-inbox-container {
     flex-direction: column;
-    overflow: auto;
+    overflow-y: auto;
+    min-height: 100vh;
   }
 
   .carpool-inbox-left {
@@ -121,8 +140,7 @@
 
   .carpool-inbox-right {
     width: 100%;
-    padding: 2rem 1rem;
-    margin-top: 4rem; /* ✅ Prevent content from being hidden under the top bar */
+    padding: 6rem 1rem 2rem;
     height: auto;
     box-sizing: border-box;
   }
@@ -131,11 +149,17 @@
     display: flex;
   }
 
-  .mobile-nav-overlay {
-    display: block;
+  .ride-card,
+  .inbox-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem;
   }
 
-  .inbox-card {
-    padding: 1.25rem;
+  .inbox-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
   }
 }
