@@ -2,7 +2,7 @@ import { useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
-import { FaBars } from "react-icons/fa"; // ✅ NEW
+import { FaBars } from "react-icons/fa";
 import "./PostGig.css";
 
 function PostGig() {
@@ -98,7 +98,7 @@ function PostGig() {
     <div className="postgig-container">
       {/* ✅ Mobile Header */}
       <div className="mobile-top-bar">
-        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} /> {/* ✅ NEW */}
+        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <div className="mobile-title">Post a Job</div>
         <NotificationBell />
       </div>
