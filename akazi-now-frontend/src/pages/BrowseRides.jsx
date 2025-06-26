@@ -42,11 +42,6 @@ function BrowseRides() {
   };
 
   const handleSeatChange = (carpoolId, value, maxSeats) => {
-    if (value === "") {
-      setReservationCounts(prev => ({ ...prev, [carpoolId]: "" }));
-      return;
-    }
-
     const numericValue = parseInt(value);
     const safeValue = isNaN(numericValue) || numericValue <= 0
       ? ""
@@ -98,6 +93,7 @@ function BrowseRides() {
       alert("❌ Reservation failed: " + error.message);
     } else {
       alert("✅ Reservation successful!");
+      setReservationCounts(prev => ({ ...prev, [carpoolId]: "" }));
       fetchRides();
     }
   };
@@ -119,6 +115,7 @@ function BrowseRides() {
 
   return (
     <>
+      {/* ✅ Mobile Top Bar */}
       <div className="mobile-top-bar">
         <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <h2 className="mobile-title">Browse Rides</h2>
@@ -193,15 +190,11 @@ function BrowseRides() {
                             min="1"
                             max={seatsLeft}
                             value={selectedSeats}
-                            placeholder="Enter seats"
+                            placeholder="Seats"
                             onChange={(e) => handleSeatChange(ride.id, e.target.value, seatsLeft)}
                             style={{ width: "60px", marginRight: "10px" }}
                           />
-                          <button
-                            onClick={() => reserveSeat(ride, selectedSeats)}
-                            style={reserveBtnStyle}
-                            disabled={!selectedSeats || selectedSeats < 1}
-                          >
+                          <button onClick={() => reserveSeat(ride, selectedSeats)} style={reserveBtnStyle}>
                             Reserve
                           </button>
                         </div>
