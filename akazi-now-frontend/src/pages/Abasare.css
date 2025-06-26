@@ -57,6 +57,31 @@ body {
   padding: 2rem;
 }
 
+/* FORM BUTTONS ABOVE TABLE */
+.umusare-actions {
+  margin-bottom: 1.5rem;
+  display: flex;
+  gap: 10px;
+}
+
+.umusare-actions button {
+  background: white;
+  border: 1px solid #aaa;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.umusare-actions .exit-btn {
+  color: red;
+  border-color: red;
+}
+
+.umusare-actions button:hover {
+  background: #eee;
+}
+
 /* TABLE STYLING */
 .abasare-table {
   width: 100%;
@@ -101,21 +126,6 @@ body {
 
 .star-inactive {
   color: #ddd;
-}
-
-/* Action buttons inside table */
-.abasare-table button {
-  background: none;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 3px 6px;
-  cursor: pointer;
-  font-size: 13px;
-  margin-top: 5px;
-}
-
-.abasare-table button:hover {
-  background-color: #f1f1f1;
 }
 
 /* Mobile Top Bar */
@@ -197,5 +207,14 @@ body {
   .abasare-table {
     font-size: 14px;
     min-width: 700px;
+  }
+
+  .umusare-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .umusare-actions button {
+    width: 100%;
   }
 }

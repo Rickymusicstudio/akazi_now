@@ -174,6 +174,28 @@ function Abasare() {
             <button type="submit" style={{ marginTop: "1rem", ...submitBtnStyle }}>Submit</button>
           </form>
 
+          {abasareList.some((a) => a.user_id === userId) && (
+            <div className="umusare-actions">
+              <button
+                onClick={() => {
+                  const myEntry = abasareList.find(a => a.user_id === userId);
+                  if (myEntry) toggleStatus(myEntry.user_id, myEntry.is_available);
+                }}
+              >
+                Toggle Status
+              </button>
+              <button
+                onClick={() => {
+                  const myEntry = abasareList.find(a => a.user_id === userId);
+                  if (myEntry) leaveTable(myEntry.user_id);
+                }}
+                className="exit-btn"
+              >
+                Exit Table
+              </button>
+            </div>
+          )}
+
           <table className="abasare-table">
             <thead>
               <tr>
@@ -183,7 +205,6 @@ function Abasare() {
                 <th>Location</th>
                 <th>Status</th>
                 <th>Rating</th>
-                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -215,24 +236,6 @@ function Abasare() {
                         ★
                       </span>
                     ))}
-                  </td>
-                  <td>
-                    {userId === item.user_id && (
-                      <>
-                        <button
-                          onClick={() => toggleStatus(item.user_id, item.is_available)}
-                          style={{ fontSize: "12px", marginRight: "5px" }}
-                        >
-                          {item.is_available ? "Set Unavailable" : "Set Available"}
-                        </button>
-                        <button
-                          onClick={() => leaveTable(item.user_id)}
-                          style={{ fontSize: "12px", color: "red" }}
-                        >
-                          Exit Table
-                        </button>
-                      </>
-                    )}
                   </td>
                 </tr>
               ))}
