@@ -63,9 +63,39 @@ function Abasare() {
     }
   };
 
+  const handleRating = async (umusareId, stars) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return alert("Please log in to rate.");
+
+    // Save rating
+    const { error: insertError } = await supabase
+      .from("ratings")
+      .insert([{ umusare_id: umusareId, rated_by: user.id, rating: stars }]);
+
+    if (insertError) {
+      console.error(insertError);
+      return alert("Failed to rate.");
+    }
+
+    // Recalculate average
+    const { data: ratings } = await supabase
+      .from("ratings")
+      .select("rating")
+      .eq("umusare_id", umusareId);
+
+    const avg =
+      ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length;
+
+    await supabase
+      .from("abasare")
+      .update({ average_rating: avg })
+      .eq("user_id", umusareId);
+
+    fetchAbasare();
+  };
+
   return (
     <>
-      {/* 🔝 Mobile Top Bar */}
       <div className="mobile-top-bar">
         <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <h2 className="mobile-title">Abasare</h2>
@@ -146,20 +176,20 @@ function Abasare() {
                     {item.is_available ? "Available" : "Unavailable"}
                   </td>
                   <td>
-                    {item.average_rating ? (
-                      Array.from({ length: 5 }, (_, i) => (
-                        <span
-                          key={i}
-                          className={i < Math.round(item.average_rating)
-                            ? (i < 3 ? "star-green" : "star-yellow")
-                            : "star-inactive"}
-                        >
-                          ★
-                        </span>
-                      ))
-                    ) : (
-                      <span style={{ color: "#888" }}>(N/A)</span>
-                    )}
+                    {Array.from({ length: 5 }, (_, i) => (
+                      <span
+                        key={i}
+                        onClick={() => handleRating(item.user_id, i + 1)}
+                        className={
+                          item.average_rating && i < Math.round(item.average_rating)
+                            ? "star-green"
+                            : "star-yellow"
+                        }
+                        style={{ cursor: "pointer" }}
+                      >
+                        ★
+                      </span>
+                    ))}
                   </td>
                 </tr>
               ))}
