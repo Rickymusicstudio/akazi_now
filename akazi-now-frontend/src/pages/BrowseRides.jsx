@@ -44,7 +44,7 @@ function BrowseRides() {
   const handleSeatChange = (carpoolId, value, maxSeats) => {
     const numericValue = parseInt(value);
     const safeValue = isNaN(numericValue) || numericValue <= 0
-      ? ""
+      ? ""  // ✅ keep it blank when empty or invalid
       : Math.min(maxSeats, numericValue);
 
     setReservationCounts(prev => ({
