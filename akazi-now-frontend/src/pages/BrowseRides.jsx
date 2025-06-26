@@ -42,7 +42,11 @@ function BrowseRides() {
   };
 
   const handleSeatChange = (carpoolId, value, maxSeats) => {
-    const safeValue = Math.min(maxSeats, Math.max(1, value || 1));
+    const numericValue = parseInt(value);
+    const safeValue = isNaN(numericValue) || numericValue <= 0
+      ? ""
+      : Math.min(maxSeats, numericValue);
+
     setReservationCounts(prev => ({
       ...prev,
       [carpoolId]: safeValue
@@ -59,6 +63,11 @@ function BrowseRides() {
     if (!userId) {
       alert("Please login to reserve a seat.");
       navigate("/login");
+      return;
+    }
+
+    if (!seatsRequested || seatsRequested <= 0) {
+      alert("⚠️ Please enter a valid number of seats.");
       return;
     }
 
@@ -147,7 +156,7 @@ function BrowseRides() {
                   ? ride.reservations.reduce((sum, r) => sum + (r.seats_reserved ?? 0), 0)
                   : 0;
                 const seatsLeft = Math.max(0, ride.available_seats - reservedCount);
-                const selectedSeats = reservationCounts[ride.id] ?? ""; // Updated line
+                const selectedSeats = reservationCounts[ride.id] !== undefined ? reservationCounts[ride.id] : "";
                 const hasReserved = ride.reservations?.some(r => r.user_id === userId);
 
                 return (
@@ -179,7 +188,7 @@ function BrowseRides() {
                             max={seatsLeft}
                             value={selectedSeats}
                             placeholder="Seats"
-                            onChange={(e) => handleSeatChange(ride.id, parseInt(e.target.value), seatsLeft)}
+                            onChange={(e) => handleSeatChange(ride.id, e.target.value, seatsLeft)}
                             style={{ width: "60px", marginRight: "10px" }}
                           />
                           <button onClick={() => reserveSeat(ride, selectedSeats)} style={reserveBtnStyle}>
