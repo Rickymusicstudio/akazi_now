@@ -4,7 +4,7 @@ import { supabase } from "../supabaseClient";
 import { useNavigate, Link } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell";
 import { FaBars } from "react-icons/fa";
-import "./AbasareDetail.css";
+import "./BrowseRides.css";
 
 function Abasare() {
   const [form, setForm] = useState({ current_location: "", is_available: true });
