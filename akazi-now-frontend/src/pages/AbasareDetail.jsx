@@ -56,21 +56,36 @@ function AbasareDetail() {
         </div>
       )}
 
-      {/* ✅ Profile Card */}
-      <div className="abasare-detail-container">
-        <div className="abasare-card">
-          <img
-            src={driver.user?.image_url || defaultAvatar}
-            alt="Umusare"
-            className="abasare-detail-avatar"
-          />
-          <h2>{driver.user?.full_name || "Unnamed"}</h2>
-          <p><strong>Phone:</strong> {driver.user?.phone || "N/A"}</p>
-          <p><strong>Current Location:</strong> {driver.current_location}</p>
-          <p><strong>Status:</strong> {driver.is_available ? "✅ Available" : "⛔ Not Available"}</p>
-          <p><strong>Average Rating:</strong> {driver.average_rating ? `${driver.average_rating.toFixed(1)} / 5` : "Not yet rated"}</p>
+      {/* ✅ 50/50 Layout */}
+      <div className="browse-container">
+        {/* Left Panel (gradient/nav) */}
+        <div className="browse-left">
+          <div className="nav-buttons">
+            <button onClick={() => navigate("/")}>Home</button>
+            <button onClick={() => navigate("/carpools")}>Browse Rides</button>
+            <button onClick={() => navigate("/post-ride")}>Post Ride</button>
+            <button onClick={() => navigate("/carpool-inbox")}>Carpool Inbox</button>
+            <button onClick={() => navigate("/abasare")}>Abasare</button>
+            <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
+          </div>
+          <h2 style={{ fontSize: "28px", fontWeight: "bold", marginTop: "3rem" }}>Umusare Profile</h2>
+          <NotificationBell />
+        </div>
 
-          {/* Future: Add star rating UI here if needed */}
+        {/* Right Panel (white/details) */}
+        <div className="browse-right">
+          <div className="abasare-card">
+            <img
+              src={driver.user?.image_url || defaultAvatar}
+              alt="Umusare"
+              className="abasare-detail-avatar"
+            />
+            <h2>{driver.user?.full_name || "Unnamed"}</h2>
+            <p><strong>Phone:</strong> {driver.user?.phone || "N/A"}</p>
+            <p><strong>Current Location:</strong> {driver.current_location}</p>
+            <p><strong>Status:</strong> {driver.is_available ? "✅ Available" : "⛔ Not Available"}</p>
+            <p><strong>Average Rating:</strong> {driver.average_rating ? `${driver.average_rating.toFixed(1)} / 5` : "Not yet rated"}</p>
+          </div>
         </div>
       </div>
     </>
@@ -78,4 +93,3 @@ function AbasareDetail() {
 }
 
 export default AbasareDetail;
- 
