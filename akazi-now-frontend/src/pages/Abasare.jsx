@@ -1,72 +1,113 @@
 // pages/Abasare.jsx
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell";
-import { FaBars } from "react-icons/fa";
-import "./BrowseRides.css";
+import { FaBars, FaStar } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import "./Abasare.css";
 
 function Abasare() {
+  const [abasare, setAbasare] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
   const [form, setForm] = useState({ current_location: "", is_available: true });
-  const [userId, setUserId] = useState(null);
-  const [abasareList, setAbasareList] = useState([]);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [ratings, setRatings] = useState({});
+  const [submittedRatings, setSubmittedRatings] = useState({});
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    loadUser();
-    fetchAbasare();
+    fetchCurrentUser();
   }, []);
 
-  const loadUser = async () => {
+  const fetchCurrentUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      navigate("/login");
+    if (!user) return navigate("/login");
+
+    setCurrentUser(user);
+    const { data: profile } = await supabase
+      .from("users")
+      .select("phone")
+      .eq("auth_user_id", user.id)
+      .single();
+
+    const { data: existing } = await supabase
+      .from("abasare")
+      .select("*")
+      .eq("user_id", user.id)
+      .single();
+
+    if (existing) {
+      setForm({ current_location: existing.current_location, is_available: existing.is_available });
     } else {
-      setUserId(user.id);
+      setForm({ current_location: "", is_available: true });
     }
+
+    fetchAbasare();
   };
 
   const fetchAbasare = async () => {
     const { data, error } = await supabase
       .from("abasare")
-      .select(`
-        id,
-        current_location,
-        is_available,
-        average_rating,
-        user_id,
-        users:users!abasare_user_id_fkey(full_name, phone)
-      `)
-      .order("created_at", { ascending: false });
+      .select("*, users(full_name, phone)");
 
-    if (!error) setAbasareList(data || []);
+    if (!error) {
+      setAbasare(data);
+      fetchRatings(data.map((a) => a.user_id));
+    }
+  };
+
+  const fetchRatings = async (userIds) => {
+    const { data } = await supabase
+      .from("abasare_ratings")
+      .select("rated_user_id, rating");
+
+    const ratingMap = {};
+    userIds.forEach((id) => {
+      const userRatings = data.filter((r) => r.rated_user_id === id);
+      const avg =
+        userRatings.length > 0
+          ? userRatings.reduce((sum, r) => sum + r.rating, 0) / userRatings.length
+          : 0;
+      ratingMap[id] = Math.round(avg * 10) / 10;
+    });
+
+    setRatings(ratingMap);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!userId || !form.current_location.trim()) return alert("Please fill in your current location.");
-
-    const { error } = await supabase.from("abasare").upsert([
-      {
-        user_id: userId,
-        current_location: form.current_location.trim(),
-        is_available: form.is_available,
-      },
-    ]);
+    const { error } = await supabase.from("abasare").upsert({
+      user_id: currentUser.id,
+      current_location: form.current_location,
+      is_available: form.is_available,
+    });
 
     if (error) {
       alert("❌ Failed to register: " + error.message);
     } else {
-      alert("✅ Registered/Updated as Umusare");
-      setForm({ current_location: "", is_available: true });
+      alert("✅ Umusare status updated.");
+      fetchAbasare();
+    }
+  };
+
+  const handleRating = async (ratedUserId, score) => {
+    if (!currentUser || currentUser.id === ratedUserId || submittedRatings[ratedUserId]) return;
+
+    const { error } = await supabase.from("abasare_ratings").insert({
+      rated_user_id: ratedUserId,
+      rater_user_id: currentUser.id,
+      rating: score,
+    });
+
+    if (!error) {
+      setSubmittedRatings((prev) => ({ ...prev, [ratedUserId]: true }));
       fetchAbasare();
     }
   };
 
   return (
     <>
-      {/* 🔝 Mobile Top Bar */}
       <div className="mobile-top-bar">
         <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <h2 className="mobile-title">Abasare</h2>
@@ -80,67 +121,82 @@ function Abasare() {
             <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Browse Rides</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/post-ride") }}>Post Ride</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox") }}>Carpool Inbox</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/abasare") }}>Abasare</li>
             <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
           </ul>
         </div>
       )}
 
-      <div className="browse-container">
-        <div className="browse-left">
+      <div className="abasare-container">
+        <div className="abasare-left">
           <div className="nav-buttons">
             <button onClick={() => navigate("/")}>Home</button>
             <button onClick={() => navigate("/carpools")}>Browse Rides</button>
-            <button onClick={() => navigate("/post-ride")}>Post Ride</button>
-            <button onClick={() => navigate("/carpool-inbox")}>Carpool Inbox</button>
             <button onClick={() => navigate("/abasare")}>Abasare</button>
-            <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
+            <button onClick={() => navigate("/profile")}>Profile</button>
           </div>
-          <h2 style={{ fontSize: "28px", fontWeight: "bold", marginTop: "3rem" }}>Umusare Registration</h2>
-          <NotificationBell />
-        </div>
-
-        <div className="browse-right">
-          <form onSubmit={handleSubmit} style={{ marginBottom: "2rem" }}>
-            <h3>Register as Umusare</h3>
+          <h2>Umusare Registration</h2>
+          <form onSubmit={handleSubmit}>
+            <label>Current Location:</label>
             <input
               type="text"
-              placeholder="Your Current Location (e.g Kacyiru)"
               value={form.current_location}
               onChange={(e) => setForm({ ...form, current_location: e.target.value })}
               required
             />
-            <div style={{ marginTop: "0.5rem" }}>
-              <input
-                type="checkbox"
-                checked={form.is_available}
-                onChange={(e) => setForm({ ...form, is_available: e.target.checked })}
-              />
-              <label style={{ marginLeft: "0.5rem" }}>Available now</label>
-            </div>
-            <button type="submit" style={{ marginTop: "1rem", ...submitBtnStyle }}>Submit</button>
+            <label>Status:</label>
+            <select
+              value={form.is_available}
+              onChange={(e) => setForm({ ...form, is_available: e.target.value === "true" })}
+            >
+              <option value="true">Available</option>
+              <option value="false">Not Available</option>
+            </select>
+            <button type="submit">Update</button>
           </form>
+        </div>
 
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <div className="abasare-right">
+          <h2>Available Drivers</h2>
+          <table className="abasare-table">
             <thead>
               <tr>
-                <th style={thStyle}>Name</th>
-                <th style={thStyle}>Phone</th>
-                <th style={thStyle}>Location</th>
-                <th style={thStyle}>Status</th>
-                <th style={thStyle}>Rating</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Rating</th>
               </tr>
             </thead>
             <tbody>
-              {abasareList.map((item) => (
-                <tr key={item.id} style={{ textAlign: "center" }}>
-                  <td>{item.users?.full_name || "N/A"}</td>
-                  <td>{item.users?.phone || "N/A"}</td>
-                  <td>{item.current_location || "N/A"}</td>
-                  <td style={{ color: item.is_available ? "green" : "red" }}>
-                    {item.is_available ? "Available" : "Unavailable"}
+              {abasare.map((driver) => (
+                <tr key={driver.user_id}>
+                  <td>{driver.users?.full_name || "Unknown"}</td>
+                  <td>{driver.users?.phone || "N/A"}</td>
+                  <td>{driver.current_location}</td>
+                  <td style={{ color: driver.is_available ? "green" : "gray" }}>
+                    {driver.is_available ? "Available" : "Not Available"}
                   </td>
-                  <td>{item.average_rating || "N/A"}</td>
+                  <td>
+                    <span style={{ marginRight: "8px" }}>
+                      ⭐ {ratings[driver.user_id] || "N/A"}
+                    </span>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <FaStar
+                        key={star}
+                        style={{
+                          color:
+                            submittedRatings[driver.user_id] || currentUser?.id === driver.user_id
+                              ? "#ccc"
+                              : "#ffcc00",
+                          cursor:
+                            submittedRatings[driver.user_id] || currentUser?.id === driver.user_id
+                              ? "default"
+                              : "pointer",
+                        }}
+                        onClick={() => handleRating(driver.user_id, star)}
+                      />
+                    ))}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -150,20 +206,5 @@ function Abasare() {
     </>
   );
 }
-
-const submitBtnStyle = {
-  padding: "8px 16px",
-  borderRadius: "8px",
-  background: "linear-gradient(to right, #6a00ff, #ff007a)",
-  color: "white",
-  border: "none",
-  cursor: "pointer",
-};
-
-const thStyle = {
-  padding: "10px",
-  fontWeight: "bold",
-  borderBottom: "1px solid #ddd",
-};
 
 export default Abasare;
