@@ -13,6 +13,7 @@ import CarpoolInbox from "./pages/CarpoolInbox";
 import NotificationsDetail from "./pages/NotificationsDetail";
 import JobDetails from "./pages/JobDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Abasare from "./pages/Abasare"; // ✅ Add import
 
 function App() {
   return (
@@ -119,6 +120,15 @@ function App() {
           element={
             <ProtectedRoute>
               <NotificationsDetail />
+            </ProtectedRoute>
+          }
+        />
+        {/* ✅ New Abasare Route */}
+        <Route
+          path="/abasare"
+          element={
+            <ProtectedRoute>
+              <Abasare />
             </ProtectedRoute>
           }
         />
