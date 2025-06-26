@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
+import NotificationBell from "../components/NotificationBell.jsx";
 import { useNavigate } from "react-router-dom";
-import NotificationBell from "../components/NotificationBell";
 import "./CarpoolInbox.css";
+import { FaBars } from "react-icons/fa";
 
 function CarpoolInbox() {
   const [reservations, setReservations] = useState([]);
@@ -14,69 +15,57 @@ function CarpoolInbox() {
   }, []);
 
   const fetchReservations = async () => {
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) return;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
 
-    // Fetch all reservations
-    const { data: reservationsData, error: resError } = await supabase
-      .from("reservations")
-      .select("*")
+    const { data, error } = await supabase
+      .from("carpool_reservations")
+      .select(`
+        *,
+        carpools (
+          origin,
+          destination,
+          datetime,
+          price,
+          car_image,
+          driver_name
+        )
+      `)
+      .eq("user_id", user.id)
       .order("reserved_at", { ascending: false });
 
-    if (resError) {
-      console.error("❌ Failed to fetch reservations:", resError.message);
-      return;
+    if (error) {
+      console.error("❌ Failed to fetch reservations:", error.message);
+    } else {
+      setReservations(data || []);
     }
-
-    // Fetch current user's carpools
-    const { data: carpoolsData, error: carpoolError } = await supabase
-      .from("carpools")
-      .select("id, origin, destination, datetime, price, notes, driver_name, contact_info")
-      .eq("user_id", user.id);
-
-    if (carpoolError) {
-      console.error("❌ Failed to fetch carpools:", carpoolError.message);
-      return;
-    }
-
-    // Match reservations with your carpools
-    const carpoolIds = carpoolsData.map(c => c.id);
-    const myReservations = reservationsData
-      .filter(res => carpoolIds.includes(res.carpool_id))
-      .map(res => {
-        const carpool = carpoolsData.find(c => c.id === res.carpool_id);
-        return {
-          ...res,
-          carpool
-        };
-      });
-
-    setReservations(myReservations);
   };
 
   return (
     <div className="carpool-inbox-container">
       {/* Mobile Top Bar */}
       <div className="mobile-top-bar">
-        <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>☰</div>
-        <h2 className="mobile-title">Inbox</h2>
+        <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>
+          <FaBars />
+        </div>
+        <div className="mobile-title">Inbox</div>
         <NotificationBell />
       </div>
 
-      {/* Mobile Navigation Overlay */}
+      {/* Mobile Dropdown Navigation */}
       {mobileNavOpen && (
         <div className="mobile-nav-overlay">
           <ul>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Browse Rides</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool") }}>Post Ride</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox") }}>Carpool Inbox</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/"); }}>Home</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools"); }}>Browse Rides</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool"); }}>Post Ride</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox"); }}>Carpool Inbox</li>
             <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
           </ul>
         </div>
       )}
 
-      {/* Desktop Left Navigation */}
+      {/* Left Panel for Desktop */}
       <div className="carpool-inbox-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -96,13 +85,16 @@ function CarpoolInbox() {
         ) : (
           reservations.map((res) => (
             <div key={res.id} className="inbox-card">
-              <div><strong>Origin:</strong> {res.carpool?.origin}</div>
-              <div><strong>Destination:</strong> {res.carpool?.destination}</div>
-              <div><strong>Date/Time:</strong> {new Date(res.carpool?.datetime).toLocaleString()}</div>
-              <div><strong>Price:</strong> {res.carpool?.price} RWF</div>
-              <div><strong>Notes:</strong> {res.carpool?.notes}</div>
-              <div><strong>Reserved At:</strong> {new Date(res.reserved_at).toLocaleString()}</div>
+              {res.carpools?.car_image && (
+                <img src={res.carpools.car_image} alt="car" style={{ width: "100%", borderRadius: "12px", marginBottom: "0.5rem" }} />
+              )}
+              <div><strong>From:</strong> {res.carpools?.origin}</div>
+              <div><strong>To:</strong> {res.carpools?.destination}</div>
+              <div><strong>Date:</strong> {new Date(res.carpools?.datetime).toLocaleString()}</div>
+              <div><strong>Price:</strong> {res.carpools?.price} Frw</div>
+              <div><strong>Driver:</strong> {res.carpools?.driver_name}</div>
               <div><strong>Seats Reserved:</strong> {res.seats_reserved}</div>
+              <div><strong>Reserved at:</strong> {new Date(res.reserved_at).toLocaleString()}</div>
             </div>
           ))
         )}
