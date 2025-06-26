@@ -123,6 +123,7 @@ function BrowseRides() {
             <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Browse Rides</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/post-ride") }}>Post Ride</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox") }}>Carpool Inbox</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/abasare") }}>Abasare</li>
             <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
           </ul>
         </div>
@@ -135,6 +136,7 @@ function BrowseRides() {
             <button onClick={() => navigate("/carpools")}>Browse Rides</button>
             <button onClick={() => navigate("/post-ride")}>Post Ride</button>
             <button onClick={() => navigate("/carpool-inbox")}>Carpool Inbox</button>
+            <button onClick={() => navigate("/abasare")}>Abasare</button>
             <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
           </div>
           <h2 style={{ fontSize: "28px", fontWeight: "bold", marginTop: "3rem" }}>Available Rides</h2>
@@ -165,7 +167,7 @@ function BrowseRides() {
                     />
 
                     <div style={{ flex: 1 }}>
-                      <h3 style={{ marginBottom: "0.25rem" }}>{ride.origin} → {ride.destination}</h3>
+                      <h3>{ride.origin} → {ride.destination}</h3>
                       <p><strong>Seats:</strong> {ride.available_seats} | <strong>Left:</strong> {seatsLeft}</p>
                       <p><strong>Date/Time:</strong> {new Date(ride.datetime).toLocaleString()}</p>
                       {ride.price && <p><strong>Price:</strong> {ride.price} RWF</p>}

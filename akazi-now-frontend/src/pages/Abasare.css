@@ -1,0 +1,172 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* CONTAINER */
+.abasare-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* LEFT PANEL (Desktop Nav) */
+.abasare-left {
+  width: 50%;
+  background: linear-gradient(to bottom right, #6a00ff, #ff007a);
+  color: white;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.nav-buttons {
+  position: absolute;
+  top: 1rem;
+  left: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.nav-buttons button {
+  background: none;
+  border: none;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* RIGHT PANEL (Driver List) */
+.abasare-right {
+  width: 50%;
+  height: 100vh;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+  padding: 2rem;
+}
+
+/* DRIVER CARD */
+.abasare-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.5rem;
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+.abasare-card img.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* TEXT STYLES */
+.abasare-card div {
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* MOBILE TOP NAV */
+.mobile-top-bar {
+  display: none;
+  width: 100%;
+  background: linear-gradient(to right, #6a00ff, #ff007a);
+  color: white;
+  padding: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+}
+
+.mobile-hamburger {
+  font-size: 1.6rem;
+  cursor: pointer;
+  color: white;
+}
+
+.mobile-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* FULLSCREEN NAV OVERLAY */
+.mobile-nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(to bottom, #6a00ff, #ff007a);
+  color: white;
+  z-index: 999;
+  padding-top: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mobile-nav-overlay ul {
+  list-style: none;
+  font-size: 1.6rem;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.mobile-nav-overlay li {
+  cursor: pointer;
+}
+
+/* RESPONSIVE STYLES */
+@media (max-width: 768px) {
+  .abasare-container {
+    flex-direction: column;
+    overflow-y: auto;
+    min-height: 100vh;
+  }
+
+  .abasare-left {
+    display: none;
+  }
+
+  .abasare-right {
+    width: 100%;
+    padding: 6rem 1rem 2rem;
+    box-sizing: border-box;
+    height: auto;
+  }
+
+  .mobile-top-bar {
+    display: flex;
+  }
+
+  .abasare-card {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .abasare-card img.avatar {
+    margin: 0 auto 1rem;
+  }
+}
