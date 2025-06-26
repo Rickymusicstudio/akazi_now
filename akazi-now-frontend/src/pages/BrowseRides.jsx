@@ -41,15 +41,11 @@ function BrowseRides() {
     setLoading(false);
   };
 
-  const handleSeatChange = (carpoolId, value, maxSeats) => {
+  const handleSeatChange = (carpoolId, value) => {
     const numericValue = parseInt(value);
-    const safeValue = isNaN(numericValue) || numericValue <= 0
-      ? ""
-      : Math.min(maxSeats, numericValue);
-
     setReservationCounts(prev => ({
       ...prev,
-      [carpoolId]: safeValue
+      [carpoolId]: isNaN(numericValue) || numericValue <= 0 ? "" : numericValue
     }));
   };
 
@@ -93,7 +89,6 @@ function BrowseRides() {
       alert("❌ Reservation failed: " + error.message);
     } else {
       alert("✅ Reservation successful!");
-      setReservationCounts(prev => ({ ...prev, [carpoolId]: "" }));
       fetchRides();
     }
   };
@@ -115,7 +110,6 @@ function BrowseRides() {
 
   return (
     <>
-      {/* ✅ Mobile Top Bar */}
       <div className="mobile-top-bar">
         <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <h2 className="mobile-title">Browse Rides</h2>
@@ -188,10 +182,9 @@ function BrowseRides() {
                           <input
                             type="number"
                             min="1"
-                            max={seatsLeft}
                             value={selectedSeats}
                             placeholder="Seats"
-                            onChange={(e) => handleSeatChange(ride.id, e.target.value, seatsLeft)}
+                            onChange={(e) => handleSeatChange(ride.id, e.target.value)}
                             style={{ width: "60px", marginRight: "10px" }}
                           />
                           <button onClick={() => reserveSeat(ride, selectedSeats)} style={reserveBtnStyle}>
