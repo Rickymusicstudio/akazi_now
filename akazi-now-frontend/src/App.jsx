@@ -13,7 +13,8 @@ import CarpoolInbox from "./pages/CarpoolInbox";
 import NotificationsDetail from "./pages/NotificationsDetail";
 import JobDetails from "./pages/JobDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Abasare from "./pages/Abasare"; // ✅ Add import
+import Abasare from "./pages/Abasare"; // ✅ List of drivers
+import AbasareDetail from "./pages/AbasareDetail"; // ✅ Individual driver view
 
 function App() {
   return (
@@ -23,115 +24,26 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* 🏁 Default: redirect "/" to gigs */}
+        {/* 🏁 Default redirect */}
         <Route path="/" element={<Navigate to="/gigs" replace />} />
 
         {/* 🧱 Protected Routes */}
-        <Route
-          path="/gigs"
-          element={
-            <ProtectedRoute>
-              <Gigs />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <UserProfile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/post-job"
-          element={
-            <ProtectedRoute>
-              <PostGig />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/applications"
-          element={
-            <ProtectedRoute>
-              <MyApplications />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/inbox"
-          element={
-            <ProtectedRoute>
-              <ApplicationsInbox />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/my-jobs"
-          element={
-            <ProtectedRoute>
-              <MyJobs />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/jobs/:id"
-          element={
-            <ProtectedRoute>
-              <JobDetails />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/carpools"
-          element={
-            <ProtectedRoute>
-              <BrowseRides />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/post-ride"
-          element={
-            <ProtectedRoute>
-              <Carpool />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/carpool"
-          element={
-            <ProtectedRoute>
-              <Carpool />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/carpool-inbox"
-          element={
-            <ProtectedRoute>
-              <CarpoolInbox />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/notifications/:id"
-          element={
-            <ProtectedRoute>
-              <NotificationsDetail />
-            </ProtectedRoute>
-          }
-        />
-        {/* ✅ New Abasare Route */}
-        <Route
-          path="/abasare"
-          element={
-            <ProtectedRoute>
-              <Abasare />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/gigs" element={<ProtectedRoute><Gigs /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+        <Route path="/post-job" element={<ProtectedRoute><PostGig /></ProtectedRoute>} />
+        <Route path="/applications" element={<ProtectedRoute><MyApplications /></ProtectedRoute>} />
+        <Route path="/inbox" element={<ProtectedRoute><ApplicationsInbox /></ProtectedRoute>} />
+        <Route path="/my-jobs" element={<ProtectedRoute><MyJobs /></ProtectedRoute>} />
+        <Route path="/jobs/:id" element={<ProtectedRoute><JobDetails /></ProtectedRoute>} />
+        <Route path="/carpools" element={<ProtectedRoute><BrowseRides /></ProtectedRoute>} />
+        <Route path="/post-ride" element={<ProtectedRoute><Carpool /></ProtectedRoute>} />
+        <Route path="/carpool" element={<ProtectedRoute><Carpool /></ProtectedRoute>} />
+        <Route path="/carpool-inbox" element={<ProtectedRoute><CarpoolInbox /></ProtectedRoute>} />
+        <Route path="/notifications/:id" element={<ProtectedRoute><NotificationsDetail /></ProtectedRoute>} />
+
+        {/* ✅ Abasare Routes */}
+        <Route path="/abasare" element={<ProtectedRoute><Abasare /></ProtectedRoute>} />
+        <Route path="/abasare/:id" element={<ProtectedRoute><AbasareDetail /></ProtectedRoute>} />
       </Routes>
     </Router>
   );
