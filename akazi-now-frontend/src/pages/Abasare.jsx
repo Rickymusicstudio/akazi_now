@@ -1,11 +1,9 @@
-// pages/Abasare.jsx
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate, Link } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell";
 import { FaBars } from "react-icons/fa";
 import "./Abasare.css";
-
 
 function Abasare() {
   const [form, setForm] = useState({ current_location: "", is_available: true });
@@ -87,8 +85,8 @@ function Abasare() {
         </div>
       )}
 
-      <div className="browse-container">
-        <div className="browse-left">
+      <div className="abasare-container">
+        <div className="abasare-left">
           <div className="nav-buttons">
             <button onClick={() => navigate("/")}>Home</button>
             <button onClick={() => navigate("/carpools")}>Browse Rides</button>
@@ -101,7 +99,7 @@ function Abasare() {
           <NotificationBell />
         </div>
 
-        <div className="browse-right">
+        <div className="abasare-right">
           <form onSubmit={handleSubmit} style={{ marginBottom: "2rem" }}>
             <h3>Register as Umusare</h3>
             <input
@@ -122,32 +120,46 @@ function Abasare() {
             <button type="submit" style={{ marginTop: "1rem", ...submitBtnStyle }}>Submit</button>
           </form>
 
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <table className="abasare-table">
             <thead>
               <tr>
-                <th style={thStyle}>Name</th>
-                <th style={thStyle}>Phone</th>
-                <th style={thStyle}>Location</th>
-                <th style={thStyle}>Status</th>
-                <th style={thStyle}>Rating</th>
+                <th>#</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Rating</th>
               </tr>
             </thead>
             <tbody>
-              {abasareList.map((item) => (
-                <tr key={item.id} style={{ textAlign: "center" }}>
+              {abasareList.map((item, index) => (
+                <tr key={item.id}>
+                  <td>{index + 1}</td>
                   <td>
-                    <Link to={`/abasare/${item.user_id}`} style={{ color: "#6a00ff", textDecoration: "underline" }}>
+                    <Link to={`/abasare/${item.user_id}`} style={{ fontWeight: "bold", textDecoration: "none", color: "#000" }}>
                       {item.users?.full_name || "N/A"}
                     </Link>
                   </td>
                   <td>{item.users?.phone || "N/A"}</td>
                   <td>{item.current_location || "N/A"}</td>
-                  <td style={{ color: item.is_available ? "green" : "red" }}>
+                  <td style={{ color: item.is_available ? "green" : "red", fontWeight: "bold" }}>
                     {item.is_available ? "Available" : "Unavailable"}
                   </td>
                   <td>
-                    {"★".repeat(Math.round(item.average_rating || 0))}{" "}
-                    <span style={{ color: "gray" }}>({item.average_rating || "N/A"})</span>
+                    {item.average_rating ? (
+                      Array.from({ length: 5 }, (_, i) => (
+                        <span
+                          key={i}
+                          className={i < Math.round(item.average_rating)
+                            ? (i < 3 ? "star-green" : "star-yellow")
+                            : "star-inactive"}
+                        >
+                          ★
+                        </span>
+                      ))
+                    ) : (
+                      <span style={{ color: "#888" }}>(N/A)</span>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -166,12 +178,6 @@ const submitBtnStyle = {
   color: "white",
   border: "none",
   cursor: "pointer",
-};
-
-const thStyle = {
-  padding: "10px",
-  fontWeight: "bold",
-  borderBottom: "1px solid #ddd",
 };
 
 export default Abasare;
