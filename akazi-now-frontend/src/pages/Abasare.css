@@ -103,6 +103,21 @@ body {
   color: #ddd;
 }
 
+/* Action buttons inside table */
+.abasare-table button {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 3px 6px;
+  cursor: pointer;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.abasare-table button:hover {
+  background-color: #f1f1f1;
+}
+
 /* Mobile Top Bar */
 .mobile-top-bar {
   display: none;
@@ -181,6 +196,6 @@ body {
 
   .abasare-table {
     font-size: 14px;
-    min-width: 600px;
+    min-width: 700px;
   }
 }

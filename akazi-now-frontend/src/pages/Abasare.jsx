@@ -67,7 +67,6 @@ function Abasare() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return alert("Please log in to rate.");
 
-    // Save rating
     const { error: insertError } = await supabase
       .from("ratings")
       .insert([{ umusare_id: umusareId, rated_by: user.id, rating: stars }]);
@@ -77,7 +76,6 @@ function Abasare() {
       return alert("Failed to rate.");
     }
 
-    // Recalculate average
     const { data: ratings } = await supabase
       .from("ratings")
       .select("rating")
@@ -92,6 +90,32 @@ function Abasare() {
       .eq("user_id", umusareId);
 
     fetchAbasare();
+  };
+
+  const toggleStatus = async (umusareId, currentStatus) => {
+    const { error } = await supabase
+      .from("abasare")
+      .update({ is_available: !currentStatus })
+      .eq("user_id", umusareId);
+
+    if (error) {
+      alert("❌ Failed to update status");
+    } else {
+      fetchAbasare();
+    }
+  };
+
+  const leaveTable = async (umusareId) => {
+    const { error } = await supabase
+      .from("abasare")
+      .delete()
+      .eq("user_id", umusareId);
+
+    if (error) {
+      alert("❌ Failed to leave table");
+    } else {
+      fetchAbasare();
+    }
   };
 
   return (
@@ -159,6 +183,7 @@ function Abasare() {
                 <th>Location</th>
                 <th>Status</th>
                 <th>Rating</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -190,6 +215,24 @@ function Abasare() {
                         ★
                       </span>
                     ))}
+                  </td>
+                  <td>
+                    {userId === item.user_id && (
+                      <>
+                        <button
+                          onClick={() => toggleStatus(item.user_id, item.is_available)}
+                          style={{ fontSize: "12px", marginRight: "5px" }}
+                        >
+                          {item.is_available ? "Set Unavailable" : "Set Available"}
+                        </button>
+                        <button
+                          onClick={() => leaveTable(item.user_id)}
+                          style={{ fontSize: "12px", color: "red" }}
+                        >
+                          Exit Table
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}
