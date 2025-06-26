@@ -1,94 +1,74 @@
+// pages/Abasare.jsx
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import NotificationBell from "../components/NotificationBell";
 import { useNavigate } from "react-router-dom";
+import NotificationBell from "../components/NotificationBell";
+import { FaBars } from "react-icons/fa";
 import "./BrowseRides.css";
 
 function Abasare() {
-  const [abasare, setAbasare] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [form, setForm] = useState({
-    current_location: "",
-    is_available: true,
-  });
+  const [form, setForm] = useState({ current_location: "", is_available: true });
+  const [userId, setUserId] = useState(null);
+  const [abasareList, setAbasareList] = useState([]);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchCurrentUser();
+    loadUser();
     fetchAbasare();
   }, []);
 
-  const fetchCurrentUser = async () => {
+  const loadUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    setCurrentUser(user || null);
+    if (!user) {
+      navigate("/login");
+    } else {
+      setUserId(user.id);
+    }
   };
 
   const fetchAbasare = async () => {
     const { data, error } = await supabase
       .from("abasare")
       .select(`
-        *,
-        users(full_name, phone)
+        id,
+        current_location,
+        is_available,
+        average_rating,
+        user_id,
+        users:users!abasare_user_id_fkey(full_name, phone)
       `)
       .order("created_at", { ascending: false });
 
-    if (!error) {
-      setAbasare(data || []);
-    }
-  };
-
-  const handleFormChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    if (!error) setAbasareList(data || []);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!currentUser) return alert("❌ Please login first.");
+    if (!userId || !form.current_location.trim()) return alert("Please fill in your current location.");
 
-    const { data: existing } = await supabase
-      .from("abasare")
-      .select("id")
-      .eq("user_id", currentUser.id)
-      .single();
-
-    let error;
-
-    if (existing) {
-      ({ error } = await supabase
-        .from("abasare")
-        .update({
-          current_location: form.current_location,
-          is_available: form.is_available,
-        })
-        .eq("user_id", currentUser.id));
-    } else {
-      ({ error } = await supabase
-        .from("abasare")
-        .insert([{
-          user_id: currentUser.id,
-          current_location: form.current_location,
-          is_available: form.is_available,
-        }]));
-    }
+    const { error } = await supabase.from("abasare").upsert([
+      {
+        user_id: userId,
+        current_location: form.current_location.trim(),
+        is_available: form.is_available,
+      },
+    ]);
 
     if (error) {
-      alert("❌ Failed to update status: " + error.message);
+      alert("❌ Failed to register: " + error.message);
     } else {
-      alert("✅ Status updated!");
+      alert("✅ Registered/Updated as Umusare");
+      setForm({ current_location: "", is_available: true });
       fetchAbasare();
     }
   };
 
   return (
     <>
-      {/* Mobile Nav */}
+      {/* 🔝 Mobile Top Bar */}
       <div className="mobile-top-bar">
-        <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>☰</div>
+        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <h2 className="mobile-title">Abasare</h2>
         <NotificationBell />
       </div>
@@ -121,78 +101,69 @@ function Abasare() {
         </div>
 
         <div className="browse-right">
-          {/* Registration Form */}
           <form onSubmit={handleSubmit} style={{ marginBottom: "2rem" }}>
             <h3>Register as Umusare</h3>
             <input
               type="text"
-              name="current_location"
-              placeholder="Your Current Location (e.g. Nyamirambo)"
+              placeholder="Your Current Location (e.g Kacyiru)"
               value={form.current_location}
-              onChange={handleFormChange}
+              onChange={(e) => setForm({ ...form, current_location: e.target.value })}
               required
-              className="input"
-              style={{ marginBottom: "1rem" }}
             />
-            <label style={{ display: "block", marginBottom: "1rem" }}>
+            <div style={{ marginTop: "0.5rem" }}>
               <input
                 type="checkbox"
-                name="is_available"
                 checked={form.is_available}
-                onChange={handleFormChange}
+                onChange={(e) => setForm({ ...form, is_available: e.target.checked })}
               />
-              {' '}Available now
-            </label>
-            <button type="submit" style={btnStyle}>Submit</button>
+              <label style={{ marginLeft: "0.5rem" }}>Available now</label>
+            </div>
+            <button type="submit" style={{ marginTop: "1rem", ...submitBtnStyle }}>Submit</button>
           </form>
 
-          {/* Driver Table */}
-          <div style={{ overflowX: "auto" }}>
-            <table style={tableStyle}>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Phone</th>
-                  <th>Location</th>
-                  <th>Status</th>
-                  <th>Rating</th>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+                <th style={thStyle}>Name</th>
+                <th style={thStyle}>Phone</th>
+                <th style={thStyle}>Location</th>
+                <th style={thStyle}>Status</th>
+                <th style={thStyle}>Rating</th>
+              </tr>
+            </thead>
+            <tbody>
+              {abasareList.map((item) => (
+                <tr key={item.id} style={{ textAlign: "center" }}>
+                  <td>{item.users?.full_name || "N/A"}</td>
+                  <td>{item.users?.phone || "N/A"}</td>
+                  <td>{item.current_location || "N/A"}</td>
+                  <td style={{ color: item.is_available ? "green" : "red" }}>
+                    {item.is_available ? "Available" : "Unavailable"}
+                  </td>
+                  <td>{item.average_rating || "N/A"}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {abasare.map((d) => (
-                  <tr key={d.id}>
-                    <td>{d.users?.full_name || "Unknown"}</td>
-                    <td>{d.users?.phone || "N/A"}</td>
-                    <td>{d.current_location}</td>
-                    <td style={{ color: d.is_available ? "green" : "gray" }}>
-                      {d.is_available ? "Available" : "Not Available"}
-                    </td>
-                    <td>{d.average_rating ? d.average_rating.toFixed(1) : "N/A"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </>
   );
 }
 
-const btnStyle = {
-  padding: "10px 20px",
+const submitBtnStyle = {
+  padding: "8px 16px",
+  borderRadius: "8px",
   background: "linear-gradient(to right, #6a00ff, #ff007a)",
-  color: "#fff",
+  color: "white",
   border: "none",
-  borderRadius: "20px",
   cursor: "pointer",
-  fontWeight: "bold",
 };
 
-const tableStyle = {
-  width: "100%",
-  borderCollapse: "collapse",
-  marginTop: "1rem",
+const thStyle = {
+  padding: "10px",
+  fontWeight: "bold",
+  borderBottom: "1px solid #ddd",
 };
 
 export default Abasare;
