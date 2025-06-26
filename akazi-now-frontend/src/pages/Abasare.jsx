@@ -2,43 +2,93 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import NotificationBell from "../components/NotificationBell";
 import { useNavigate } from "react-router-dom";
-import { FaBars } from "react-icons/fa";
-import defaultAvatar from "../assets/avatar.png";
-import "./Abasare.css";
+import "./BrowseRides.css";
 
 function Abasare() {
-  const [drivers, setDrivers] = useState([]);
+  const [abasare, setAbasare] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [form, setForm] = useState({
+    current_location: "",
+    is_available: true,
+  });
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchDrivers();
+    fetchCurrentUser();
+    fetchAbasare();
   }, []);
 
-  const fetchDrivers = async () => {
+  const fetchCurrentUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    setCurrentUser(user || null);
+  };
+
+  const fetchAbasare = async () => {
     const { data, error } = await supabase
       .from("abasare")
       .select(`
-        id,
-        is_available,
-        location,
-        updated_at,
-        users ( full_name, phone, image_url )
+        *,
+        users(full_name, phone)
       `)
-      .order("updated_at", { ascending: false });
+      .order("created_at", { ascending: false });
 
     if (!error) {
-      setDrivers(data || []);
+      setAbasare(data || []);
+    }
+  };
+
+  const handleFormChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!currentUser) return alert("❌ Please login first.");
+
+    const { data: existing } = await supabase
+      .from("abasare")
+      .select("id")
+      .eq("user_id", currentUser.id)
+      .single();
+
+    let error;
+
+    if (existing) {
+      ({ error } = await supabase
+        .from("abasare")
+        .update({
+          current_location: form.current_location,
+          is_available: form.is_available,
+        })
+        .eq("user_id", currentUser.id));
     } else {
-      console.error("❌ Failed to load drivers:", error.message);
+      ({ error } = await supabase
+        .from("abasare")
+        .insert([{
+          user_id: currentUser.id,
+          current_location: form.current_location,
+          is_available: form.is_available,
+        }]));
+    }
+
+    if (error) {
+      alert("❌ Failed to update status: " + error.message);
+    } else {
+      alert("✅ Status updated!");
+      fetchAbasare();
     }
   };
 
   return (
     <>
-      {/* ✅ Mobile Nav Bar */}
+      {/* Mobile Nav */}
       <div className="mobile-top-bar">
-        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
+        <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>☰</div>
         <h2 className="mobile-title">Abasare</h2>
         <NotificationBell />
       </div>
@@ -47,52 +97,102 @@ function Abasare() {
         <div className="mobile-nav-overlay">
           <ul>
             <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Browse Rides</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/post-ride") }}>Post Ride</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox") }}>Carpool Inbox</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/abasare") }}>Abasare</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Rides</li>
             <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
           </ul>
         </div>
       )}
 
-      <div className="abasare-container">
-        <div className="abasare-left">
+      <div className="browse-container">
+        <div className="browse-left">
           <div className="nav-buttons">
             <button onClick={() => navigate("/")}>Home</button>
+            <button onClick={() => navigate("/carpools")}>Browse Rides</button>
+            <button onClick={() => navigate("/post-ride")}>Post Ride</button>
+            <button onClick={() => navigate("/carpool-inbox")}>Carpool Inbox</button>
             <button onClick={() => navigate("/abasare")}>Abasare</button>
-            <button onClick={() => navigate("/carpools")}>Rides</button>
             <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
           </div>
-          <h2 style={{ marginTop: "4rem" }}>Available Drivers</h2>
+          <h2 style={{ fontSize: "28px", fontWeight: "bold", marginTop: "3rem" }}>Umusare Registration</h2>
           <NotificationBell />
         </div>
 
-        <div className="abasare-right">
-          {drivers.length === 0 ? (
-            <p>No drivers listed yet.</p>
-          ) : (
-            drivers.map((driver) => (
-              <div className="abasare-card" key={driver.id}>
-                <img
-                  src={driver.users?.image_url || defaultAvatar}
-                  alt="Driver"
-                  className="avatar"
-                />
-                <div><strong>Name:</strong> {driver.users?.full_name || "Unknown"}</div>
-                <div><strong>Phone:</strong> {driver.users?.phone || "N/A"}</div>
-                <div><strong>Location:</strong> {driver.location}</div>
-                <div>
-                  <strong>Status:</strong>{" "}
-                  <span style={{ color: driver.is_available ? "green" : "red", fontWeight: "bold" }}>
-                    {driver.is_available ? "✅ Available" : "❌ Not Available"}
-                  </span>
-                </div>
-              </div>
-            ))
-          )}
+        <div className="browse-right">
+          {/* Registration Form */}
+          <form onSubmit={handleSubmit} style={{ marginBottom: "2rem" }}>
+            <h3>Register as Umusare</h3>
+            <input
+              type="text"
+              name="current_location"
+              placeholder="Your Current Location (e.g. Nyamirambo)"
+              value={form.current_location}
+              onChange={handleFormChange}
+              required
+              className="input"
+              style={{ marginBottom: "1rem" }}
+            />
+            <label style={{ display: "block", marginBottom: "1rem" }}>
+              <input
+                type="checkbox"
+                name="is_available"
+                checked={form.is_available}
+                onChange={handleFormChange}
+              />
+              {' '}Available now
+            </label>
+            <button type="submit" style={btnStyle}>Submit</button>
+          </form>
+
+          {/* Driver Table */}
+          <div style={{ overflowX: "auto" }}>
+            <table style={tableStyle}>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Location</th>
+                  <th>Status</th>
+                  <th>Rating</th>
+                </tr>
+              </thead>
+              <tbody>
+                {abasare.map((d) => (
+                  <tr key={d.id}>
+                    <td>{d.users?.full_name || "Unknown"}</td>
+                    <td>{d.users?.phone || "N/A"}</td>
+                    <td>{d.current_location}</td>
+                    <td style={{ color: d.is_available ? "green" : "gray" }}>
+                      {d.is_available ? "Available" : "Not Available"}
+                    </td>
+                    <td>{d.average_rating ? d.average_rating.toFixed(1) : "N/A"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </>
   );
 }
+
+const btnStyle = {
+  padding: "10px 20px",
+  background: "linear-gradient(to right, #6a00ff, #ff007a)",
+  color: "#fff",
+  border: "none",
+  borderRadius: "20px",
+  cursor: "pointer",
+  fontWeight: "bold",
+};
+
+const tableStyle = {
+  width: "100%",
+  borderCollapse: "collapse",
+  marginTop: "1rem",
+};
 
 export default Abasare;
