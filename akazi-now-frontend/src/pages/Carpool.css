@@ -14,8 +14,8 @@
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  align-items: center;         /* ✅ Center horizontally */
-  justify-content: center;     /* ✅ Center vertically */
+  align-items: center;
+  justify-content: center;
   position: relative;
   text-align: center;
 }
@@ -68,6 +68,26 @@
   border: 1px solid #ccc;
   border-radius: 10px;
   font-size: 14px;
+  background-color: #fff;
+  color: #000;
+}
+
+/* Fix autofill and dark mode input issues on Android */
+input,
+textarea,
+select {
+  background-color: #fff !important;
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  box-shadow: none !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  box-shadow: 0 0 0px 1000px white inset !important;
+  -webkit-text-fill-color: #000 !important;
 }
 
 /* Mobile Top Bar */
