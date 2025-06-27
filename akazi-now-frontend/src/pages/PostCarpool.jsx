@@ -1,4 +1,3 @@
-// PostCarpool.jsx
 import { useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
@@ -80,14 +79,12 @@ function PostCarpool() {
 
   return (
     <div className="postride-container">
-      {/* Mobile Top Nav */}
       <div className="mobile-top-bar">
         <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <h2 className="mobile-title">Post Ride</h2>
         <NotificationBell />
       </div>
 
-      {/* Mobile Nav Overlay */}
       {mobileNavOpen && (
         <div className="mobile-nav-overlay">
           <ul>
@@ -100,7 +97,6 @@ function PostCarpool() {
         </div>
       )}
 
-      {/* Left Gradient Panel */}
       <div className="postride-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -113,22 +109,30 @@ function PostCarpool() {
         <NotificationBell />
       </div>
 
-      {/* Right Form Panel */}
       <div className="postride-right">
         <form className="postride-form" onSubmit={handleSubmit}>
           {message && <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>{message}</p>}
 
           <label>Origin</label>
-          <input type="text" name="origin" value={form.origin} onChange={handleChange} placeholder="e.g. Kigali" required />
+          <input type="text" name="origin" value={form.origin} onChange={handleChange} required />
 
           <label>Destination</label>
-          <input type="text" name="destination" value={form.destination} onChange={handleChange} placeholder="e.g. Huye" required />
+          <input type="text" name="destination" value={form.destination} onChange={handleChange} required />
 
           <label>Available Seats</label>
           <input type="number" name="available_seats" value={form.available_seats} onChange={handleChange} required />
 
           <label>Date & Time</label>
-          <input type="datetime-local" name="datetime" value={form.datetime} onChange={handleChange} required />
+          <input
+            type="datetime-local"
+            name="datetime"
+            value={form.datetime}
+            onChange={(e) => {
+              handleChange(e);
+              e.target.blur(); // ✅ closes picker after selecting on Android
+            }}
+            required
+          />
 
           <label>Price (Frw)</label>
           <input type="number" name="price" value={form.price} onChange={handleChange} />
