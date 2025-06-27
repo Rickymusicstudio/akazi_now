@@ -69,7 +69,7 @@ input:-webkit-autofill:hover {
 .abasare-right {
   width: 50%;
   height: 100vh;
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: auto;
   background-color: #f9f9f9;
   padding: 2rem;
@@ -100,6 +100,22 @@ input:-webkit-autofill:hover {
 
 .umusare-actions button:hover {
   background: #eee;
+}
+
+/* TABLE WRAPPER FOR SCROLLING */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 6px;
 }
 
 /* TABLE STYLING */
@@ -217,7 +233,7 @@ input:-webkit-autofill:hover {
   .abasare-right {
     width: 100%;
     padding: 6rem 1rem 2rem;
-    overflow-x: auto;
+    overflow-x: hidden;
   }
 
   .mobile-top-bar {

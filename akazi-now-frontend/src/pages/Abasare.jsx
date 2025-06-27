@@ -1,4 +1,3 @@
-// Abasare.jsx
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate, Link } from "react-router-dom";
@@ -196,51 +195,53 @@ function Abasare() {
             </div>
           )}
 
-          <table className="abasare-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Location</th>
-                <th>Status</th>
-                <th>Rating</th>
-              </tr>
-            </thead>
-            <tbody>
-              {abasareList.map((item, index) => (
-                <tr key={item.id}>
-                  <td>{index + 1}</td>
-                  <td>
-                    <Link to={`/abasare/${item.user_id}`} style={{ fontWeight: "bold", textDecoration: "none", color: "#000" }}>
-                      {item.users?.full_name || "N/A"}
-                    </Link>
-                  </td>
-                  <td>{item.users?.phone || "N/A"}</td>
-                  <td>{item.current_location || "N/A"}</td>
-                  <td style={{ color: item.is_available ? "green" : "red", fontWeight: "bold" }}>
-                    {item.is_available ? "Available" : "Unavailable"}
-                  </td>
-                  <td>
-                    {Array.from({ length: 5 }, (_, i) => (
-                      <span
-                        key={i}
-                        onClick={() => handleRating(item.user_id, i + 1)}
-                        className={
-                          item.average_rating && i < Math.round(item.average_rating)
-                            ? "star-green"
-                            : "star-yellow"
-                        }
-                        style={{ cursor: "pointer" }}
-                      >
-                        ★
-                      </span>
-                    ))}
-                  </td>
+          <div className="table-wrapper">
+            <table className="abasare-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Location</th>
+                  <th>Status</th>
+                  <th>Rating</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {abasareList.map((item, index) => (
+                  <tr key={item.id}>
+                    <td>{index + 1}</td>
+                    <td>
+                      <Link to={`/abasare/${item.user_id}`} style={{ fontWeight: "bold", textDecoration: "none", color: "#000" }}>
+                        {item.users?.full_name || "N/A"}
+                      </Link>
+                    </td>
+                    <td>{item.users?.phone || "N/A"}</td>
+                    <td>{item.current_location || "N/A"}</td>
+                    <td style={{ color: item.is_available ? "green" : "red", fontWeight: "bold" }}>
+                      {item.is_available ? "Available" : "Unavailable"}
+                    </td>
+                    <td>
+                      {Array.from({ length: 5 }, (_, i) => (
+                        <span
+                          key={i}
+                          onClick={() => handleRating(item.user_id, i + 1)}
+                          className={
+                            item.average_rating && i < Math.round(item.average_rating)
+                              ? "star-green"
+                              : "star-yellow"
+                          }
+                          style={{ cursor: "pointer" }}
+                        >
+                          ★
+                        </span>
+                      ))}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </>
