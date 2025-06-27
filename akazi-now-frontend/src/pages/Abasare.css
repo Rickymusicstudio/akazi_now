@@ -219,6 +219,29 @@ input:-webkit-autofill:hover {
   cursor: pointer;
 }
 
+/* SEARCH BAR */
+.search-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 0.5rem;
+}
+
+.search-icon {
+  font-size: 20px;
+  cursor: pointer;
+  color: #6a00ff;
+}
+
+.search-input {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  max-width: 300px;
+}
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .abasare-container {

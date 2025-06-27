@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate, Link } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell";
-import { FaBars } from "react-icons/fa";
+import { FaBars, FaSearch } from "react-icons/fa";
 import "./Abasare.css";
 
 function Abasare() {
@@ -10,6 +10,8 @@ function Abasare() {
   const [userId, setUserId] = useState(null);
   const [abasareList, setAbasareList] = useState([]);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,24 +21,14 @@ function Abasare() {
 
   const loadUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      navigate("/login");
-    } else {
-      setUserId(user.id);
-    }
+    if (!user) navigate("/login");
+    else setUserId(user.id);
   };
 
   const fetchAbasare = async () => {
     const { data, error } = await supabase
       .from("abasare")
-      .select(`
-        id,
-        current_location,
-        is_available,
-        average_rating,
-        user_id,
-        users:users!abasare_user_id_fkey(full_name, phone)
-      `)
+      .select(`id, current_location, is_available, average_rating, user_id, users:users!abasare_user_id_fkey(full_name, phone)`)
       .order("created_at", { ascending: false });
 
     if (!error) setAbasareList(data || []);
@@ -54,9 +46,8 @@ function Abasare() {
       },
     ]);
 
-    if (error) {
-      alert("❌ Failed to register: " + error.message);
-    } else {
+    if (error) alert("❌ Failed to register: " + error.message);
+    else {
       alert("✅ Registered/Updated as Umusare");
       setForm({ current_location: "", is_available: true });
       fetchAbasare();
@@ -71,10 +62,7 @@ function Abasare() {
       .from("ratings")
       .insert([{ umusare_id: umusareId, rated_by: user.id, rating: stars }]);
 
-    if (insertError) {
-      console.error(insertError);
-      return alert("Failed to rate.");
-    }
+    if (insertError) return alert("Failed to rate.");
 
     const { data: ratings } = await supabase
       .from("ratings")
@@ -97,28 +85,17 @@ function Abasare() {
       .update({ is_available: !currentStatus })
       .eq("user_id", umusareId);
 
-    if (error) {
-      alert("❌ Failed to update status");
-    } else {
-      fetchAbasare();
-    }
+    if (!error) fetchAbasare();
   };
 
   const leaveTable = async (umusareId) => {
-    const { error } = await supabase
-      .from("abasare")
-      .delete()
-      .eq("user_id", umusareId);
-
-    if (error) {
-      alert("❌ Failed to leave table");
-    } else {
-      fetchAbasare();
-    }
+    const { error } = await supabase.from("abasare").delete().eq("user_id", umusareId);
+    if (!error) fetchAbasare();
   };
 
   return (
     <>
+      {/* Mobile Header */}
       <div className="mobile-top-bar">
         <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <h2 className="mobile-title">Abasare</h2>
@@ -139,6 +116,7 @@ function Abasare() {
       )}
 
       <div className="abasare-container">
+        {/* Left Side (Desktop Only) */}
         <div className="abasare-left">
           <div className="nav-buttons">
             <button onClick={() => navigate("/")}>Home</button>
@@ -152,6 +130,7 @@ function Abasare() {
           <NotificationBell />
         </div>
 
+        {/* Right Side */}
         <div className="abasare-right">
           <form onSubmit={handleSubmit} style={{ marginBottom: "2rem" }}>
             <h3>Register as Umusare</h3>
@@ -173,6 +152,7 @@ function Abasare() {
             <button type="submit" style={{ marginTop: "1rem", ...submitBtnStyle }}>Submit</button>
           </form>
 
+          {/* Buttons if user already in table */}
           {abasareList.some((a) => a.user_id === userId) && (
             <div className="umusare-actions">
               <button
@@ -195,6 +175,23 @@ function Abasare() {
             </div>
           )}
 
+          {/* 🔍 Search Bar */}
+          <div className="search-bar">
+            {!showSearch && (
+              <FaSearch className="search-icon" onClick={() => setShowSearch(true)} />
+            )}
+            {showSearch && (
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Search by name, phone, or location..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            )}
+          </div>
+
+          {/* Table */}
           <div className="table-wrapper">
             <table className="abasare-table">
               <thead>
@@ -208,37 +205,46 @@ function Abasare() {
                 </tr>
               </thead>
               <tbody>
-                {abasareList.map((item, index) => (
-                  <tr key={item.id}>
-                    <td>{index + 1}</td>
-                    <td>
-                      <Link to={`/abasare/${item.user_id}`} style={{ fontWeight: "bold", textDecoration: "none", color: "#000" }}>
-                        {item.users?.full_name || "N/A"}
-                      </Link>
-                    </td>
-                    <td>{item.users?.phone || "N/A"}</td>
-                    <td>{item.current_location || "N/A"}</td>
-                    <td style={{ color: item.is_available ? "green" : "red", fontWeight: "bold" }}>
-                      {item.is_available ? "Available" : "Unavailable"}
-                    </td>
-                    <td>
-                      {Array.from({ length: 5 }, (_, i) => (
-                        <span
-                          key={i}
-                          onClick={() => handleRating(item.user_id, i + 1)}
-                          className={
-                            item.average_rating && i < Math.round(item.average_rating)
-                              ? "star-green"
-                              : "star-yellow"
-                          }
-                          style={{ cursor: "pointer" }}
-                        >
-                          ★
-                        </span>
-                      ))}
-                    </td>
-                  </tr>
-                ))}
+                {abasareList
+                  .filter((item) => {
+                    const term = searchTerm.toLowerCase();
+                    return (
+                      item.users?.full_name?.toLowerCase().includes(term) ||
+                      item.users?.phone?.toLowerCase().includes(term) ||
+                      item.current_location?.toLowerCase().includes(term)
+                    );
+                  })
+                  .map((item, index) => (
+                    <tr key={item.id}>
+                      <td>{index + 1}</td>
+                      <td>
+                        <Link to={`/abasare/${item.user_id}`} style={{ fontWeight: "bold", textDecoration: "none", color: "#000" }}>
+                          {item.users?.full_name || "N/A"}
+                        </Link>
+                      </td>
+                      <td>{item.users?.phone || "N/A"}</td>
+                      <td>{item.current_location || "N/A"}</td>
+                      <td style={{ color: item.is_available ? "green" : "red", fontWeight: "bold" }}>
+                        {item.is_available ? "Available" : "Unavailable"}
+                      </td>
+                      <td>
+                        {Array.from({ length: 5 }, (_, i) => (
+                          <span
+                            key={i}
+                            onClick={() => handleRating(item.user_id, i + 1)}
+                            className={
+                              item.average_rating && i < Math.round(item.average_rating)
+                                ? "star-green"
+                                : "star-yellow"
+                            }
+                            style={{ cursor: "pointer" }}
+                          >
+                            ★
+                          </span>
+                        ))}
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>
