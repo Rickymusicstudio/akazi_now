@@ -1,3 +1,4 @@
+// PostCarpool.jsx
 import { useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
@@ -50,9 +51,7 @@ function PostCarpool() {
         return;
       }
 
-      const { data } = supabase.storage
-        .from("car-images")
-        .getPublicUrl(fileName);
+      const { data } = supabase.storage.from("car-images").getPublicUrl(fileName);
       imageUrl = data.publicUrl;
     }
 
