@@ -11,6 +11,7 @@ function Signup() {
     email: '',
     password: '',
     confirmPassword: '',
+    phone: '',              // ✅ NEW FIELD
     district_id: '',
     sector_id: '',
     cell: '',
@@ -78,6 +79,7 @@ function Signup() {
       const { error: insertError } = await supabase.from('users').insert([{
         full_name: formData.name,
         email: formData.email,
+        phone: formData.phone, // ✅ STORE PHONE
         auth_user_id: authData.user.id,
         district_id: formData.district_id,
         sector_id: formData.sector_id,
@@ -98,6 +100,7 @@ function Signup() {
         email: '',
         password: '',
         confirmPassword: '',
+        phone: '',
         district_id: '',
         sector_id: '',
         cell: '',
@@ -128,6 +131,9 @@ function Signup() {
 
           <label>Email</label>
           <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+
+          <label>Phone Number</label> {/* ✅ NEW INPUT */}
+          <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required />
 
           <label>Password</label>
           <input type="password" name="password" value={formData.password} onChange={handleChange} required />
