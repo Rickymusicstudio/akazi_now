@@ -158,7 +158,7 @@ function Abasare() {
             <h3>Register as Umusare</h3>
             <input
               type="text"
-              placeholder="Your Current Location (e.g Kacyiru)"
+              placeholder="Your Current Location"
               value={form.current_location}
               onChange={(e) => setForm({ ...form, current_location: e.target.value })}
               required
