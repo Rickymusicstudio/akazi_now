@@ -1,4 +1,3 @@
-// PostCarpool.jsx
 import { useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
@@ -130,7 +129,7 @@ function PostCarpool() {
             value={form.datetime}
             onChange={(e) => {
               handleChange(e);
-              e.target.blur();
+              e.target.blur(); // ✅ closes picker after selecting on Android
             }}
             required
           />

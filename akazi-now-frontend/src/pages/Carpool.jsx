@@ -1,3 +1,4 @@
+// Carpool.jsx
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
@@ -131,10 +132,10 @@ function Carpool() {
         <form onSubmit={handleSubmit} className="carpool-form">
           {message && <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>{message}</p>}
 
-          <input type="text" name="origin" value={form.origin} onChange={handleChange} required className="input" />
-          <input type="text" name="destination" value={form.destination} onChange={handleChange} required className="input" />
+          <input type="text" name="origin" placeholder="Origin (e.g. Kigali)" value={form.origin} onChange={handleChange} required className="input" />
+          <input type="text" name="destination" placeholder="Destination (e.g. Huye)" value={form.destination} onChange={handleChange} required className="input" />
           <input type="number" name="available_seats" placeholder="Available Seats" value={form.available_seats} onChange={handleChange} required className="input" />
-          <input type="datetime-local" name="datetime" value={form.datetime} onChange={(e) => { handleChange(e); e.target.blur(); }} required className="input" />
+          <input type="datetime-local" name="datetime" value={form.datetime} onChange={handleChange} required className="input" />
           <input type="number" name="price" placeholder="Price (Frw)" value={form.price} onChange={handleChange} className="input" />
           <textarea name="notes" placeholder="Extra Message (Optional)" value={form.notes} onChange={handleChange} rows={4} className="input" />
           <label>Upload Car Picture</label>
