@@ -1,3 +1,4 @@
+// Abasare.jsx
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate, Link } from "react-router-dom";
@@ -81,8 +82,7 @@ function Abasare() {
       .select("rating")
       .eq("umusare_id", umusareId);
 
-    const avg =
-      ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length;
+    const avg = ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length;
 
     await supabase
       .from("abasare")

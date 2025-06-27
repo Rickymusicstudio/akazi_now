@@ -18,6 +18,15 @@ input:-webkit-autofill:hover {
   -webkit-text-fill-color: black !important;
 }
 
+.abasare-right input[type="text"],
+.abasare-right input[type="email"],
+.abasare-right input[type="password"] {
+  background-color: white !important;
+  color: black !important;
+  -webkit-text-fill-color: black !important;
+  box-shadow: none !important;
+}
+
 /* MAIN LAYOUT */
 .abasare-container {
   display: flex;
@@ -79,6 +88,8 @@ input:-webkit-autofill:hover {
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 14px;
+  font-weight: bold;
+  color: black;
   cursor: pointer;
 }
 
@@ -100,20 +111,20 @@ input:-webkit-autofill:hover {
   border-radius: 6px;
   overflow: hidden;
   font-size: 15px;
-  text-align: center;
+  min-width: 700px;
+}
+
+.abasare-table th,
+.abasare-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
 }
 
 .abasare-table th {
   background-color: #f1c40f;
   color: #000;
   font-weight: bold;
-  padding: 12px;
-}
-
-.abasare-table td {
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-  text-align: center;
 }
 
 .abasare-table tr:nth-child(even) {
