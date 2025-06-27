@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell";
 import { FaBars } from "react-icons/fa";
 import "./Abasare.css";
+import defaultAvatar from "../assets/avatar.png";
 
 function Abasare() {
   const [form, setForm] = useState({ current_location: "", is_available: true });
   const [userId, setUserId] = useState(null);
   const [abasareList, setAbasareList] = useState([]);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,233 +29,142 @@ function Abasare() {
   };
 
   const fetchAbasare = async () => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("abasare")
-      .select(`
-        id,
-        current_location,
-        is_available,
-        average_rating,
-        user_id,
-        users:users!abasare_user_id_fkey(full_name, phone)
-      `)
-      .order("created_at", { ascending: false });
-
-    if (!error) setAbasareList(data || []);
+      .select("*, users(full_name, phone_number, profile_picture_url)")
+      .order("created_at", { ascending: true });
+    setAbasareList(data || []);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!userId || !form.current_location.trim()) return alert("Please fill in your current location.");
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+  };
 
+  const handleSubmit = async () => {
     const { error } = await supabase.from("abasare").upsert([
       {
         user_id: userId,
-        current_location: form.current_location.trim(),
+        current_location: form.current_location,
         is_available: form.is_available,
       },
     ]);
-
-    if (error) {
-      alert("❌ Failed to register: " + error.message);
-    } else {
-      alert("✅ Registered/Updated as Umusare");
-      setForm({ current_location: "", is_available: true });
-      fetchAbasare();
-    }
+    if (!error) fetchAbasare();
   };
 
-  const handleRating = async (umusareId, stars) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return alert("Please log in to rate.");
-
-    const { error: insertError } = await supabase
-      .from("ratings")
-      .insert([{ umusare_id: umusareId, rated_by: user.id, rating: stars }]);
-
-    if (insertError) {
-      console.error(insertError);
-      return alert("Failed to rate.");
-    }
-
-    const { data: ratings } = await supabase
-      .from("ratings")
-      .select("rating")
-      .eq("umusare_id", umusareId);
-
-    const avg =
-      ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length;
-
+  const handleToggleStatus = async () => {
+    const entry = abasareList.find((a) => a.user_id === userId);
+    if (!entry) return;
     await supabase
       .from("abasare")
-      .update({ average_rating: avg })
-      .eq("user_id", umusareId);
+      .update({ is_available: !entry.is_available })
+      .eq("user_id", userId);
+    fetchAbasare();
+  };
+
+  const handleExit = async () => {
+    await supabase.from("abasare").delete().eq("user_id", userId);
+    fetchAbasare();
+  };
+
+  const handleRate = async (targetUserId, ratingValue) => {
+    const { data: existing } = await supabase
+      .from("ratings")
+      .select("*")
+      .eq("user_id", targetUserId)
+      .eq("rater_id", userId);
+
+    if (existing.length) {
+      await supabase
+        .from("ratings")
+        .update({ rating: ratingValue })
+        .eq("user_id", targetUserId)
+        .eq("rater_id", userId);
+    } else {
+      await supabase
+        .from("ratings")
+        .insert({ user_id: targetUserId, rater_id: userId, rating: ratingValue });
+    }
 
     fetchAbasare();
   };
 
-  const toggleStatus = async (umusareId, currentStatus) => {
-    const { error } = await supabase
-      .from("abasare")
-      .update({ is_available: !currentStatus })
-      .eq("user_id", umusareId);
-
-    if (error) {
-      alert("❌ Failed to update status");
-    } else {
-      fetchAbasare();
-    }
-  };
-
-  const leaveTable = async (umusareId) => {
-    const { error } = await supabase
-      .from("abasare")
-      .delete()
-      .eq("user_id", umusareId);
-
-    if (error) {
-      alert("❌ Failed to leave table");
-    } else {
-      fetchAbasare();
-    }
+  const renderStars = (targetUserId, averageRating) => {
+    return [1, 2, 3, 4, 5].map((value) => (
+      <span
+        key={value}
+        className={`star ${averageRating >= value ? "green" : "yellow"}`}
+        onClick={() => handleRate(targetUserId, value)}
+      >
+        ★
+      </span>
+    ));
   };
 
   return (
-    <>
-      <div className="mobile-top-bar">
-        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
-        <h2 className="mobile-title">Abasare</h2>
-        <NotificationBell />
-      </div>
-
-      {mobileNavOpen && (
-        <div className="mobile-nav-overlay">
-          <ul>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Browse Rides</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/post-ride") }}>Post Ride</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox") }}>Carpool Inbox</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/abasare") }}>Abasare</li>
-            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
-          </ul>
-        </div>
-      )}
-
-      <div className="abasare-container">
-        <div className="abasare-left">
-          <div className="nav-buttons">
-            <button onClick={() => navigate("/")}>Home</button>
-            <button onClick={() => navigate("/carpools")}>Browse Rides</button>
-            <button onClick={() => navigate("/post-ride")}>Post Ride</button>
-            <button onClick={() => navigate("/carpool-inbox")}>Carpool Inbox</button>
-            <button onClick={() => navigate("/abasare")}>Abasare</button>
-            <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
-          </div>
-          <h2 style={{ fontSize: "28px", fontWeight: "bold", marginTop: "3rem" }}>Umusare Registration</h2>
+    <div className="abasare-container">
+      <div className="abasare-left">
+        <div className="nav-buttons">
+          <FaBars onClick={() => setMobileNavOpen(!mobileNavOpen)} className="menu-icon" />
           <NotificationBell />
         </div>
-
-        <div className="abasare-right">
-          <form onSubmit={handleSubmit} style={{ marginBottom: "2rem" }}>
-            <h3>Register as Umusare</h3>
-            <input
-              type="text"
-              placeholder="Your Current Location (e.g Kacyiru)"
-              value={form.current_location}
-              onChange={(e) => setForm({ ...form, current_location: e.target.value })}
-              required
-            />
-            <div style={{ marginTop: "0.5rem" }}>
-              <input
-                type="checkbox"
-                checked={form.is_available}
-                onChange={(e) => setForm({ ...form, is_available: e.target.checked })}
-              />
-              <label style={{ marginLeft: "0.5rem" }}>Available now</label>
-            </div>
-            <button type="submit" style={{ marginTop: "1rem", ...submitBtnStyle }}>Submit</button>
-          </form>
-
-          {abasareList.some((a) => a.user_id === userId) && (
-            <div className="umusare-actions">
-              <button
-                onClick={() => {
-                  const myEntry = abasareList.find(a => a.user_id === userId);
-                  if (myEntry) toggleStatus(myEntry.user_id, myEntry.is_available);
-                }}
-              >
-                Change Status
-              </button>
-              <button
-                onClick={() => {
-                  const myEntry = abasareList.find(a => a.user_id === userId);
-                  if (myEntry) leaveTable(myEntry.user_id);
-                }}
-                className="exit-btn"
-              >
-                Exit Table
-              </button>
-            </div>
-          )}
-
-          <table className="abasare-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Location</th>
-                <th>Status</th>
-                <th>Rating</th>
-              </tr>
-            </thead>
-            <tbody>
-              {abasareList.map((item, index) => (
-                <tr key={item.id}>
-                  <td>{index + 1}</td>
-                  <td>
-                    <Link to={`/abasare/${item.user_id}`} style={{ fontWeight: "bold", textDecoration: "none", color: "#000" }}>
-                      {item.users?.full_name || "N/A"}
-                    </Link>
-                  </td>
-                  <td>{item.users?.phone || "N/A"}</td>
-                  <td>{item.current_location || "N/A"}</td>
-                  <td style={{ color: item.is_available ? "green" : "red", fontWeight: "bold" }}>
-                    {item.is_available ? "Available" : "Unavailable"}
-                  </td>
-                  <td>
-                    {Array.from({ length: 5 }, (_, i) => (
-                      <span
-                        key={i}
-                        onClick={() => handleRating(item.user_id, i + 1)}
-                        className={
-                          item.average_rating && i < Math.round(item.average_rating)
-                            ? "star-green"
-                            : "star-yellow"
-                        }
-                        style={{ cursor: "pointer" }}
-                      >
-                        ★
-                      </span>
-                    ))}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <h2>Register as Umusare</h2>
+        <input
+          name="current_location"
+          placeholder="Your Current Location (e.g Kacyiru)"
+          value={form.current_location}
+          onChange={handleChange}
+          autoComplete="off"
+        />
+        <label>
+          <input
+            type="checkbox"
+            name="is_available"
+            checked={form.is_available}
+            onChange={handleChange}
+          />
+          Available now
+        </label>
+        <button onClick={handleSubmit} className="submit-btn">Submit</button>
+        <div className="status-buttons">
+          <button onClick={handleToggleStatus}>Change Status</button>
+          <button className="exit-btn" onClick={handleExit}>Exit Table</button>
         </div>
       </div>
-    </>
+
+      <div className="abasare-right">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Location</th>
+              <th>Status</th>
+              <th>Rating</th>
+            </tr>
+          </thead>
+          <tbody>
+            {abasareList.map((a, i) => (
+              <tr key={a.id}>
+                <td>{i + 1}</td>
+                <td>
+                  <strong>{a.users?.full_name?.split(" ")[0]}</strong><br />
+                  {a.users?.full_name?.split(" ")[1] || ""}
+                </td>
+                <td>{a.users?.phone_number || "N/A"}</td>
+                <td>{a.current_location}</td>
+                <td className={a.is_available ? "status-available" : "status-unavailable"}>
+                  {a.is_available ? "Available" : "Not Available"}
+                </td>
+                <td>{renderStars(a.user_id, a.average_rating || 0)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }
-
-const submitBtnStyle = {
-  padding: "8px 16px",
-  borderRadius: "8px",
-  background: "linear-gradient(to right, #6a00ff, #ff007a)",
-  color: "white",
-  border: "none",
-  cursor: "pointer",
-};
 
 export default Abasare;
