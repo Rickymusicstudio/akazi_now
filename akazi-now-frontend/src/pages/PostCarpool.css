@@ -1,10 +1,20 @@
-/* PostCarpool.css — Clean 50/50 split layout with isolated styles */
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
+body {
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Container layout */
 .postride-container {
   display: flex;
   height: 100vh;
   width: 100vw;
-  font-family: 'Segoe UI', sans-serif;
+  overflow: hidden;
 }
 
 /* Left gradient section */
@@ -40,17 +50,16 @@
   cursor: pointer;
 }
 
-/* Right panel with the form */
+/* Right panel */
 .postride-right {
   width: 50%;
   height: 100vh;
   overflow-y: auto;
   padding: 2rem;
   background-color: #fff;
-  box-sizing: border-box;
 }
 
-/* Form layout (renamed from .signup-form) */
+/* Form styling */
 .postride-form {
   display: flex;
   flex-direction: column;
@@ -63,7 +72,8 @@
 }
 
 .postride-form input,
-.postride-form textarea {
+.postride-form textarea,
+.postride-form select {
   padding: 1rem;
   font-size: 1rem;
   border-radius: 12px;
@@ -71,13 +81,26 @@
   margin-bottom: 1rem;
   background-color: #fff;
   color: #000;
+  -webkit-text-fill-color: #000 !important;
+  box-shadow: none !important;
 }
 
+/* Autofill fix (Android Chrome) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  box-shadow: 0 0 0px 1000px white inset !important;
+  -webkit-text-fill-color: #000 !important;
+}
+
+/* Textarea tweaks */
 .postride-form textarea {
   resize: vertical;
   height: 80px;
 }
 
+/* Submit button */
 .postride-form .btn {
   padding: 1rem;
   font-size: 1.1rem;
@@ -89,8 +112,89 @@
   cursor: pointer;
 }
 
-/* Hide mobile nav elements on desktop */
-.mobile-top-bar,
-.mobile-nav-overlay {
+/* Mobile top bar (hidden on desktop) */
+.mobile-top-bar {
   display: none;
+  width: 100%;
+  background: linear-gradient(to right, #6a00ff, #ff007a);
+  color: white;
+  padding: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+}
+
+.mobile-hamburger {
+  font-size: 1.6rem;
+  color: white;
+  cursor: pointer;
+}
+
+.mobile-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Mobile nav overlay */
+.mobile-nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(to bottom, #6a00ff, #ff007a);
+  color: white;
+  z-index: 999;
+  padding-top: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mobile-nav-overlay ul {
+  list-style: none;
+  font-size: 1.6rem;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.mobile-nav-overlay li {
+  cursor: pointer;
+}
+
+/* Responsive for mobile */
+@media (max-width: 768px) {
+  .postride-container {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .postride-left {
+    display: none;
+  }
+
+  .postride-right {
+    width: 100%;
+    padding: 6rem 1rem 2rem;
+  }
+
+  .mobile-top-bar {
+    display: flex;
+  }
+
+  .postride-form input,
+  .postride-form textarea,
+  .postride-form select {
+    font-size: 16px;
+  }
+
+  .postride-form .btn {
+    font-size: 16px;
+    padding: 0.8rem;
+  }
 }
