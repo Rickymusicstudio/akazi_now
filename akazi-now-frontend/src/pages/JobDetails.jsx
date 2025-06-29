@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import defaultAvatar from "../assets/avatar.png";
 import NotificationBell from "../components/NotificationBell";
-import "./JobDetails.css";
+import "./Inbox.css";
 
 function JobDetails() {
   const { id } = useParams();

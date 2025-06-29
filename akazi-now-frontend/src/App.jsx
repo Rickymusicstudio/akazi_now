@@ -13,8 +13,9 @@ import CarpoolInbox from "./pages/CarpoolInbox";
 import NotificationsDetail from "./pages/NotificationsDetail";
 import JobDetails from "./pages/JobDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Abasare from "./pages/Abasare"; // ✅ List of drivers
-import AbasareDetail from "./pages/AbasareDetail"; // ✅ Individual driver view
+import Abasare from "./pages/Abasare";
+import AbasareDetail from "./pages/AbasareDetail";
+import Settings from "./pages/Settings"; // ✅ NEW Settings Page
 
 function App() {
   return (
@@ -44,6 +45,9 @@ function App() {
         {/* ✅ Abasare Routes */}
         <Route path="/abasare" element={<ProtectedRoute><Abasare /></ProtectedRoute>} />
         <Route path="/abasare/:id" element={<ProtectedRoute><AbasareDetail /></ProtectedRoute>} />
+
+        {/* ✅ Settings Page */}
+        <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
       </Routes>
     </Router>
   );
