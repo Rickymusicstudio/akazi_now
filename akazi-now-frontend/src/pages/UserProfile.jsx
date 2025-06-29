@@ -14,9 +14,12 @@ function UserProfile() {
   const [sectors, setSectors] = useState([]);
   const [message, setMessage] = useState('');
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [showSettings, setShowSettings] = useState(true);
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [passwords, setPasswords] = useState({ newPassword: '', confirmPassword: '' });
+
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
-  const [showSettings, setShowSettings] = useState(true);
 
   useEffect(() => {
     loadProfile();
@@ -73,7 +76,7 @@ function UserProfile() {
 
   const handleSave = async () => {
     if (!profile?.auth_user_id) {
-      setMessage('❌ Missing auth_user_id. Cannot update profile.');
+      setMessage('❌ Missing auth_user_id.');
       return;
     }
 
@@ -139,6 +142,32 @@ function UserProfile() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate('/login');
+  };
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    const { newPassword, confirmPassword } = passwords;
+
+    if (newPassword.length < 6) {
+      setMessage('❌ Password must be at least 6 characters');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setMessage('❌ Passwords do not match');
+      return;
+    }
+
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+
+    if (error) {
+      setMessage('❌ Failed to change password');
+    } else {
+      setMessage('✅ Password changed successfully');
+      setPasswords({ newPassword: '', confirmPassword: '' });
+      setShowChangePassword(false);
+      setShowSettings(true);
+    }
   };
 
   if (!profile) return null;
@@ -212,12 +241,29 @@ function UserProfile() {
 
       {/* Right Panel */}
       <div className="profile-right">
-        {showSettings ? (
+        {showChangePassword ? (
+          <form className="profile-form" onSubmit={handlePasswordChange}>
+            <label>New Password</label>
+            <input
+              type="password"
+              value={passwords.newPassword}
+              onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
+            />
+            <label>Confirm Password</label>
+            <input
+              type="password"
+              value={passwords.confirmPassword}
+              onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
+            />
+            <button type="button" className="btn" onClick={() => setShowChangePassword(false)}>Cancel</button>
+            <button type="submit" className="btn">Change Password</button>
+          </form>
+        ) : showSettings ? (
           <div className="profile-form">
             {message && <p style={{ color: message.startsWith('✅') ? 'green' : 'red' }}>{message}</p>}
             <button className="btn" onClick={() => { setShowSettings(false); setEditing(true); }}>Edit Profile</button>
-            <button className="btn" onClick={() => alert("⚠️ Change Password (to be implemented)")}>Change Password</button>
-            <button className="btn" onClick={() => alert("🌗 Toggle Dark Mode (to be implemented)")}>Toggle Dark Mode</button>
+            <button className="btn" onClick={() => { setShowSettings(false); setShowChangePassword(true); }}>Change Password</button>
+            <button className="btn" onClick={() => alert("🌗 Dark Mode (to be implemented)")}>Toggle Dark Mode</button>
             <button className="btn" onClick={() => alert("📲 Push Notifications (to be implemented)")}>Push Notifications</button>
             <button className="btn" onClick={() => alert("❌ Delete Account (to be implemented)")}>Delete Account</button>
           </div>
