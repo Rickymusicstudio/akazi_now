@@ -1,5 +1,4 @@
-// Gigs.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { FaPhone, FaBars } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +14,7 @@ function Gigs() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const mobileNavRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -91,25 +91,37 @@ function Gigs() {
       {/* ✅ Mobile Header */}
       <div
         className="mobile-top-bar"
-        style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }} // ✅ dark blue
+        style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
       >
-        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
+        <FaBars
+          className="mobile-hamburger"
+          onClick={() => {
+            setMobileNavOpen((prev) => {
+              const newState = !prev;
+              if (newState && mobileNavRef.current) {
+                mobileNavRef.current.scrollTo({ top: 0, behavior: "smooth" });
+              }
+              return newState;
+            });
+          }}
+        />
         <h2 className="mobile-title">Available Jobs</h2>
         <NotificationBell />
       </div>
 
       {mobileNavOpen && (
         <div
+          ref={mobileNavRef}
           className="mobile-nav-overlay"
-          style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }} // ✅ dark blue
+          style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)", overflowY: "auto" }}
         >
           <ul>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/post-job") }}>Post a Job</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/my-jobs") }}>My Jobs</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/profile") }}>Profile</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/inbox") }}>Inbox</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Car Pooling</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/"); }}>Home</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/post-job"); }}>Post a Job</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/my-jobs"); }}>My Jobs</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/profile"); }}>Profile</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/inbox"); }}>Inbox</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools"); }}>Car Pooling</li>
             <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
           </ul>
         </div>
