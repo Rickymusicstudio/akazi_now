@@ -11,11 +11,26 @@ function ApplicationsInbox() {
   const [notifications, setNotifications] = useState([]);
   const [isPoster, setIsPoster] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchInbox();
+    fetchUserProfile();
   }, []);
+
+  const fetchUserProfile = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data } = await supabase
+      .from("users")
+      .select("image_url")
+      .eq("auth_user_id", user.id)
+      .single();
+
+    setUserProfile(data);
+  };
 
   const fetchInbox = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -88,9 +103,16 @@ function ApplicationsInbox() {
 
   return (
     <div className="inbox-container">
-      {/* ✅ MOBILE TOP NAV */}
+      {/* ✅ MOBILE TOP NAV WITH PROFILE PIC */}
       <div className="mobile-top-bar">
-        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
+        <div className="mobile-left-group">
+          <img
+            src={userProfile?.image_url || defaultAvatar}
+            alt="avatar"
+            className="mobile-profile-pic"
+          />
+          <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
+        </div>
         <h2 className="mobile-title">Inbox</h2>
         <NotificationBell />
       </div>
