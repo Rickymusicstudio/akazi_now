@@ -8,7 +8,7 @@
 /* LEFT (Desktop) */
 .gigs-left {
   width: 50%;
-  background: linear-gradient(to bottom, #4facfe, #00f2fe); /* ✅ updated */
+  background: linear-gradient(to bottom, #4facfe, #00f2fe); /* ✅ blue gradient */
   color: white;
   padding: 2rem;
   display: flex;
@@ -187,7 +187,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: linear-gradient(to bottom, #4facfe, #00f2fe); /* ✅ updated */
+    background: linear-gradient(to bottom, #4facfe, #00f2fe); /* ✅ fixed */
     color: white;
     position: sticky;
     top: 0;
@@ -216,7 +216,7 @@
   .mobile-nav-overlay {
     position: fixed;
     inset: 0;
-    background: linear-gradient(to bottom, #4facfe, #00f2fe); /* ✅ updated */
+    background: linear-gradient(to bottom, #4facfe, #00f2fe); /* ✅ fixed */
     z-index: 999;
     display: flex;
     justify-content: center;
