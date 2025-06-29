@@ -9,7 +9,7 @@
 /* LEFT (Desktop) */
 .myjobs-left {
   width: 50%;
-  background: linear-gradient(135deg, #4a47a3, #38327c); /* 🔵 Updated */
+  background: linear-gradient(to bottom right, #1a237e, #3949ab); /* dark blue */
   color: white;
   padding: 2rem;
   display: flex;
@@ -21,11 +21,13 @@
 
 .nav-buttons {
   position: absolute;
-  top: 1.5rem;
-  left: 2rem;
+  top: 1rem;
+  left: 1.5rem;
   display: flex;
-  flex-wrap: wrap;
   gap: 1rem;
+  flex-wrap: wrap;
+  font-weight: bold;
+  font-size: 14px;
 }
 
 .nav-buttons button {
@@ -78,34 +80,54 @@
   color: #222;
 }
 
-.job-card p {
-  margin: 0;
+.job-card .job-employer {
+  margin-top: 0.25rem;
+  font-style: italic;
+  color: #777;
+}
+
+.job-card .job-description {
+  margin: 1rem 0;
   font-size: 1rem;
   color: #444;
 }
 
-.job-status.open {
+.job-card .requirement {
+  font-weight: bold;
+  color: #222;
+  margin: 0.5rem 0;
+}
+
+.job-card .contact-info {
+  display: flex;
+  align-items: center;
+  color: #6a00ff;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+.job-card .status {
+  font-weight: bold;
   color: green;
-  font-weight: bold;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-.job-status.closed {
-  color: red;
-  font-weight: bold;
-}
-
-.delete-btn {
-  margin-top: 1rem;
-  background: linear-gradient(to right, #4a47a3, #38327c);
+.job-card .delete-btn {
+  margin-top: 1.5rem;
+  background: linear-gradient(to right, #1a237e, #3949ab); /* dark blue */
   color: white;
-  padding: 0.75rem 2rem;
   border: none;
   border-radius: 999px;
+  padding: 0.75rem 2rem;
   font-weight: bold;
+  font-size: 1rem;
   cursor: pointer;
 }
 
-/* MOBILE STYLES */
+/* MOBILE VIEW */
 .mobile-top-bar {
   display: none;
 }
@@ -126,7 +148,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: linear-gradient(135deg, #4a47a3, #38327c); /* 🔵 Updated */
+    background: linear-gradient(to right, #1a237e, #3949ab); /* dark blue */
     color: white;
     position: fixed;
     top: 0;
@@ -158,10 +180,26 @@
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
   }
 
+  .job-list {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .job-card {
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+
   .mobile-nav-overlay {
     position: fixed;
     inset: 0;
-    background: linear-gradient(135deg, #4a47a3, #38327c); /* 🔵 Updated */
+    background: linear-gradient(to bottom right, #1a237e, #3949ab); /* dark blue */
     z-index: 1000;
     display: flex;
     justify-content: center;
