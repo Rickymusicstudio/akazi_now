@@ -117,7 +117,7 @@
 
 .job-card .delete-btn {
   margin-top: 1.5rem;
-  background: linear-gradient(to right, #0f2027, #203a43, #2c5364); /* ✅ updated */
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364); /* ✅ dark blue */
   color: white;
   border: none;
   border-radius: 999px;
@@ -148,7 +148,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ updated */
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ dark blue */
     color: white;
     position: fixed;
     top: 0;
@@ -199,7 +199,7 @@
   .mobile-nav-overlay {
     position: fixed;
     inset: 0;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ updated */
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ fixed gradient */
     z-index: 1000;
     display: flex;
     justify-content: center;
