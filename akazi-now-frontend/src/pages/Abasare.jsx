@@ -13,33 +13,19 @@ function Abasare() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [profilePic, setProfilePic] = useState(defaultAvatar);
+  const [userProfile, setUserProfile] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     loadUser();
     fetchAbasare();
-    loadProfilePicture();
+    fetchProfileImage();
   }, []);
 
   const loadUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) navigate("/login");
     else setUserId(user.id);
-  };
-
-  const loadProfilePicture = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const { data } = await supabase
-        .from("users")
-        .select("image_url")
-        .eq("auth_user_id", user.id)
-        .single();
-      if (data?.image_url) {
-        setProfilePic(data.image_url);
-      }
-    }
   };
 
   const fetchAbasare = async () => {
@@ -51,17 +37,26 @@ function Abasare() {
     if (!error) setAbasareList(data || []);
   };
 
+  const fetchProfileImage = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data } = await supabase
+      .from("users")
+      .select("image_url")
+      .eq("auth_user_id", user.id)
+      .single();
+    setUserProfile(data);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!userId || !form.current_location.trim()) return alert("Please fill in your current location.");
 
-    const { error } = await supabase.from("abasare").upsert([
-      {
-        user_id: userId,
-        current_location: form.current_location.trim(),
-        is_available: form.is_available,
-      },
-    ]);
+    const { error } = await supabase.from("abasare").upsert([{
+      user_id: userId,
+      current_location: form.current_location.trim(),
+      is_available: form.is_available,
+    }]);
 
     if (error) alert("❌ Failed to register: " + error.message);
     else {
@@ -112,13 +107,18 @@ function Abasare() {
 
   return (
     <>
-      {/* Mobile Header */}
-      <div className="mobile-top-bar">
-        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
-        <h2 className="mobile-title">Abasare</h2>
-        <div className="mobile-profile-pic-wrapper">
-          <img src={profilePic} alt="Profile" className="mobile-profile-pic" />
+      {/* Mobile Top Bar */}
+      <div className="mobile-top-bar" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}>
+        <div className="mobile-left-group">
+          <img
+            src={userProfile?.image_url || defaultAvatar}
+            alt="avatar"
+            className="mobile-profile-pic"
+          />
+          <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         </div>
+        <h2 className="mobile-title">Abasare</h2>
+        <NotificationBell />
       </div>
 
       {mobileNavOpen && (
@@ -135,7 +135,6 @@ function Abasare() {
       )}
 
       <div className="abasare-container">
-        {/* Left Side (Desktop Only) */}
         <div className="abasare-left">
           <div className="nav-buttons">
             <button onClick={() => navigate("/")}>Home</button>
@@ -149,7 +148,6 @@ function Abasare() {
           <NotificationBell />
         </div>
 
-        {/* Right Side */}
         <div className="abasare-right">
           <form onSubmit={handleSubmit} style={{ marginBottom: "2rem" }}>
             <h3>Register as Umusare</h3>
@@ -173,27 +171,17 @@ function Abasare() {
 
           {abasareList.some((a) => a.user_id === userId) && (
             <div className="umusare-actions">
-              <button
-                onClick={() => {
-                  const myEntry = abasareList.find(a => a.user_id === userId);
-                  if (myEntry) toggleStatus(myEntry.user_id, myEntry.is_available);
-                }}
-              >
-                Change Status
-              </button>
-              <button
-                onClick={() => {
-                  const myEntry = abasareList.find(a => a.user_id === userId);
-                  if (myEntry) leaveTable(myEntry.user_id);
-                }}
-                className="exit-btn"
-              >
-                Exit Table
-              </button>
+              <button onClick={() => {
+                const myEntry = abasareList.find(a => a.user_id === userId);
+                if (myEntry) toggleStatus(myEntry.user_id, myEntry.is_available);
+              }}>Change Status</button>
+              <button className="exit-btn" onClick={() => {
+                const myEntry = abasareList.find(a => a.user_id === userId);
+                if (myEntry) leaveTable(myEntry.user_id);
+              }}>Exit Table</button>
             </div>
           )}
 
-          {/* Search Bar */}
           <div className="search-bar">
             {!showSearch && (
               <FaSearch className="search-icon" onClick={() => setShowSearch(true)} />
@@ -209,7 +197,6 @@ function Abasare() {
             )}
           </div>
 
-          {/* Table */}
           <div className="table-wrapper">
             <table className="abasare-table">
               <thead>
