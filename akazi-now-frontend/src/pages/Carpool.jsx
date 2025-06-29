@@ -1,8 +1,8 @@
-// Carpool.jsx
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell";
+import defaultAvatar from "../assets/avatar.png";
 import "./Carpool.css";
 
 function Carpool() {
@@ -18,25 +18,31 @@ function Carpool() {
   const [carImageFile, setCarImageFile] = useState(null);
   const [message, setMessage] = useState("");
   const [userProfile, setUserProfile] = useState({ full_name: "", contact_info: "" });
+  const [profilePic, setProfilePic] = useState(defaultAvatar);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data, error } = await supabase
-        .from("users")
-        .select("full_name, contact_info")
-        .eq("auth_user_id", user.id)
-        .single();
-
-      if (!error) setUserProfile(data);
-    };
-
     fetchProfile();
   }, []);
+
+  const fetchProfile = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from("users")
+      .select("full_name, contact_info, image_url")
+      .eq("auth_user_id", user.id)
+      .single();
+
+    if (!error && data) {
+      setUserProfile(data);
+      if (data.image_url) {
+        setProfilePic(data.image_url);
+      }
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -94,11 +100,13 @@ function Carpool() {
 
   return (
     <div className="carpool-container">
-      {/* Mobile Top Bar */}
+      {/* ✅ MOBILE HEADER WITH PROFILE PICTURE */}
       <div className="mobile-top-bar">
         <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>☰</div>
         <h2 className="mobile-title">Post Carpool</h2>
-        <NotificationBell />
+        <div className="mobile-profile-pic-wrapper">
+          <img src={profilePic} alt="Profile" className="mobile-profile-pic" />
+        </div>
       </div>
 
       {/* Mobile Nav Overlay */}
@@ -148,7 +156,7 @@ function Carpool() {
 }
 
 const btnStyle = {
-  background: "linear-gradient(to right, #0f2027, #203a43, #2c5364)", // ✅ dark blue
+  background: "linear-gradient(to right, #0f2027, #203a43, #2c5364)",
   color: "white",
   padding: "12px 24px",
   border: "none",
