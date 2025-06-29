@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
@@ -8,15 +8,15 @@ import "./MyJobs.css";
 function MyJobs() {
   const [jobs, setJobs] = useState([]);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [navClosing, setNavClosing] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [slideDirection, setSlideDirection] = useState("");
+  const mobileNavRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchMyJobs();
+    fetchJobs();
   }, []);
 
-  const fetchMyJobs = async () => {
+  const fetchJobs = async () => {
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -29,87 +29,64 @@ function MyJobs() {
     const { data, error } = await supabase
       .from("jobs")
       .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
+      .eq("user_id", user.id);
 
     if (error) {
-      console.error("❌ Failed to fetch jobs:", error.message);
+      console.error("Failed to fetch jobs:", error.message);
     } else {
-      setJobs(data || []);
-    }
-    setLoading(false);
-  };
-
-  const handleDelete = async (id) => {
-    const confirmed = window.confirm("Are you sure you want to delete this job?");
-    if (!confirmed) return;
-
-    const { error: appDeleteError } = await supabase
-      .from("applications")
-      .delete()
-      .eq("gig_id", id);
-
-    if (appDeleteError) {
-      alert("❌ Failed to delete related applications: " + appDeleteError.message);
-      return;
-    }
-
-    const { error: jobDeleteError } = await supabase
-      .from("jobs")
-      .delete()
-      .eq("id", id);
-
-    if (jobDeleteError) {
-      alert("❌ Failed to delete job: " + jobDeleteError.message);
-    } else {
-      alert("✅ Job deleted");
-      fetchMyJobs();
+      setJobs(data);
     }
   };
 
-  const handleToggleNav = () => {
-    if (mobileNavOpen) {
-      setNavClosing(true);
-      setTimeout(() => {
-        setMobileNavOpen(false);
-        setNavClosing(false);
-      }, 400);
+  const handleDelete = async (jobId) => {
+    const { error } = await supabase.from("jobs").delete().eq("id", jobId);
+    if (error) {
+      alert("❌ Failed to delete job");
     } else {
+      fetchJobs();
+    }
+  };
+
+  const handleHamburgerClick = () => {
+    if (!mobileNavOpen) {
+      setSlideDirection("slide-down");
       setMobileNavOpen(true);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      setSlideDirection("slide-up");
+      setTimeout(() => setMobileNavOpen(false), 300);
     }
   };
 
   return (
     <div className="myjobs-container">
-      {/* MOBILE NAV HEADER */}
-      <div className="mobile-top-bar">
-        <FaBars className="mobile-hamburger" onClick={handleToggleNav} />
+      {/* ✅ Mobile Header */}
+      <div className="mobile-top-bar" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}>
+        <FaBars className="mobile-hamburger" onClick={handleHamburgerClick} />
         <h2 className="mobile-title">My Jobs</h2>
         <NotificationBell />
       </div>
 
-      {/* MOBILE FULLSCREEN NAV */}
+      {/* ✅ Mobile Nav Overlay */}
       {mobileNavOpen && (
-        <div className={`mobile-nav-overlay ${navClosing ? "hide" : ""}`}>
+        <div
+          ref={mobileNavRef}
+          className={`mobile-nav-overlay ${slideDirection}`}
+          style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
+        >
           <ul>
-            <li onClick={() => { handleToggleNav(); navigate("/") }}>Home</li>
-            <li onClick={() => { handleToggleNav(); navigate("/post-job") }}>Post a Job</li>
-            <li onClick={() => { handleToggleNav(); navigate("/my-jobs") }}>My Jobs</li>
-            <li onClick={() => { handleToggleNav(); navigate("/profile") }}>Profile</li>
-            <li onClick={() => { handleToggleNav(); navigate("/inbox") }}>Inbox</li>
-            <li onClick={() => { handleToggleNav(); navigate("/carpools") }}>Car Pooling</li>
-            <li onClick={async () => {
-              await supabase.auth.signOut();
-              handleToggleNav();
-              navigate("/login");
-            }}>Logout</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/post-job") }}>Post a Job</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/my-jobs") }}>My Jobs</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/profile") }}>Profile</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/inbox") }}>Inbox</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Car Pooling</li>
+            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
           </ul>
         </div>
       )}
 
-      {/* DESKTOP LEFT NAV */}
-      <div className="myjobs-left">
+      {/* ✅ Desktop Left Panel */}
+      <div className="gigs-left" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}>
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
           <button onClick={() => navigate("/post-job")}>Post a Job</button>
@@ -131,25 +108,27 @@ function MyJobs() {
         <NotificationBell />
       </div>
 
-      {/* RIGHT CONTENT */}
-      <div className="myjobs-right">
-        {loading ? null : jobs.length === 0 ? (
-          <p className="empty-message">You haven't posted any jobs yet.</p>
+      {/* ✅ Job Cards Area */}
+      <div className="gigs-right">
+        {jobs.length === 0 ? (
+          <p style={{ textAlign: "center", color: "#555" }}>No jobs posted yet.</p>
         ) : (
           <div className="job-list">
             {jobs.map((job) => (
-              <div key={job.id} className="job-card">
-                <h3 style={{ fontWeight: "bold", fontSize: "22px" }}>{job.title}</h3>
+              <div className="job-card" key={job.id}>
+                <h3 style={{ marginBottom: "0.5rem" }}>{job.title}</h3>
                 <p><strong>Posted by:</strong> {job.employer_name}</p>
                 <p><strong>Address:</strong> {job.address}</p>
                 <p><strong>Description:</strong> {job.job_description}</p>
-                <p><strong>Requirement:</strong> {job.requirement || "-"}</p>
-                {job.price && <p><strong>Price:</strong> {job.price} Frw</p>}
+                <p><strong>Requirement:</strong> {job.requirement}</p>
+                <p><strong>Price:</strong> {job.price} Frw</p>
                 <p><strong>Contact:</strong> {job.contact_info}</p>
-                <p className={job.status === "closed" ? "job-status closed" : "job-status open"}>
-                  <strong>Status:</strong> {job.status === "closed" ? "❌ Closed" : "✅ Open"}
+                <p style={{ fontWeight: "bold", color: job.status === "open" ? "green" : "red" }}>
+                  Status: {job.status === "open" ? "✅ Open" : "❌ Closed"}
                 </p>
-                <button className="delete-btn" onClick={() => handleDelete(job.id)}>Delete Job</button>
+                <button onClick={() => handleDelete(job.id)} className="delete-button">
+                  Delete Job
+                </button>
               </div>
             ))}
           </div>
