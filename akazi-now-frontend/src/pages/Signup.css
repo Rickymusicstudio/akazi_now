@@ -38,12 +38,7 @@ input:-webkit-autofill {
 
 .signup-left {
   flex: 1;
-  background-image: linear-gradient(
-      to bottom right,
-      rgba(128, 0, 255, 0.5),
-      rgba(255, 0, 128, 0.5)
-    ),
-    url('../assets/signup.jpg');
+  background: linear-gradient(to bottom, #4facfe, #00f2fe); /* ✅ updated blue gradient */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -148,12 +143,7 @@ input:-webkit-autofill {
 @media screen and (max-width: 768px) {
   .signup-container {
     flex-direction: column;
-    background-image: linear-gradient(
-        to bottom right,
-        rgba(128, 0, 255, 0.6),
-        rgba(255, 0, 150, 0.6)
-      ),
-      url('../assets/signup.jpg');
+    background-image: linear-gradient(to bottom, #4facfe, #00f2fe); /* ✅ mobile version blue gradient */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -187,7 +177,7 @@ input:-webkit-autofill {
     backdrop-filter: blur(6px);
     border-radius: 20px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
-    padding-bottom: 120px; /* ✅ prevent keyboard overlap */
+    padding-bottom: 120px;
   }
 
   .signup-form h2 {
