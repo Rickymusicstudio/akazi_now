@@ -14,12 +14,15 @@ function Gigs() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [mobileNavVisible, setMobileNavVisible] = useState(false);
-  const [slideDirection, setSlideDirection] = useState(""); // slide-down or slide-up
+  const [slideDirection, setSlideDirection] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState(defaultAvatar);
+
   const mobileNavRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchJobs();
+    loadUserProfile();
   }, []);
 
   const fetchJobs = async () => {
@@ -29,6 +32,20 @@ function Gigs() {
       console.error("❌ Failed to fetch jobs:", error.message);
     } else {
       setJobs(data || []);
+    }
+  };
+
+  const loadUserProfile = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data: profile } = await supabase
+        .from("users")
+        .select("image_url")
+        .eq("auth_user_id", user.id)
+        .single();
+      if (profile?.image_url) {
+        setAvatarUrl(profile.image_url);
+      }
     }
   };
 
@@ -99,13 +116,27 @@ function Gigs() {
 
   return (
     <div className="gigs-container">
-      {/* ✅ Mobile Header */}
-      <div className="mobile-top-bar" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}>
-        <FaBars className="mobile-hamburger" onClick={handleHamburgerClick} />
-        <h2 className="mobile-title">Available Jobs</h2>
+      {/* ✅ Mobile Header with Avatar, Hamburger, Title, Bell */}
+      <div className="mobile-top-bar" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.5rem 1rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <img
+            src={avatarUrl}
+            alt="Profile"
+            style={{
+              width: "35px",
+              height: "35px",
+              borderRadius: "50%",
+              objectFit: "cover",
+              border: "2px solid white",
+            }}
+          />
+          <FaBars className="mobile-hamburger" onClick={handleHamburgerClick} style={{ fontSize: "22px", color: "white" }} />
+        </div>
+        <h2 style={{ color: "white", fontWeight: "bold", fontSize: "18px" }}>Available Jobs</h2>
         <NotificationBell />
       </div>
 
+      {/* ✅ Mobile Nav Menu */}
       {mobileNavVisible && (
         <div
           ref={mobileNavRef}
@@ -124,6 +155,7 @@ function Gigs() {
         </div>
       )}
 
+      {/* ✅ Desktop Nav */}
       <div className="gigs-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -146,6 +178,7 @@ function Gigs() {
         <NotificationBell />
       </div>
 
+      {/* ✅ Right Jobs List */}
       <div className="gigs-right">
         {!jobsFetched ? null : jobs.length === 0 ? (
           <p style={{ textAlign: "center", color: "#555" }}>No jobs available right now.</p>
