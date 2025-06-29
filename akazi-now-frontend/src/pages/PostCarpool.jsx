@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
+import defaultAvatar from "../assets/avatar.png";
 import "./PostCarpool.css";
 import { FaBars } from "react-icons/fa";
 
@@ -17,7 +18,26 @@ function PostCarpool() {
   const [imageFile, setImageFile] = useState(null);
   const [message, setMessage] = useState("");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [profilePic, setProfilePic] = useState(defaultAvatar);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    loadProfilePicture();
+  }, []);
+
+  const loadProfilePicture = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data } = await supabase
+        .from("users")
+        .select("image_url")
+        .eq("auth_user_id", user.id)
+        .single();
+      if (data?.image_url) {
+        setProfilePic(data.image_url);
+      }
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -79,10 +99,13 @@ function PostCarpool() {
 
   return (
     <div className="postride-container">
+      {/* ✅ MOBILE HEADER WITH PROFILE PICTURE */}
       <div className="mobile-top-bar">
         <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <h2 className="mobile-title">Post Ride</h2>
-        <NotificationBell />
+        <div className="mobile-profile-pic-wrapper">
+          <img src={profilePic} alt="Profile" className="mobile-profile-pic" />
+        </div>
       </div>
 
       {mobileNavOpen && (
@@ -92,6 +115,7 @@ function PostCarpool() {
             <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Browse Rides</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/post-ride") }}>Post Ride</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox") }}>Carpool Inbox</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/abasare") }}>Abasare</li>
             <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
           </ul>
         </div>
@@ -129,7 +153,7 @@ function PostCarpool() {
             value={form.datetime}
             onChange={(e) => {
               handleChange(e);
-              e.target.blur(); // ✅ closes picker after selecting on Android
+              e.target.blur(); // ✅ closes picker on Android
             }}
             required
           />
