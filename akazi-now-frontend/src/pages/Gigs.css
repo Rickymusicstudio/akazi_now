@@ -8,7 +8,7 @@
 /* LEFT (Desktop) */
 .gigs-left {
   width: 50%;
-  background: linear-gradient(135deg, #6a00ff, #ff007a);
+  background: linear-gradient(to bottom, #4facfe, #00f2fe); /* ✅ updated */
   color: white;
   padding: 2rem;
   display: flex;
@@ -187,7 +187,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: linear-gradient(135deg, #6a00ff, #ff007a);
+    background: linear-gradient(to bottom, #4facfe, #00f2fe); /* ✅ updated */
     color: white;
     position: sticky;
     top: 0;
@@ -200,7 +200,7 @@
     font-weight: bold;
     cursor: pointer;
     z-index: 1;
-    color: white; /* ✅ Force white color */
+    color: white;
   }
 
   .mobile-title {
@@ -216,7 +216,7 @@
   .mobile-nav-overlay {
     position: fixed;
     inset: 0;
-    background: linear-gradient(135deg, #6a00ff, #ff007a);
+    background: linear-gradient(to bottom, #4facfe, #00f2fe); /* ✅ updated */
     z-index: 999;
     display: flex;
     justify-content: center;
@@ -249,7 +249,8 @@
     }
   }
 }
-/* 🔔 Notification Bell (inside Gigs.css) */
+
+/* 🔔 Notification Bell */
 .notification-bell-container {
   position: absolute;
   top: 1rem;
@@ -258,7 +259,7 @@
 }
 
 .notification-bell-button {
-  background: #fff; /* ✅ white background for visibility */
+  background: #fff;
   border: 2px solid #fff;
   border-radius: 50%;
   width: 42px;
