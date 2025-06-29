@@ -91,7 +91,7 @@ function Gigs() {
       {/* ✅ Mobile Header */}
       <div
         className="mobile-top-bar"
-        style={{ background: "linear-gradient(to bottom, #4facfe, #00f2fe)" }} // ✅ blue gradient
+        style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }} // ✅ dark blue
       >
         <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <h2 className="mobile-title">Available Jobs</h2>
@@ -101,7 +101,7 @@ function Gigs() {
       {mobileNavOpen && (
         <div
           className="mobile-nav-overlay"
-          style={{ background: "linear-gradient(to bottom, #4facfe, #00f2fe)" }} // ✅ blue gradient
+          style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }} // ✅ dark blue
         >
           <ul>
             <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
