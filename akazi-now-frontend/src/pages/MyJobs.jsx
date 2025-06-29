@@ -117,12 +117,17 @@ function MyJobs() {
           <button onClick={() => navigate("/profile")}>Profile</button>
           <button onClick={() => navigate("/inbox")}>Inbox</button>
           <button onClick={() => navigate("/carpools")}>Car Pooling</button>
-          <button className="logout-btn" onClick={async () => {
-            await supabase.auth.signOut();
-            navigate("/login");
-          }}>Logout</button>
+          <button
+            onClick={async () => {
+              await supabase.auth.signOut();
+              navigate("/login");
+            }}
+            style={{ color: "#ffcccc" }}
+          >
+            Logout
+          </button>
         </div>
-        <h2 className="myjobs-title">My Jobs</h2>
+        <h2 style={{ fontSize: "32px", fontWeight: "bold", marginTop: "3rem" }}>My Jobs</h2>
         <NotificationBell />
       </div>
 
@@ -134,7 +139,7 @@ function MyJobs() {
           <div className="job-list">
             {jobs.map((job) => (
               <div key={job.id} className="job-card">
-                <h3 className="job-title">{job.title}</h3>
+                <h3 style={{ fontWeight: "bold", fontSize: "22px" }}>{job.title}</h3>
                 <p><strong>Posted by:</strong> {job.employer_name}</p>
                 <p><strong>Address:</strong> {job.address}</p>
                 <p><strong>Description:</strong> {job.job_description}</p>

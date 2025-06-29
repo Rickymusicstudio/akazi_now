@@ -1,4 +1,4 @@
-.myjobs-container {
+.myjobs-container {
   display: flex;
   height: 100vh;
   width: 100vw;
@@ -75,6 +75,9 @@
 
 .job-card h3 {
   margin: 0;
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #222;
 }
 
 .job-card .job-employer {
@@ -196,7 +199,7 @@
   .mobile-nav-overlay {
     position: fixed;
     inset: 0;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ dark blue */
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ fixed gradient */
     z-index: 1000;
     display: flex;
     justify-content: center;
@@ -228,25 +231,4 @@
       transform: translateY(0);
     }
   }
-}
-
-/* 🆕 Added classes to replace inline styles */
-.myjobs-title {
-  font-size: 32px;
-  font-weight: bold;
-  margin-top: 3rem;
-}
-
-.job-title {
-  font-size: 22px;
-  font-weight: bold;
-}
-
-.logout-btn {
-  color: #ffcccc;
-  background: none;
-  border: none;
-  font-weight: bold;
-  font-size: 14px;
-  cursor: pointer;
 }
