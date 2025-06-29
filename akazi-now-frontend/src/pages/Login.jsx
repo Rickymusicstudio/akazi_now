@@ -45,7 +45,7 @@ function Login() {
       const { data: { user } } = await supabase.auth.getUser();
 
       if (user) {
-        navigate('/gigs'); // ✅ Redirect fixed here
+        navigate('/gigs');
       } else {
         setError('❌ Login succeeded but user not found.');
       }
@@ -88,6 +88,13 @@ function Login() {
             onChange={handleChange}
             required
           />
+
+          {/* ✅ Forgot Password Link */}
+          <div style={{ marginTop: '0.5rem', textAlign: 'right' }}>
+            <Link to="/forgot-password" style={{ fontSize: '0.9rem', color: '#6a00ff' }}>
+              Forgot Password?
+            </Link>
+          </div>
 
           <button type="submit" className="btn" disabled={loading}>
             {loading ? 'Logging in...' : 'Log In'}

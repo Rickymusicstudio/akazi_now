@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword"; // ✅ NEW
+import ResetPassword from "./pages/ResetPassword";   // ✅ NEW
 import UserProfile from "./pages/UserProfile";
 import PostGig from "./pages/PostGig";
 import Gigs from "./pages/Gigs";
@@ -15,7 +17,7 @@ import JobDetails from "./pages/JobDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Abasare from "./pages/Abasare";
 import AbasareDetail from "./pages/AbasareDetail";
-import Settings from "./pages/Settings"; // ✅ NEW Settings Page
+import Settings from "./pages/Settings";
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
         {/* 🔐 Auth Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} /> {/* ✅ Added */}
+        <Route path="/reset-password" element={<ResetPassword />} />   {/* ✅ Added */}
 
         {/* 🏁 Default redirect */}
         <Route path="/" element={<Navigate to="/gigs" replace />} />
