@@ -8,7 +8,7 @@
 /* LEFT (Desktop) */
 .gigs-left {
   width: 50%;
-  background: linear-gradient(to bottom, #4facfe, #00f2fe); /* ✅ blue gradient */
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ dark blue */
   color: white;
   padding: 2rem;
   display: flex;
@@ -179,7 +179,7 @@
     height: auto;
     overflow-y: visible;
     padding: 1.5rem;
-    padding-top: 6rem; /* Fix: account for fixed mobile nav */
+    padding-top: 6rem;
   }
 
   .mobile-top-bar {
@@ -187,7 +187,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: linear-gradient(to bottom, #4facfe, #00f2fe); /* ✅ fixed */
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ dark blue */
     color: white;
     position: sticky;
     top: 0;
@@ -216,7 +216,7 @@
   .mobile-nav-overlay {
     position: fixed;
     inset: 0;
-    background: linear-gradient(to bottom, #4facfe, #00f2fe); /* ✅ fixed */
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ dark blue */
     z-index: 999;
     display: flex;
     justify-content: center;
