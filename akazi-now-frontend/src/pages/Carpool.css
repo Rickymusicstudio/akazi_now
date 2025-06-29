@@ -1,9 +1,21 @@
-/* Base layout */
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* DESKTOP LAYOUT */
 .carpool-container {
   display: flex;
   height: 100vh;
   overflow: hidden;
-  font-family: 'Segoe UI', sans-serif;
 }
 
 /* Left nav (desktop) */
@@ -72,7 +84,7 @@
   color: #000;
 }
 
-/* Fix autofill and dark mode input issues on Android */
+/* Autofill fix */
 input,
 textarea,
 select {
@@ -141,7 +153,7 @@ input:-webkit-autofill:hover {
   cursor: pointer;
 }
 
-/* Mobile Styles */
+/* MOBILE RESPONSIVE */
 @media (max-width: 768px) {
   .carpool-container {
     flex-direction: column;
