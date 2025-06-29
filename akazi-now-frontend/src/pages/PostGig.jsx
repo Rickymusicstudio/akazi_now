@@ -1,7 +1,8 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
+import defaultAvatar from "../assets/avatar.png";
 import { FaBars } from "react-icons/fa";
 import "./PostGig.css";
 
@@ -15,9 +16,33 @@ function PostGig() {
   });
   const [imageFile, setImageFile] = useState(null);
   const [message, setMessage] = useState("");
+  const [profile, setProfile] = useState(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const mobileNavRef = useRef(null);
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    const { data: userProfile } = await supabase
+      .from("users")
+      .select("*")
+      .eq("auth_user_id", user.id)
+      .single();
+
+    if (userProfile) {
+      setProfile(userProfile);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -60,18 +85,12 @@ function PostGig() {
       imageUrl = data.publicUrl;
     }
 
-    const { data: userProfile } = await supabase
-      .from("users")
-      .select("image_url, full_name, phone")
-      .eq("auth_user_id", user.id)
-      .single();
-
-    const posterImage = userProfile?.image_url || null;
-    const employerName = userProfile?.full_name || "Unknown";
-    const contactInfo = userProfile?.phone || "N/A";
+    const posterImage = profile?.image_url || null;
+    const employerName = profile?.full_name || "Unknown";
+    const contactInfo = profile?.phone || "N/A";
 
     const { error } = await supabase.from("jobs").insert([{
-      user_id: user.id,
+      user_id: profile.auth_user_id,
       ...form,
       status: "open",
       image_url: imageUrl,
@@ -97,6 +116,7 @@ function PostGig() {
 
   return (
     <div className="postgig-container">
+      {/* ✅ Mobile Top Bar */}
       <div
         className="mobile-top-bar"
         style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
@@ -135,6 +155,7 @@ function PostGig() {
         </div>
       )}
 
+      {/* ✅ Desktop Left Panel */}
       <div className="gigs-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -145,10 +166,22 @@ function PostGig() {
           <button onClick={() => navigate("/carpools")}>Car Pooling</button>
           <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
         </div>
+
         <h2 style={{ fontSize: "32px", fontWeight: "bold", marginTop: "3rem" }}>Post a Job</h2>
         <NotificationBell />
+        <div className="profile-card">
+          <img
+            src={profile?.image_url || defaultAvatar}
+            alt="avatar"
+            className="profile-image"
+            onClick={() => fileInputRef.current?.click()}
+            style={{ cursor: "pointer" }}
+          />
+          <h2 style={{ marginTop: "1rem" }}>{profile?.full_name}</h2>
+        </div>
       </div>
 
+      {/* ✅ Right Form Panel */}
       <div className="gigs-right">
         <form className="signup-form" onSubmit={handleSubmit}>
           {message && (
