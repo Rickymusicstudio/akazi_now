@@ -1,8 +1,9 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
 import { FaBars } from "react-icons/fa";
+import defaultAvatar from "../assets/avatar.png";
 import "./PostGig.css";
 
 function PostGig() {
@@ -16,8 +17,23 @@ function PostGig() {
   const [imageFile, setImageFile] = useState(null);
   const [message, setMessage] = useState("");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [userProfilePic, setUserProfilePic] = useState(null);
   const mobileNavRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchProfilePic = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase
+        .from("users")
+        .select("image_url")
+        .eq("auth_user_id", user.id)
+        .single();
+      setUserProfilePic(data?.image_url || defaultAvatar);
+    };
+    fetchProfilePic();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -101,6 +117,11 @@ function PostGig() {
         className="mobile-top-bar"
         style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
       >
+        <img
+          src={userProfilePic || defaultAvatar}
+          alt="avatar"
+          className="top-bar-avatar"
+        />
         <FaBars
           className="mobile-hamburger"
           onClick={() => {
