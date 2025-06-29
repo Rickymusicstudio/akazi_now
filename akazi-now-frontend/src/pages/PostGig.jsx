@@ -3,6 +3,7 @@ import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
 import { FaBars } from "react-icons/fa";
+import defaultAvatar from "../assets/avatar.png"; // ✅ Default fallback
 import "./PostGig.css";
 
 function PostGig() {
@@ -164,11 +165,27 @@ function PostGig() {
           <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
         </div>
 
-        {/* ✅ Restored Post a Job heading for desktop */}
+        {/* Desktop heading */}
         <h2 style={{ fontSize: "32px", fontWeight: "bold", marginTop: "3rem" }}>Post a Job</h2>
       </div>
 
       <div className="gigs-right">
+        {/* ✅ Mobile Profile Image */}
+        <div className="mobile-profile" style={{ textAlign: "center", marginTop: "1rem", marginBottom: "1rem" }}>
+          <img
+            src={userProfile?.image_url || defaultAvatar}
+            alt="Profile"
+            style={{
+              width: "80px",
+              height: "80px",
+              borderRadius: "50%",
+              objectFit: "cover",
+              display: "block",
+              margin: "0 auto"
+            }}
+          />
+        </div>
+
         <form className="signup-form" onSubmit={handleSubmit}>
           <h2 style={{ textAlign: "center", marginBottom: "1rem", fontWeight: "bold" }}>
             Post a Job
