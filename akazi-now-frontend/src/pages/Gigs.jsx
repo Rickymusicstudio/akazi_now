@@ -9,7 +9,7 @@ import "./Gigs.css";
 
 function Gigs() {
   const [jobs, setJobs] = useState([]);
-  const [jobsFetched, setJobsFetched] = useState(false); // ✅ Added
+  const [jobsFetched, setJobsFetched] = useState(false);
   const [applyingJobId, setApplyingJobId] = useState(null);
   const [applicationMessage, setApplicationMessage] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
@@ -23,7 +23,7 @@ function Gigs() {
 
   const fetchJobs = async () => {
     const { data, error } = await supabase.from("jobs").select("*");
-    setJobsFetched(true); // ✅ Mark fetch complete
+    setJobsFetched(true);
     if (error) {
       console.error("❌ Failed to fetch jobs:", error.message);
     } else {
@@ -89,14 +89,20 @@ function Gigs() {
   return (
     <div className="gigs-container">
       {/* ✅ Mobile Header */}
-      <div className="mobile-top-bar">
+      <div
+        className="mobile-top-bar"
+        style={{ background: "linear-gradient(to bottom, #4facfe, #00f2fe)" }} // ✅ blue gradient
+      >
         <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <h2 className="mobile-title">Available Jobs</h2>
         <NotificationBell />
       </div>
 
       {mobileNavOpen && (
-        <div className="mobile-nav-overlay">
+        <div
+          className="mobile-nav-overlay"
+          style={{ background: "linear-gradient(to bottom, #4facfe, #00f2fe)" }} // ✅ blue gradient
+        >
           <ul>
             <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/post-job") }}>Post a Job</li>
@@ -117,7 +123,15 @@ function Gigs() {
           <button onClick={() => navigate("/profile")}>Profile</button>
           <button onClick={() => navigate("/inbox")}>Inbox</button>
           <button onClick={() => navigate("/carpools")}>Car Pooling</button>
-          <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
+          <button
+            onClick={async () => {
+              await supabase.auth.signOut();
+              navigate("/login");
+            }}
+            style={{ color: "#ffcccc" }}
+          >
+            Logout
+          </button>
         </div>
         <h2 style={{ fontSize: "32px", fontWeight: "bold", marginTop: "3rem" }}>Available Jobs</h2>
         <NotificationBell />
