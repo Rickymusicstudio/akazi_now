@@ -37,7 +37,7 @@ input:-webkit-autofill:hover {
 
 .abasare-left {
   width: 50%;
-  background: linear-gradient(to bottom right, #6a00ff, #ff007a);
+  background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
   color: white;
   padding: 2rem;
   display: flex;
@@ -100,6 +100,21 @@ input:-webkit-autofill:hover {
 
 .umusare-actions button:hover {
   background: #eee;
+}
+
+/* Submit Button */
+.abasare-right form button[type="submit"],
+.submit-btn {
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 999px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 1rem;
+  width: fit-content;
 }
 
 /* TABLE WRAPPER FOR SCROLLING */
@@ -168,7 +183,7 @@ input:-webkit-autofill:hover {
 .mobile-top-bar {
   display: none;
   width: 100%;
-  background: linear-gradient(to right, #6a00ff, #ff007a);
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
   color: white;
   padding: 1rem;
   justify-content: space-between;
@@ -196,7 +211,7 @@ input:-webkit-autofill:hover {
 .mobile-nav-overlay {
   position: fixed;
   inset: 0;
-  background: linear-gradient(to bottom, #6a00ff, #ff007a);
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
   color: white;
   z-index: 999;
   padding-top: 5rem;
