@@ -179,3 +179,7 @@ body {
     margin-top: 0.5rem;
   }
 }
+
+.browse-left {
+  background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364) !important;
+}
