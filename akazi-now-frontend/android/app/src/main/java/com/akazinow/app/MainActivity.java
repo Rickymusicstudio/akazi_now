@@ -1,4 +1,4 @@
-package akazi_now.com;
+package com.akazinow.app;
 
 import com.getcapacitor.BridgeActivity;
 

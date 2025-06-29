@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">akazi-now-frontend</string>
-    <string name="title_activity_main">akazi-now-frontend</string>
-    <string name="package_name">akazi_now.com</string>
-    <string name="custom_url_scheme">akazi_now.com</string>
+    <string name="app_name">akazinow</string>
+    <string name="title_activity_main">akazinow</string>
+    <string name="package_name">com.akazinow.app</string>
+    <string name="custom_url_scheme">com.akazinow.app</string>
 </resources>
