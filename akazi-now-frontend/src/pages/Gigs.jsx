@@ -13,7 +13,8 @@ function Gigs() {
   const [applicationMessage, setApplicationMessage] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [mobileNavVisible, setMobileNavVisible] = useState(false);
+  const [slideDirection, setSlideDirection] = useState(""); // slide-down or slide-up
   const mobileNavRef = useRef(null);
   const navigate = useNavigate();
 
@@ -28,6 +29,16 @@ function Gigs() {
       console.error("❌ Failed to fetch jobs:", error.message);
     } else {
       setJobs(data || []);
+    }
+  };
+
+  const handleHamburgerClick = () => {
+    if (!mobileNavVisible) {
+      setSlideDirection("slide-down");
+      setMobileNavVisible(true);
+    } else {
+      setSlideDirection("slide-up");
+      setTimeout(() => setMobileNavVisible(false), 300);
     }
   };
 
@@ -89,39 +100,25 @@ function Gigs() {
   return (
     <div className="gigs-container">
       {/* ✅ Mobile Header */}
-      <div
-        className="mobile-top-bar"
-        style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
-      >
-        <FaBars
-          className="mobile-hamburger"
-          onClick={() => {
-            setMobileNavOpen((prev) => {
-              const newState = !prev;
-              if (newState && mobileNavRef.current) {
-                mobileNavRef.current.scrollTo({ top: 0, behavior: "smooth" });
-              }
-              return newState;
-            });
-          }}
-        />
+      <div className="mobile-top-bar" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}>
+        <FaBars className="mobile-hamburger" onClick={handleHamburgerClick} />
         <h2 className="mobile-title">Available Jobs</h2>
         <NotificationBell />
       </div>
 
-      {mobileNavOpen && (
+      {mobileNavVisible && (
         <div
           ref={mobileNavRef}
-          className="mobile-nav-overlay"
-          style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)", overflowY: "auto" }}
+          className={`mobile-nav-overlay ${slideDirection}`}
+          style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
         >
           <ul>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/"); }}>Home</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/post-job"); }}>Post a Job</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/my-jobs"); }}>My Jobs</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/profile"); }}>Profile</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/inbox"); }}>Inbox</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools"); }}>Car Pooling</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/") }}>Home</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/post-job") }}>Post a Job</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/my-jobs") }}>My Jobs</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/profile") }}>Profile</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/inbox") }}>Inbox</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/carpools") }}>Car Pooling</li>
             <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
           </ul>
         </div>
