@@ -8,6 +8,7 @@ import "./MyJobs.css";
 function MyJobs() {
   const [jobs, setJobs] = useState([]);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [navClosing, setNavClosing] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -16,7 +17,10 @@ function MyJobs() {
   }, []);
 
   const fetchMyJobs = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       navigate("/login");
       return;
@@ -63,48 +67,48 @@ function MyJobs() {
     }
   };
 
-  const closeMenuAndNavigate = (path) => {
-    setMobileNavOpen(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    navigate(path);
+  const handleToggleNav = () => {
+    if (mobileNavOpen) {
+      setNavClosing(true);
+      setTimeout(() => {
+        setMobileNavOpen(false);
+        setNavClosing(false);
+      }, 400);
+    } else {
+      setMobileNavOpen(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   return (
     <div className="myjobs-container">
       {/* MOBILE NAV HEADER */}
       <div className="mobile-top-bar">
-        <FaBars
-          className="mobile-hamburger"
-          onClick={() => {
-            setMobileNavOpen(prev => !prev);
-            if (!mobileNavOpen) {
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }
-          }}
-        />
+        <FaBars className="mobile-hamburger" onClick={handleToggleNav} />
         <h2 className="mobile-title">My Jobs</h2>
         <NotificationBell />
       </div>
 
-      {/* MOBILE NAV OVERLAY */}
+      {/* MOBILE FULLSCREEN NAV */}
       {mobileNavOpen && (
-        <div className="mobile-nav-overlay">
+        <div className={`mobile-nav-overlay ${navClosing ? "hide" : ""}`}>
           <ul>
-            <li onClick={() => closeMenuAndNavigate("/")}>Home</li>
-            <li onClick={() => closeMenuAndNavigate("/post-job")}>Post a Job</li>
-            <li onClick={() => closeMenuAndNavigate("/my-jobs")}>My Jobs</li>
-            <li onClick={() => closeMenuAndNavigate("/profile")}>Profile</li>
-            <li onClick={() => closeMenuAndNavigate("/inbox")}>Inbox</li>
-            <li onClick={() => closeMenuAndNavigate("/carpools")}>Car Pooling</li>
+            <li onClick={() => { handleToggleNav(); navigate("/") }}>Home</li>
+            <li onClick={() => { handleToggleNav(); navigate("/post-job") }}>Post a Job</li>
+            <li onClick={() => { handleToggleNav(); navigate("/my-jobs") }}>My Jobs</li>
+            <li onClick={() => { handleToggleNav(); navigate("/profile") }}>Profile</li>
+            <li onClick={() => { handleToggleNav(); navigate("/inbox") }}>Inbox</li>
+            <li onClick={() => { handleToggleNav(); navigate("/carpools") }}>Car Pooling</li>
             <li onClick={async () => {
               await supabase.auth.signOut();
-              closeMenuAndNavigate("/login");
+              handleToggleNav();
+              navigate("/login");
             }}>Logout</li>
           </ul>
         </div>
       )}
 
-      {/* DESKTOP NAV */}
+      {/* DESKTOP LEFT NAV */}
       <div className="myjobs-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -127,7 +131,7 @@ function MyJobs() {
         <NotificationBell />
       </div>
 
-      {/* JOBS LIST */}
+      {/* RIGHT CONTENT */}
       <div className="myjobs-right">
         {loading ? null : jobs.length === 0 ? (
           <p className="empty-message">You haven't posted any jobs yet.</p>
