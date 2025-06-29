@@ -21,6 +21,8 @@ function UserProfile() {
     loadDistricts();
   }, []);
 
+  const toggleMobileNav = () => setMobileNavOpen(prev => !prev);
+
   const loadProfile = async () => {
     const { data: { user }, error } = await supabase.auth.getUser();
     if (error || !user) {
@@ -150,7 +152,7 @@ function UserProfile() {
             alt="avatar"
             className="mobile-profile-pic"
           />
-          <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
+          <FaBars className="mobile-hamburger" onClick={toggleMobileNav} />
         </div>
         <div className="mobile-title">My Profile</div>
         <NotificationBell />
@@ -158,14 +160,14 @@ function UserProfile() {
 
       {/* ✅ Mobile Full Nav */}
       {mobileNavOpen && (
-        <div className="mobile-nav-overlay">
-          <ul>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/post-job") }}>Post a Job</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/my-jobs") }}>My Jobs</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/profile") }}>Profile</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/inbox") }}>Inbox</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool") }}>Car Pooling</li>
+        <div className="mobile-nav-overlay" onClick={toggleMobileNav}>
+          <ul onClick={(e) => e.stopPropagation()}>
+            <li onClick={() => { toggleMobileNav(); navigate("/") }}>Home</li>
+            <li onClick={() => { toggleMobileNav(); navigate("/post-job") }}>Post a Job</li>
+            <li onClick={() => { toggleMobileNav(); navigate("/my-jobs") }}>My Jobs</li>
+            <li onClick={() => { toggleMobileNav(); navigate("/profile") }}>Profile</li>
+            <li onClick={() => { toggleMobileNav(); navigate("/inbox") }}>Inbox</li>
+            <li onClick={() => { toggleMobileNav(); navigate("/carpool") }}>Car Pooling</li>
             <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
           </ul>
         </div>
