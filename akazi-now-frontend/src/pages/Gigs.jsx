@@ -15,14 +15,13 @@ function Gigs() {
   const [showModal, setShowModal] = useState(false);
   const [mobileNavVisible, setMobileNavVisible] = useState(false);
   const [slideDirection, setSlideDirection] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState(defaultAvatar);
-
+  const [userProfile, setUserProfile] = useState(null);
   const mobileNavRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchJobs();
-    loadUserProfile();
+    fetchUserProfile();
   }, []);
 
   const fetchJobs = async () => {
@@ -35,18 +34,15 @@ function Gigs() {
     }
   };
 
-  const loadUserProfile = async () => {
+  const fetchUserProfile = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const { data: profile } = await supabase
-        .from("users")
-        .select("image_url")
-        .eq("auth_user_id", user.id)
-        .single();
-      if (profile?.image_url) {
-        setAvatarUrl(profile.image_url);
-      }
-    }
+    if (!user) return;
+    const { data } = await supabase
+      .from("users")
+      .select("image_url")
+      .eq("auth_user_id", user.id)
+      .single();
+    setUserProfile(data);
   };
 
   const handleHamburgerClick = () => {
@@ -116,27 +112,19 @@ function Gigs() {
 
   return (
     <div className="gigs-container">
-      {/* ✅ Mobile Header with Avatar, Hamburger, Title, Bell */}
-      <div className="mobile-top-bar" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.5rem 1rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+      <div className="mobile-top-bar" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}>
+        <div className="mobile-left-group">
           <img
-            src={avatarUrl}
-            alt="Profile"
-            style={{
-              width: "35px",
-              height: "35px",
-              borderRadius: "50%",
-              objectFit: "cover",
-              border: "2px solid white",
-            }}
+            src={userProfile?.image_url || defaultAvatar}
+            alt="avatar"
+            className="mobile-profile-pic"
           />
-          <FaBars className="mobile-hamburger" onClick={handleHamburgerClick} style={{ fontSize: "22px", color: "white" }} />
+          <FaBars className="mobile-hamburger" onClick={handleHamburgerClick} />
         </div>
-        <h2 style={{ color: "white", fontWeight: "bold", fontSize: "18px" }}>Available Jobs</h2>
+        <h2 className="mobile-title">Available Jobs</h2>
         <NotificationBell />
       </div>
 
-      {/* ✅ Mobile Nav Menu */}
       {mobileNavVisible && (
         <div
           ref={mobileNavRef}
@@ -155,7 +143,6 @@ function Gigs() {
         </div>
       )}
 
-      {/* ✅ Desktop Nav */}
       <div className="gigs-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -164,21 +151,12 @@ function Gigs() {
           <button onClick={() => navigate("/profile")}>Profile</button>
           <button onClick={() => navigate("/inbox")}>Inbox</button>
           <button onClick={() => navigate("/carpools")}>Car Pooling</button>
-          <button
-            onClick={async () => {
-              await supabase.auth.signOut();
-              navigate("/login");
-            }}
-            style={{ color: "#ffcccc" }}
-          >
-            Logout
-          </button>
+          <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
         </div>
         <h2 style={{ fontSize: "32px", fontWeight: "bold", marginTop: "3rem" }}>Available Jobs</h2>
         <NotificationBell />
       </div>
 
-      {/* ✅ Right Jobs List */}
       <div className="gigs-right">
         {!jobsFetched ? null : jobs.length === 0 ? (
           <p style={{ textAlign: "center", color: "#555" }}>No jobs available right now.</p>
