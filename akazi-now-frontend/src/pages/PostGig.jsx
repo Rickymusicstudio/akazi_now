@@ -3,7 +3,7 @@ import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
 import { FaBars } from "react-icons/fa";
-import defaultAvatar from "../assets/avatar.png"; // ✅ Default fallback
+import defaultAvatar from "../assets/avatar.png";
 import "./PostGig.css";
 
 function PostGig() {
@@ -120,19 +120,26 @@ function PostGig() {
         className="mobile-top-bar"
         style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
       >
-        <FaBars
-          className="mobile-hamburger"
-          onClick={() => {
-            setMobileNavOpen((prev) => {
-              const newState = !prev;
-              if (newState && mobileNavRef.current) {
-                mobileNavRef.current.scrollTo({ top: 0, behavior: "smooth" });
-              }
-              return newState;
-            });
-          }}
-        />
-        <div className="mobile-title">Post a Job</div>
+        <div className="mobile-left-group">
+          <img
+            src={userProfile?.image_url || defaultAvatar}
+            alt="avatar"
+            className="mobile-profile-pic"
+          />
+          <FaBars
+            className="mobile-hamburger"
+            onClick={() => {
+              setMobileNavOpen((prev) => {
+                const newState = !prev;
+                if (newState && mobileNavRef.current) {
+                  mobileNavRef.current.scrollTo({ top: 0, behavior: "smooth" });
+                }
+                return newState;
+              });
+            }}
+          />
+        </div>
+        <h2 className="mobile-title">Post a Job</h2>
         <NotificationBell />
       </div>
 
@@ -164,28 +171,9 @@ function PostGig() {
           <button onClick={() => navigate("/carpools")}>Car Pooling</button>
           <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
         </div>
-
-        {/* Desktop heading */}
-        <h2 style={{ fontSize: "32px", fontWeight: "bold", marginTop: "3rem" }}>Post a Job</h2>
       </div>
 
       <div className="gigs-right">
-        {/* ✅ Mobile Profile Image */}
-        <div className="mobile-profile" style={{ textAlign: "center", marginTop: "1rem", marginBottom: "1rem" }}>
-          <img
-            src={userProfile?.image_url || defaultAvatar}
-            alt="Profile"
-            style={{
-              width: "80px",
-              height: "80px",
-              borderRadius: "50%",
-              objectFit: "cover",
-              display: "block",
-              margin: "0 auto"
-            }}
-          />
-        </div>
-
         <form className="signup-form" onSubmit={handleSubmit}>
           <h2 style={{ textAlign: "center", marginBottom: "1rem", fontWeight: "bold" }}>
             Post a Job
