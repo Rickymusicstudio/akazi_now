@@ -3,6 +3,7 @@ import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
 import { FaBars } from "react-icons/fa";
+import defaultAvatar from "../assets/avatar.png";
 import "./MyJobs.css";
 
 function MyJobs() {
@@ -10,16 +11,29 @@ function MyJobs() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [navClosing, setNavClosing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchMyJobs();
+    fetchUserProfile();
   }, []);
 
+  const fetchUserProfile = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data } = await supabase
+      .from("users")
+      .select("image_url")
+      .eq("auth_user_id", user.id)
+      .single();
+
+    setUserProfile(data);
+  };
+
   const fetchMyJobs = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
       navigate("/login");
@@ -84,7 +98,14 @@ function MyJobs() {
     <div className="myjobs-container">
       {/* MOBILE NAV HEADER */}
       <div className="mobile-top-bar">
-        <FaBars className="mobile-hamburger" onClick={handleToggleNav} />
+        <div className="mobile-left-group">
+          <img
+            src={userProfile?.image_url || defaultAvatar}
+            alt="avatar"
+            className="mobile-profile-pic"
+          />
+          <FaBars className="mobile-hamburger" onClick={handleToggleNav} />
+        </div>
         <h2 className="mobile-title">My Jobs</h2>
         <NotificationBell />
       </div>
