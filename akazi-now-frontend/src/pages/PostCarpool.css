@@ -20,7 +20,7 @@ body {
 /* Left gradient section */
 .postride-left {
   width: 50%;
-  background: linear-gradient(135deg, #6a00ff, #ff007a);
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); /* ✅ dark blue */
   color: white;
   padding: 2rem;
   display: flex;
@@ -106,17 +106,22 @@ input:-webkit-autofill:focus {
   font-size: 1.1rem;
   font-weight: bold;
   color: white;
-  background: linear-gradient(to right, #6a00ff, #ff007a);
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364) !important;
   border: none;
   border-radius: 999px;
   cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.postride-form .btn:hover {
+  background: linear-gradient(to right, #12283b, #2c3e50, #2c5364) !important;
 }
 
 /* Mobile top bar (hidden on desktop) */
 .mobile-top-bar {
   display: none;
   width: 100%;
-  background: linear-gradient(to right, #6a00ff, #ff007a);
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364) !important;
   color: white;
   padding: 1rem;
   justify-content: space-between;
@@ -144,7 +149,7 @@ input:-webkit-autofill:focus {
 .mobile-nav-overlay {
   position: fixed;
   inset: 0;
-  background: linear-gradient(to bottom, #6a00ff, #ff007a);
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364) !important;
   color: white;
   z-index: 999;
   padding-top: 5rem;
