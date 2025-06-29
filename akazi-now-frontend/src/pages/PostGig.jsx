@@ -1,140 +1,98 @@
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
+import { FaBars } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
-import { FaBars } from "react-icons/fa";
+import defaultAvatar from "../assets/avatar.png";
 import "./PostGig.css";
 
 function PostGig() {
-  const [form, setForm] = useState({
+  const [profile, setProfile] = useState(null);
+  const [formData, setFormData] = useState({
     title: "",
-    address: "",
-    job_description: "",
-    requirement: "",
+    description: "",
+    requirements: "",
     price: "",
+    image: null,
   });
-  const [imageFile, setImageFile] = useState(null);
-  const [message, setMessage] = useState("");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const mobileNavRef = useRef(null);
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
+  const loadProfile = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    const { data } = await supabase
+      .from("users")
+      .select("full_name, image_url")
+      .eq("auth_user_id", user.id)
+      .single();
+    setProfile(data);
   };
 
-  const handleImageChange = (e) => {
-    setImageFile(e.target.files[0]);
+  const toggleMobileNav = () => setMobileNavOpen(!mobileNavOpen);
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    if (name === "image") {
+      setFormData((prev) => ({ ...prev, image: files[0] }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("");
-
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      setMessage("❌ Not authenticated");
-      return;
-    }
-
-    let imageUrl = null;
-    if (imageFile) {
-      const fileExt = imageFile.name.split(".").pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("job-images")
-        .upload(filePath, imageFile, { cacheControl: "3600", upsert: true });
-
-      if (uploadError) {
-        setMessage("❌ Failed to upload image: " + uploadError.message);
-        return;
-      }
-
-      const { data } = supabase.storage
-        .from("job-images")
-        .getPublicUrl(filePath);
-
-      imageUrl = data.publicUrl;
-    }
-
-    const { data: userProfile } = await supabase
-      .from("users")
-      .select("image_url, full_name, phone")
-      .eq("auth_user_id", user.id)
-      .single();
-
-    const posterImage = userProfile?.image_url || null;
-    const employerName = userProfile?.full_name || "Unknown";
-    const contactInfo = userProfile?.phone || "N/A";
-
-    const { error } = await supabase.from("jobs").insert([{
-      user_id: user.id,
-      ...form,
-      status: "open",
-      image_url: imageUrl,
-      poster_image: posterImage,
-      employer_name: employerName,
-      contact_info: contactInfo,
-    }]);
-
-    if (error) {
-      setMessage("❌ Failed to post job: " + error.message);
-    } else {
-      setMessage("✅ Job posted successfully!");
-      setForm({
-        title: "",
-        address: "",
-        job_description: "",
-        requirement: "",
-        price: "",
-      });
-      setImageFile(null);
-    }
+    // Handle submit logic
   };
 
   return (
     <div className="postgig-container">
-      <div
-        className="mobile-top-bar"
-        style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
-      >
-        <FaBars
-          className="mobile-hamburger"
-          onClick={() => {
-            setMobileNavOpen((prev) => {
-              const newState = !prev;
-              if (newState && mobileNavRef.current) {
-                mobileNavRef.current.scrollTo({ top: 0, behavior: "smooth" });
-              }
-              return newState;
-            });
-          }}
-        />
+      {/* ✅ Mobile Top Bar */}
+      <div className="mobile-top-bar">
+        <div className="mobile-left-group">
+          <img
+            src={profile?.image_url || defaultAvatar}
+            alt="avatar"
+            className="mobile-profile-pic"
+          />
+          <FaBars className="mobile-hamburger" onClick={toggleMobileNav} />
+        </div>
         <div className="mobile-title">Post a Job</div>
         <NotificationBell />
       </div>
 
       {mobileNavOpen && (
-        <div
-          ref={mobileNavRef}
-          className="mobile-nav-overlay"
-          style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)", overflowY: "auto" }}
-        >
-          <ul>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/post-job") }}>Post a Job</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/my-jobs") }}>My Jobs</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/profile") }}>Profile</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/inbox") }}>Inbox</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Car Pooling</li>
-            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+        <div className="mobile-nav-overlay" onClick={toggleMobileNav}>
+          <ul onClick={(e) => e.stopPropagation()}>
+            <li onClick={() => navigate("/")}>Home</li>
+            <li onClick={() => navigate("/post-job")}>Post a Job</li>
+            <li onClick={() => navigate("/my-jobs")}>My Jobs</li>
+            <li onClick={() => navigate("/profile")}>Profile</li>
+            <li onClick={() => navigate("/inbox")}>Inbox</li>
+            <li onClick={() => navigate("/carpool")}>Car Pooling</li>
+            <li
+              onClick={async () => {
+                await supabase.auth.signOut();
+                navigate("/login");
+              }}
+            >
+              Logout
+            </li>
           </ul>
         </div>
       )}
 
+      {/* ✅ Left Panel with Profile Card */}
       <div className="gigs-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -142,38 +100,58 @@ function PostGig() {
           <button onClick={() => navigate("/my-jobs")}>My Jobs</button>
           <button onClick={() => navigate("/profile")}>Profile</button>
           <button onClick={() => navigate("/inbox")}>Inbox</button>
-          <button onClick={() => navigate("/carpools")}>Car Pooling</button>
-          <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
+          <button onClick={() => navigate("/carpool")}>Car Pooling</button>
         </div>
-        <h2 style={{ fontSize: "32px", fontWeight: "bold", marginTop: "3rem" }}>Post a Job</h2>
-        <NotificationBell />
+
+        <div className="profile-card">
+          <img
+            src={profile?.image_url || defaultAvatar}
+            alt="avatar"
+          />
+          <h2>{profile?.full_name || "My Profile"}</h2>
+          <label className="btn" onClick={() => navigate("/profile")}>Change Picture</label>
+        </div>
       </div>
 
+      {/* ✅ Right Form Panel */}
       <div className="gigs-right">
         <form className="signup-form" onSubmit={handleSubmit}>
-          {message && (
-            <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>{message}</p>
-          )}
-
           <label>Job Title</label>
-          <input type="text" name="title" value={form.title} onChange={handleChange} required />
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+          />
 
-          <label>Address</label>
-          <input type="text" name="address" value={form.address} onChange={handleChange} required />
+          <label>Description</label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+          ></textarea>
 
-          <label>Job Description</label>
-          <textarea name="job_description" value={form.job_description} onChange={handleChange} required />
+          <label>Requirements</label>
+          <textarea
+            name="requirements"
+            value={formData.requirements}
+            onChange={handleChange}
+          ></textarea>
 
-          <label>Requirement</label>
-          <textarea name="requirement" value={form.requirement} onChange={handleChange} placeholder="E.g. must have a driving license" />
+          <label>Price</label>
+          <input
+            type="text"
+            name="price"
+            value={formData.price}
+            onChange={handleChange}
+          />
 
-          <label>Price (Frw)</label>
-          <input type="number" name="price" value={form.price} onChange={handleChange} />
+          <label>Image</label>
+          <input type="file" name="image" onChange={handleChange} />
 
-          <label>Upload Job Image</label>
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-
-          <button type="submit" className="btn">Submit Job</button>
+          <button type="submit" className="btn">
+            Submit
+          </button>
         </form>
       </div>
     </div>
