@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { supabase } from '../supabaseClient';
 import './UserProfile.css';
 import defaultAvatar from '../assets/avatar.png';
@@ -14,6 +14,7 @@ function UserProfile() {
   const [sectors, setSectors] = useState([]);
   const [message, setMessage] = useState('');
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -151,6 +152,8 @@ function UserProfile() {
             src={profile.image_url || defaultAvatar}
             alt="avatar"
             className="mobile-profile-pic"
+            onClick={() => fileInputRef.current?.click()}
+            style={{ cursor: 'pointer' }}
           />
           <FaBars className="mobile-hamburger" onClick={toggleMobileNav} />
         </div>
@@ -188,11 +191,22 @@ function UserProfile() {
         <h2 style={{ color: 'white' }}>My Profile</h2>
         <NotificationBell />
         <div className="profile-card">
-          <img src={profile.image_url || defaultAvatar} alt="avatar" />
+          <img
+            src={profile.image_url || defaultAvatar}
+            alt="avatar"
+            onClick={() => fileInputRef.current?.click()}
+            style={{ cursor: 'pointer' }}
+          />
           <h2 style={{ marginTop: '1rem' }}>{profile.full_name}</h2>
           <label className="btn">
             {uploading ? 'Uploading...' : 'Change Picture'}
-            <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              style={{ display: 'none' }}
+              ref={fileInputRef}
+            />
           </label>
         </div>
       </div>
