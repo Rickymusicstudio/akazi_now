@@ -12,6 +12,7 @@ function BrowseRides() {
   const [reservationCounts, setReservationCounts] = useState({});
   const [userId, setUserId] = useState(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,6 +23,14 @@ function BrowseRides() {
   const getCurrentUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     setUserId(user?.id || null);
+    if (user?.id) {
+      const { data: profile } = await supabase
+        .from("users")
+        .select("image_url")
+        .eq("auth_user_id", user.id)
+        .single();
+      setUserProfile(profile);
+    }
   };
 
   const fetchRides = async () => {
@@ -110,9 +119,16 @@ function BrowseRides() {
 
   return (
     <>
-      {/* Mobile Top Bar */}
+      {/* ✅ Mobile Top Bar with Avatar */}
       <div className="mobile-top-bar">
-        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
+        <div className="mobile-left-group">
+          <img
+            src={userProfile?.image_url || defaultAvatar}
+            alt="avatar"
+            className="mobile-profile-pic"
+          />
+          <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
+        </div>
         <h2 className="mobile-title">Browse Rides</h2>
         <NotificationBell />
       </div>
@@ -222,7 +238,7 @@ function BrowseRides() {
 const reserveBtnStyle = {
   padding: "8px 16px",
   borderRadius: "8px",
-  background: "linear-gradient(to right, #0f2027, #203a43, #2c5364)", // ✅ updated to dark blue
+  background: "linear-gradient(to right, #0f2027, #203a43, #2c5364)",
   color: "white",
   border: "none",
   cursor: "pointer",
