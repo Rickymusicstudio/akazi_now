@@ -9,7 +9,7 @@
 /* LEFT (Desktop) */
 .myjobs-left {
   width: 50%;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ dark blue like Gigs */
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ dark blue */
   color: white;
   padding: 2rem;
   display: flex;
@@ -117,7 +117,7 @@
 
 .job-card .delete-btn {
   margin-top: 1.5rem;
-  background: linear-gradient(to right, #0f2027, #203a43, #2c5364); /* ✅ updated to match Gigs */
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364); /* ✅ updated */
   color: white;
   border: none;
   border-radius: 999px;
