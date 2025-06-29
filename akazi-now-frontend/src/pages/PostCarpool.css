@@ -201,5 +201,6 @@ input:-webkit-autofill:focus {
   .postride-form .btn {
     font-size: 16px;
     padding: 0.8rem;
+    background: linear-gradient(to right, #0f2027, #203a43, #2c5364) !important;
   }
 }
