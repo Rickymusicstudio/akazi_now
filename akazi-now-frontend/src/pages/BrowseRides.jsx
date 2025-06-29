@@ -110,12 +110,14 @@ function BrowseRides() {
 
   return (
     <>
+      {/* Mobile Top Bar */}
       <div className="mobile-top-bar">
         <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <h2 className="mobile-title">Browse Rides</h2>
         <NotificationBell />
       </div>
 
+      {/* Mobile Nav Overlay */}
       {mobileNavOpen && (
         <div className="mobile-nav-overlay">
           <ul>
@@ -129,6 +131,7 @@ function BrowseRides() {
         </div>
       )}
 
+      {/* Main Content */}
       <div className="browse-container">
         <div className="browse-left">
           <div className="nav-buttons">
@@ -219,10 +222,11 @@ function BrowseRides() {
 const reserveBtnStyle = {
   padding: "8px 16px",
   borderRadius: "8px",
-  background: "linear-gradient(to right, #6a00ff, #ff007a)",
+  background: "linear-gradient(to right, #0f2027, #203a43, #2c5364)", // ✅ updated to dark blue
   color: "white",
   border: "none",
   cursor: "pointer",
+  fontWeight: "bold",
 };
 
 export default BrowseRides;
