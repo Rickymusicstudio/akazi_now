@@ -39,7 +39,7 @@ function NotificationBell() {
         className="notification-bell-button"
         onClick={() => setShowDropdown(!showDropdown)}
       >
-        <FaBell color="#6a00ff" size={20} />
+        <FaBell color="#b8860b" size={20} />
       </button>
 
       {showDropdown && (
