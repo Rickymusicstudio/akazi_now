@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
@@ -16,6 +16,7 @@ function PostGig() {
   const [imageFile, setImageFile] = useState(null);
   const [message, setMessage] = useState("");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const mobileNavRef = useRef(null);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -96,15 +97,32 @@ function PostGig() {
 
   return (
     <div className="postgig-container">
-      {/* ✅ Mobile Header */}
-      <div className="mobile-top-bar">
-        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
+      <div
+        className="mobile-top-bar"
+        style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
+      >
+        <FaBars
+          className="mobile-hamburger"
+          onClick={() => {
+            setMobileNavOpen((prev) => {
+              const newState = !prev;
+              if (newState && mobileNavRef.current) {
+                mobileNavRef.current.scrollTo({ top: 0, behavior: "smooth" });
+              }
+              return newState;
+            });
+          }}
+        />
         <div className="mobile-title">Post a Job</div>
         <NotificationBell />
       </div>
 
       {mobileNavOpen && (
-        <div className="mobile-nav-overlay">
+        <div
+          ref={mobileNavRef}
+          className="mobile-nav-overlay"
+          style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)", overflowY: "auto" }}
+        >
           <ul>
             <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/post-job") }}>Post a Job</li>
@@ -117,7 +135,6 @@ function PostGig() {
         </div>
       )}
 
-      {/* ✅ Desktop Navigation */}
       <div className="gigs-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -132,7 +149,6 @@ function PostGig() {
         <NotificationBell />
       </div>
 
-      {/* ✅ Form Area */}
       <div className="gigs-right">
         <form className="signup-form" onSubmit={handleSubmit}>
           {message && (

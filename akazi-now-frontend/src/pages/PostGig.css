@@ -1,3 +1,14 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+}
+
 .postgig-container {
   display: flex;
   height: 100vh;
@@ -9,7 +20,7 @@
 /* Left panel */
 .gigs-left {
   width: 50%;
-  background: linear-gradient(135deg, #6a00ff, #ff007a);
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
   color: white;
   padding: 2rem;
   display: flex;
@@ -87,7 +98,7 @@
   font-weight: bold;
 }
 
-/* Mobile */
+/* Mobile Layout */
 @media (max-width: 768px) {
   .postgig-container {
     flex-direction: column;
@@ -100,11 +111,64 @@
   .gigs-right {
     width: 100%;
     padding-top: 80px;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   .signup-form {
     margin-top: 1rem;
     padding: 1.5rem;
     box-shadow: none;
+  }
+
+  .mobile-top-bar {
+    height: 60px;
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 999;
+    color: white;
+  }
+
+  .mobile-hamburger {
+    font-size: 20px;
+    color: white;
+    cursor: pointer;
+  }
+
+  .mobile-title {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .mobile-nav-overlay {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+    color: white;
+    z-index: 998;
+    transition: transform 0.4s ease;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .mobile-nav-overlay ul {
+    list-style: none;
+    padding: 1rem;
+  }
+
+  .mobile-nav-overlay li {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
   }
 }
