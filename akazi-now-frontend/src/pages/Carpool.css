@@ -9,7 +9,7 @@
 /* Left nav (desktop) */
 .carpool-left {
   width: 50%;
-  background: linear-gradient(to bottom right, #6a00ff, #ff007a);
+  background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364); /* ✅ dark blue */
   color: white;
   padding: 2rem;
   display: flex;
@@ -94,7 +94,7 @@ input:-webkit-autofill:hover {
 .mobile-top-bar {
   display: none;
   width: 100%;
-  background: linear-gradient(to right, #6a00ff, #ff007a);
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364) !important;
   color: white;
   padding: 1rem;
   justify-content: space-between;
@@ -122,7 +122,7 @@ input:-webkit-autofill:hover {
   left: 0;
   height: 100%;
   width: 100%;
-  background: linear-gradient(to bottom, #6a00ff, #ff007a);
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364) !important;
   color: white;
   z-index: 999;
   padding-top: 5rem;
