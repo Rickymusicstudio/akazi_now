@@ -1,10 +1,10 @@
+/* src/pages/Login.css */
+
 html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
 }
-
-/* src/pages/Login.css */
 
 .login-container {
   display: flex;
@@ -14,7 +14,7 @@ html, body, #root {
   overflow: hidden;
 }
 
-/* ✅ Left image panel for desktop — gradient removed */
+/* ✅ Left image panel for desktop — image only */
 .login-left {
   flex: 1;
   background-image: url('../assets/signup.jpg');
@@ -61,7 +61,7 @@ html, body, #root {
   border: 1px solid #ccc;
   font-size: 1rem;
 
-  /* 👇 Added fix for Android dark autofill */
+  /* 👇 Fix for Android dark autofill */
   background-color: #fff !important;
   color: #000 !important;
   -webkit-text-fill-color: #000 !important;
@@ -93,7 +93,7 @@ input:-webkit-autofill {
   font-size: 0.95rem;
 }
 
-/* Animation */
+/* ✨ Animation */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -105,16 +105,11 @@ input:-webkit-autofill {
   }
 }
 
-/* Mobile Layout */
+/* ✅ Mobile Layout - gradient removed */
 @media (max-width: 768px) {
   .login-container {
     flex-direction: column;
-    background-image: linear-gradient(
-        to bottom right,
-        rgba(117, 0, 255, 0.6),
-        rgba(255, 0, 150, 0.6)
-      ),
-      url('../assets/signup.jpg');
+    background-image: url('../assets/signup.jpg'); /* ✅ Only image now */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
