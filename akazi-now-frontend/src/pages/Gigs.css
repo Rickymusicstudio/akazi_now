@@ -187,7 +187,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ dark blue */
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
     color: white;
     position: sticky;
     top: 0;
@@ -216,12 +216,15 @@
   .mobile-nav-overlay {
     position: fixed;
     inset: 0;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ dark blue */
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
     z-index: 999;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    animation: slideIn 0.3s ease-out;
+    max-height: 100vh;
+    overflow-y: auto;
+    scroll-behavior: smooth;
   }
 
   .mobile-nav-overlay ul {
@@ -238,15 +241,35 @@
     cursor: pointer;
   }
 
-  @keyframes slideIn {
+  /* Slide Animations */
+  @keyframes slideDown {
     from {
-      opacity: 0;
       transform: translateY(-100%);
+      opacity: 0;
     }
     to {
-      opacity: 1;
       transform: translateY(0);
+      opacity: 1;
     }
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+  }
+
+  .mobile-slide-down {
+    animation: slideDown 0.4s ease forwards;
+  }
+
+  .mobile-slide-up {
+    animation: slideUp 0.4s ease forwards;
   }
 }
 

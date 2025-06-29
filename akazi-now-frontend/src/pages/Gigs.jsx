@@ -14,6 +14,7 @@ function Gigs() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [mobileNavAnimating, setMobileNavAnimating] = useState(false);
   const mobileNavRef = useRef(null);
   const navigate = useNavigate();
 
@@ -86,6 +87,12 @@ function Gigs() {
     });
   };
 
+  const scrollNavToTop = () => {
+    if (mobileNavRef.current) {
+      mobileNavRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="gigs-container">
       {/* ✅ Mobile Header */}
@@ -96,24 +103,26 @@ function Gigs() {
         <FaBars
           className="mobile-hamburger"
           onClick={() => {
-            setMobileNavOpen((prev) => {
-              const newState = !prev;
-              if (newState && mobileNavRef.current) {
-                mobileNavRef.current.scrollTo({ top: 0, behavior: "smooth" });
-              }
-              return newState;
-            });
+            if (mobileNavOpen) {
+              setMobileNavAnimating(true);
+              setTimeout(() => {
+                setMobileNavAnimating(false);
+                setMobileNavOpen(false);
+              }, 400);
+            } else {
+              setMobileNavOpen(true);
+              setTimeout(scrollNavToTop, 50);
+            }
           }}
         />
         <h2 className="mobile-title">Available Jobs</h2>
         <NotificationBell />
       </div>
 
-      {mobileNavOpen && (
+      {(mobileNavOpen || mobileNavAnimating) && (
         <div
           ref={mobileNavRef}
-          className="mobile-nav-overlay"
-          style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)", overflowY: "auto" }}
+          className={`mobile-nav-overlay ${mobileNavAnimating ? "mobile-slide-up" : "mobile-slide-down"}`}
         >
           <ul>
             <li onClick={() => { setMobileNavOpen(false); navigate("/"); }}>Home</li>
@@ -124,6 +133,9 @@ function Gigs() {
             <li onClick={() => { setMobileNavOpen(false); navigate("/carpools"); }}>Car Pooling</li>
             <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
           </ul>
+          <button onClick={scrollNavToTop} style={{ marginTop: '2rem', color: 'white', background: 'none', border: '1px solid white', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer' }}>
+            ↑ Scroll to Top
+          </button>
         </div>
       )}
 
