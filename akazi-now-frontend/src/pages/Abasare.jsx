@@ -135,7 +135,7 @@ function Abasare() {
       )}
 
       <div className="abasare-container">
-        <div className="abasare-left">
+        <div className="abasare-left" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}>
           <div className="nav-buttons">
             <button onClick={() => navigate("/")}>Home</button>
             <button onClick={() => navigate("/carpools")}>Browse Rides</button>
@@ -166,7 +166,7 @@ function Abasare() {
               />
               <label style={{ marginLeft: "0.5rem" }}>Available now</label>
             </div>
-            <button type="submit" style={{ marginTop: "1rem", ...submitBtnStyle }}>Submit</button>
+            <button type="submit" style={submitBtnStyle}>Submit</button>
           </form>
 
           {abasareList.some((a) => a.user_id === userId) && (
@@ -260,12 +260,18 @@ function Abasare() {
 }
 
 const submitBtnStyle = {
-  padding: "8px 16px",
-  borderRadius: "8px",
-  background: "linear-gradient(to right, #6a00ff, #ff007a)",
+  padding: "12px 24px",
+  borderRadius: "999px",
+  background: "linear-gradient(to right, #0f2027, #203a43, #2c5364)",
   color: "white",
   border: "none",
+  fontWeight: "bold",
+  fontSize: "16px",
   cursor: "pointer",
+  marginTop: "1rem",
+  WebkitAppearance: "none",
+  appearance: "none",
+  backgroundImage: "linear-gradient(to right, #0f2027, #203a43, #2c5364) !important",
 };
 
 export default Abasare;
