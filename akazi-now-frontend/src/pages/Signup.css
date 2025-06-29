@@ -38,7 +38,7 @@ input:-webkit-autofill {
 
 .signup-left {
   flex: 1;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ dark blue */
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -100,7 +100,7 @@ input:-webkit-autofill {
 }
 
 .btn {
-  background-color: #0f1c2e; /* ✅ Dark blue */
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364) !important;
   color: #fff;
   padding: 12px;
   font-size: 16px;
@@ -110,10 +110,11 @@ input:-webkit-autofill {
   cursor: pointer;
   transition: background 0.3s ease;
   margin-top: 0.5rem;
+  font-weight: bold;
 }
 
 .btn:hover {
-  background-color: #122438; /* Slight hover variation */
+  background: linear-gradient(to right, #12283b, #2c3e50, #2c5364) !important;
   opacity: 1;
 }
 
@@ -144,7 +145,7 @@ input:-webkit-autofill {
 @media screen and (max-width: 768px) {
   .signup-container {
     flex-direction: column;
-    background-image: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ mobile dark blue */
+    background-image: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -204,7 +205,7 @@ input:-webkit-autofill {
   }
 
   .btn {
-    background-color: #0f1c2e; /* ✅ ensure mobile version also uses dark blue */
+    background: linear-gradient(to right, #0f2027, #203a43, #2c5364) !important;
     color: #fff;
     border-radius: 12px;
     padding: 0.75rem;
@@ -212,6 +213,10 @@ input:-webkit-autofill {
     font-weight: bold;
     border: none;
     width: 100%;
+  }
+  
+  .btn:hover {
+    background: linear-gradient(to right, #12283b, #2c3e50, #2c5364) !important;
   }
 
   .signin-link {
