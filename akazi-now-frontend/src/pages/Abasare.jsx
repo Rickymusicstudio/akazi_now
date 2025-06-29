@@ -3,6 +3,7 @@ import { supabase } from "../supabaseClient";
 import { useNavigate, Link } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell";
 import { FaBars, FaSearch } from "react-icons/fa";
+import defaultAvatar from "../assets/avatar.png";
 import "./Abasare.css";
 
 function Abasare() {
@@ -12,17 +13,33 @@ function Abasare() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [profilePic, setProfilePic] = useState(defaultAvatar);
   const navigate = useNavigate();
 
   useEffect(() => {
     loadUser();
     fetchAbasare();
+    loadProfilePicture();
   }, []);
 
   const loadUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) navigate("/login");
     else setUserId(user.id);
+  };
+
+  const loadProfilePicture = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data } = await supabase
+        .from("users")
+        .select("image_url")
+        .eq("auth_user_id", user.id)
+        .single();
+      if (data?.image_url) {
+        setProfilePic(data.image_url);
+      }
+    }
   };
 
   const fetchAbasare = async () => {
@@ -99,7 +116,9 @@ function Abasare() {
       <div className="mobile-top-bar">
         <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <h2 className="mobile-title">Abasare</h2>
-        <NotificationBell />
+        <div className="mobile-profile-pic-wrapper">
+          <img src={profilePic} alt="Profile" className="mobile-profile-pic" />
+        </div>
       </div>
 
       {mobileNavOpen && (
@@ -152,7 +171,6 @@ function Abasare() {
             <button type="submit" style={{ marginTop: "1rem", ...submitBtnStyle }}>Submit</button>
           </form>
 
-          {/* Buttons if user already in table */}
           {abasareList.some((a) => a.user_id === userId) && (
             <div className="umusare-actions">
               <button
@@ -175,7 +193,7 @@ function Abasare() {
             </div>
           )}
 
-          {/* 🔍 Search Bar */}
+          {/* Search Bar */}
           <div className="search-bar">
             {!showSearch && (
               <FaSearch className="search-icon" onClick={() => setShowSearch(true)} />
