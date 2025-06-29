@@ -59,29 +59,53 @@ body {
   padding: 2rem;
   background: #f9f9f9;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.carpool-form {
-  width: 100%;
-  max-width: 500px;
-  background: white;
-  padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
-.input {
-  margin-bottom: 1rem;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
+/* Ride card */
+.ride-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 600px;
   font-size: 14px;
-  background-color: #fff;
-  color: #000;
+}
+
+.ride-card strong {
+  display: inline-block;
+  width: 80px;
+}
+
+.ride-card img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 1rem;
+}
+
+/* Buttons */
+.ride-card button {
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.ride-card .reserve-btn {
+  background: #0f2027;
+  color: white;
+  margin-left: 1rem;
+}
+
+.ride-card .cancel-btn {
+  background: gray;
+  color: white;
+  margin-top: 0.5rem;
 }
 
 /* Autofill fix */
@@ -102,7 +126,7 @@ input:-webkit-autofill:hover {
   -webkit-text-fill-color: #000 !important;
 }
 
-/* Mobile Top Bar */
+/* MOBILE TOP BAR */
 .mobile-top-bar {
   display: none;
   width: 100%;
@@ -116,8 +140,21 @@ input:-webkit-autofill:hover {
   z-index: 1000;
 }
 
+.mobile-left-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mobile-profile-pic {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .mobile-hamburger {
-  font-size: 24px;
+  font-size: 22px;
   cursor: pointer;
 }
 
@@ -126,7 +163,7 @@ input:-webkit-autofill:hover {
   font-weight: bold;
 }
 
-/* Fullscreen mobile nav */
+/* FULLSCREEN NAV FOR MOBILE */
 .mobile-nav-overlay {
   display: none;
   position: fixed;
@@ -153,7 +190,7 @@ input:-webkit-autofill:hover {
   cursor: pointer;
 }
 
-/* MOBILE RESPONSIVE */
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .carpool-container {
     flex-direction: column;
@@ -177,13 +214,8 @@ input:-webkit-autofill:hover {
     display: block;
   }
 
-  .carpool-form {
-    margin-top: 1rem;
-    padding: 1.5rem;
-    box-shadow: none;
-  }
-
-  input[type="file"] {
-    margin-top: 0.5rem;
+  .ride-card {
+    padding: 1.2rem;
+    font-size: 15px;
   }
 }
