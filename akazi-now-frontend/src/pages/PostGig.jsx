@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
-import defaultAvatar from "../assets/avatar.png";
 import { FaBars } from "react-icons/fa";
 import "./PostGig.css";
 
@@ -163,15 +162,6 @@ function PostGig() {
           <button onClick={() => navigate("/inbox")}>Inbox</button>
           <button onClick={() => navigate("/carpools")}>Car Pooling</button>
           <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
-        </div>
-
-        <div className="profile-card">
-          <img
-            src={userProfile?.image_url || defaultAvatar}
-            alt="avatar"
-            className="profile-avatar"
-          />
-          <button className="change-pic-btn" disabled>Change Picture</button>
         </div>
       </div>
 
