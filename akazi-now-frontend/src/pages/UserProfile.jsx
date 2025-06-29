@@ -16,6 +16,7 @@ function UserProfile() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const [showSettings, setShowSettings] = useState(true);
 
   useEffect(() => {
     loadProfile();
@@ -70,8 +71,6 @@ function UserProfile() {
     }
   };
 
-  const handleEditToggle = () => setEditing(!editing);
-
   const handleSave = async () => {
     if (!profile?.auth_user_id) {
       setMessage('❌ Missing auth_user_id. Cannot update profile.');
@@ -94,6 +93,7 @@ function UserProfile() {
 
     if (!error) {
       setEditing(false);
+      setShowSettings(true);
       setMessage('✅ Profile updated');
     } else {
       console.error('Update failed:', error);
@@ -145,7 +145,7 @@ function UserProfile() {
 
   return (
     <div className="profile-container">
-      {/* ✅ Mobile Top Bar */}
+      {/* Mobile Top Bar */}
       <div className="mobile-top-bar">
         <div className="mobile-left-group">
           <img
@@ -157,11 +157,10 @@ function UserProfile() {
           />
           <FaBars className="mobile-hamburger" onClick={toggleMobileNav} />
         </div>
-        <div className="mobile-title">My Profile</div>
+        <div className="mobile-title">Profile</div>
         <NotificationBell />
       </div>
 
-      {/* ✅ Mobile Full Nav */}
       {mobileNavOpen && (
         <div className="mobile-nav-overlay" onClick={toggleMobileNav}>
           <ul onClick={(e) => e.stopPropagation()}>
@@ -171,12 +170,12 @@ function UserProfile() {
             <li onClick={() => { toggleMobileNav(); navigate("/profile") }}>Profile</li>
             <li onClick={() => { toggleMobileNav(); navigate("/inbox") }}>Inbox</li>
             <li onClick={() => { toggleMobileNav(); navigate("/carpool") }}>Car Pooling</li>
-            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+            <li onClick={handleLogout}>Logout</li>
           </ul>
         </div>
       )}
 
-      {/* ✅ Desktop Left */}
+      {/* Left Sidebar */}
       <div className="profile-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -197,7 +196,7 @@ function UserProfile() {
             onClick={() => fileInputRef.current?.click()}
             style={{ cursor: 'pointer' }}
           />
-          <h2 style={{ marginTop: '1rem' }}>{profile.full_name}</h2>
+          <h2>{profile.full_name}</h2>
           <label className="btn">
             {uploading ? 'Uploading...' : 'Change Picture'}
             <input
@@ -211,44 +210,51 @@ function UserProfile() {
         </div>
       </div>
 
-      {/* ✅ Right Form Panel */}
+      {/* Right Panel */}
       <div className="profile-right">
-        <form className="profile-form" onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
-          {message && <p style={{ color: message.startsWith('✅') ? 'green' : 'red' }}>{message}</p>}
+        {showSettings ? (
+          <div className="profile-form">
+            {message && <p style={{ color: message.startsWith('✅') ? 'green' : 'red' }}>{message}</p>}
+            <button className="btn" onClick={() => { setShowSettings(false); setEditing(true); }}>Edit Profile</button>
+            <button className="btn" onClick={() => alert("⚠️ Change Password (to be implemented)")}>Change Password</button>
+            <button className="btn" onClick={() => alert("🌗 Toggle Dark Mode (to be implemented)")}>Toggle Dark Mode</button>
+            <button className="btn" onClick={() => alert("📲 Push Notifications (to be implemented)")}>Push Notifications</button>
+            <button className="btn" onClick={() => alert("❌ Delete Account (to be implemented)")}>Delete Account</button>
+          </div>
+        ) : (
+          <form className="profile-form" onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
+            <label>Full Name</label>
+            <input type="text" name="full_name" value={profile.full_name || ''} onChange={handleChange} disabled={!editing} />
 
-          <label>Full Name</label>
-          <input type="text" name="full_name" value={profile.full_name || ''} onChange={handleChange} disabled={!editing} />
+            <label>Phone</label>
+            <input type="text" name="phone" value={profile.phone || ''} onChange={handleChange} disabled={!editing} />
 
-          <label>Phone</label>
-          <input type="text" name="phone" value={profile.phone || ''} onChange={handleChange} disabled={!editing} />
+            <label>District</label>
+            <select name="district_id" value={profile.district_id || ''} onChange={handleChange} disabled={!editing}>
+              <option value="">Select District</option>
+              {districts.map((d) => (
+                <option key={d.id} value={d.id}>{d.name}</option>
+              ))}
+            </select>
 
-          <label>District</label>
-          <select name="district_id" value={profile.district_id || ''} onChange={handleChange} disabled={!editing}>
-            <option value="">Select District</option>
-            {districts.map((d) => (
-              <option key={d.id} value={d.id}>{d.name}</option>
-            ))}
-          </select>
+            <label>Sector</label>
+            <select name="sector_id" value={profile.sector_id || ''} onChange={handleChange} disabled={!editing}>
+              <option value="">Select Sector</option>
+              {sectors.map((s) => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </select>
 
-          <label>Sector</label>
-          <select name="sector_id" value={profile.sector_id || ''} onChange={handleChange} disabled={!editing}>
-            <option value="">Select Sector</option>
-            {sectors.map((s) => (
-              <option key={s.id} value={s.id}>{s.name}</option>
-            ))}
-          </select>
+            <label>Cell</label>
+            <input type="text" name="cell" value={profile.cell || ''} onChange={handleChange} disabled={!editing} />
 
-          <label>Cell</label>
-          <input type="text" name="cell" value={profile.cell || ''} onChange={handleChange} disabled={!editing} />
+            <label>Village</label>
+            <input type="text" name="village" value={profile.village || ''} onChange={handleChange} disabled={!editing} />
 
-          <label>Village</label>
-          <input type="text" name="village" value={profile.village || ''} onChange={handleChange} disabled={!editing} />
-
-          <button type="button" className="btn" onClick={handleEditToggle}>
-            {editing ? 'Cancel' : 'Edit Profile'}
-          </button>
-          {editing && <button type="submit" className="btn">Save Changes</button>}
-        </form>
+            <button type="button" className="btn" onClick={() => { setEditing(false); setShowSettings(true); }}>Cancel</button>
+            <button type="submit" className="btn">Save Changes</button>
+          </form>
+        )}
       </div>
     </div>
   );
