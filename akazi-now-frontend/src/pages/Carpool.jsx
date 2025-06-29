@@ -3,6 +3,7 @@ import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell";
 import defaultAvatar from "../assets/avatar.png";
+import { FaBars } from "react-icons/fa";
 import "./Carpool.css";
 
 function Carpool() {
@@ -38,9 +39,7 @@ function Carpool() {
 
     if (!error && data) {
       setUserProfile(data);
-      if (data.image_url) {
-        setProfilePic(data.image_url);
-      }
+      if (data.image_url) setProfilePic(data.image_url);
     }
   };
 
@@ -100,16 +99,16 @@ function Carpool() {
 
   return (
     <div className="carpool-container">
-      {/* ✅ MOBILE HEADER WITH PROFILE PICTURE */}
+      {/* ✅ MOBILE HEADER */}
       <div className="mobile-top-bar">
-        <div className="mobile-hamburger" onClick={() => setMobileNavOpen(true)}>☰</div>
+        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         <h2 className="mobile-title">Post Carpool</h2>
         <div className="mobile-profile-pic-wrapper">
           <img src={profilePic} alt="Profile" className="mobile-profile-pic" />
         </div>
       </div>
 
-      {/* Mobile Nav Overlay */}
+      {/* ✅ MOBILE NAVIGATION */}
       {mobileNavOpen && (
         <div className="mobile-nav-overlay">
           <ul>
@@ -117,12 +116,13 @@ function Carpool() {
             <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Browse Rides</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/carpool") }}>Post Ride</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox") }}>Carpool Inbox</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/abasare") }}>Abasare</li>
             <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
           </ul>
         </div>
       )}
 
-      {/* Desktop Left Panel */}
+      {/* ✅ DESKTOP LEFT PANEL */}
       <div className="carpool-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -135,7 +135,7 @@ function Carpool() {
         <NotificationBell />
       </div>
 
-      {/* Right Panel Form */}
+      {/* ✅ RIGHT PANEL FORM */}
       <div className="carpool-right">
         <form onSubmit={handleSubmit} className="carpool-form">
           {message && <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>{message}</p>}
@@ -143,7 +143,17 @@ function Carpool() {
           <input type="text" name="origin" placeholder="Origin (e.g. Kigali)" value={form.origin} onChange={handleChange} required className="input" />
           <input type="text" name="destination" placeholder="Destination (e.g. Huye)" value={form.destination} onChange={handleChange} required className="input" />
           <input type="number" name="available_seats" placeholder="Available Seats" value={form.available_seats} onChange={handleChange} required className="input" />
-          <input type="datetime-local" name="datetime" value={form.datetime} onChange={handleChange} required className="input" />
+          <input
+            type="datetime-local"
+            name="datetime"
+            value={form.datetime}
+            onChange={(e) => {
+              handleChange(e);
+              e.target.blur(); // auto-close on Android
+            }}
+            required
+            className="input"
+          />
           <input type="number" name="price" placeholder="Price (Frw)" value={form.price} onChange={handleChange} className="input" />
           <textarea name="notes" placeholder="Extra Message (Optional)" value={form.notes} onChange={handleChange} rows={4} className="input" />
           <label>Upload Car Picture</label>
