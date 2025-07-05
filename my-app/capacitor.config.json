@@ -1,0 +1,10 @@
+{
+  "appId": "akazi_now.coom",
+  "appName": "Akazi now",
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false
+    }
+  }
+}
