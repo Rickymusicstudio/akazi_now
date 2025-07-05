@@ -1,0 +1,179 @@
+/* Base layout */
+.carpool-inbox-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  font-family: 'Segoe UI', sans-serif;
+  overflow: hidden;
+}
+
+/* Left navigation panel for desktop */
+.carpool-inbox-left {
+  width: 50%;
+  background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
+  color: white;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.nav-buttons {
+  position: absolute;
+  top: 1rem;
+  left: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.nav-buttons button {
+  background: none;
+  border: none;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Right content panel */
+.carpool-inbox-right {
+  width: 50%;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 2rem;
+  background-color: #f5f7fa;
+  box-sizing: border-box;
+}
+
+/* Ride card styling */
+.inbox-card {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.5rem;
+}
+
+/* Mobile top navigation bar */
+.mobile-top-bar {
+  display: none;
+  width: 100%;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  color: white;
+  padding: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  gap: 1rem;
+}
+
+.mobile-left-group {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.mobile-profile-pic {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+}
+
+.mobile-hamburger {
+  font-size: 1.6rem;
+  color: white;
+  cursor: pointer;
+}
+
+.mobile-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Mobile nav overlay dropdown */
+.mobile-nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+  color: white;
+  z-index: 999;
+  padding-top: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: slideIn 0.3s ease-out;
+}
+
+.mobile-nav-overlay ul {
+  list-style: none;
+  font-size: 1.6rem;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.mobile-nav-overlay li {
+  cursor: pointer;
+}
+
+/* Animation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .carpool-inbox-container {
+    flex-direction: column;
+    overflow-y: auto;
+    min-height: 100vh;
+  }
+
+  .carpool-inbox-left {
+    display: none;
+  }
+
+  .carpool-inbox-right {
+    width: 100%;
+    padding: 6rem 1rem 2rem;
+    height: auto;
+    box-sizing: border-box;
+  }
+
+  .mobile-top-bar {
+    display: flex;
+  }
+
+  .ride-card,
+  .inbox-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem;
+  }
+
+  .inbox-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+  }
+}

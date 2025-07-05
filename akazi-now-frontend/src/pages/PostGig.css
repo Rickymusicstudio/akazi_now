@@ -1,0 +1,208 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.postgig-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Left panel with profile card */
+.gigs-left {
+  width: 50%;
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+  color: white;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  text-align: center;
+}
+
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  border-radius: 20px;
+  margin-top: 2rem;
+}
+
+.profile-card img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-card h2 {
+  margin-top: 1rem;
+  font-size: 22px;
+  color: white;
+}
+
+.profile-card .btn {
+  margin-top: 1rem;
+  background: white;
+  color: #203a43;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.nav-buttons {
+  position: absolute;
+  top: 1.5rem;
+  left: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.nav-buttons button {
+  background: none;
+  border: none;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Right panel */
+.gigs-right {
+  width: 50%;
+  background: #f9f9f9;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+/* Form */
+.signup-form {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.signup-form label {
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.signup-form input,
+.signup-form textarea {
+  margin-bottom: 1rem;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 14px;
+  resize: vertical;
+  pointer-events: auto;
+}
+
+.signup-form .btn {
+  background: linear-gradient(to right, #6a00ff, #ff007a);
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Mobile Layout */
+@media (max-width: 768px) {
+  .postgig-container {
+    flex-direction: column;
+  }
+
+  .gigs-left {
+    display: none;
+  }
+
+  .gigs-right {
+    width: 100%;
+    padding-top: 80px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .signup-form {
+    margin-top: 1rem;
+    padding: 1.5rem;
+    box-shadow: none;
+  }
+
+  .mobile-top-bar {
+    height: 60px;
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 999;
+    color: white;
+  }
+
+  .mobile-hamburger {
+    font-size: 20px;
+    color: white;
+    cursor: pointer;
+  }
+
+  .mobile-title {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .mobile-nav-overlay {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+    color: white;
+    z-index: 998;
+    transition: transform 0.4s ease;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .mobile-nav-overlay ul {
+    list-style: none;
+    padding: 1rem;
+  }
+
+  .mobile-nav-overlay li {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+}

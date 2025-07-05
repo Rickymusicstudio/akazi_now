@@ -1,0 +1,239 @@
+.myjobs-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  font-family: 'Segoe UI', sans-serif;
+  flex-direction: row;
+}
+
+/* LEFT (Desktop) */
+.myjobs-left {
+  width: 50%;
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ dark blue */
+  color: white;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.nav-buttons {
+  position: absolute;
+  top: 1rem;
+  left: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.nav-buttons button {
+  background: none;
+  border: none;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* RIGHT (Desktop) */
+.myjobs-right {
+  width: 50%;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 2rem;
+  background-color: #fff;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.job-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+  max-width: 500px;
+}
+
+/* Card */
+.job-card {
+  width: 100%;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+.job-card h3 {
+  margin: 0;
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #222;
+}
+
+.job-card .job-employer {
+  margin-top: 0.25rem;
+  font-style: italic;
+  color: #777;
+}
+
+.job-card .job-description {
+  margin: 1rem 0;
+  font-size: 1rem;
+  color: #444;
+}
+
+.job-card .requirement {
+  font-weight: bold;
+  color: #222;
+  margin: 0.5rem 0;
+}
+
+.job-card .contact-info {
+  display: flex;
+  align-items: center;
+  color: #6a00ff;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+.job-card .status {
+  font-weight: bold;
+  color: green;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.job-card .delete-btn {
+  margin-top: 1.5rem;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364); /* ✅ dark blue */
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 0.75rem 2rem;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* MOBILE VIEW */
+.mobile-top-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .myjobs-container {
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .myjobs-left {
+    display: none;
+  }
+
+  .mobile-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ dark blue */
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 999;
+  }
+
+  .mobile-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.2rem;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+
+  .myjobs-right {
+    width: 100%;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 6rem 1.5rem 2rem;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .job-list {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .job-card {
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  .mobile-nav-overlay {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ fixed gradient */
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .mobile-nav-overlay ul {
+    list-style: none;
+    color: white;
+    font-weight: bold;
+    font-size: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .mobile-nav-overlay li {
+    cursor: pointer;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+.mobile-top-bar,
+.mobile-nav-overlay {
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364) !important;
+}

@@ -1,0 +1,227 @@
+/* Signup.css */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Autofill/dark mode fixes */
+.signup-form input[type="text"],
+.signup-form input[type="email"],
+.signup-form input[type="password"],
+.signup-form select {
+  background-color: #fff !important;
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  caret-color: auto;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  -webkit-text-fill-color: #000 !important;
+}
+
+.signup-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  flex-direction: row;
+}
+
+.signup-left {
+  flex: 1;
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.signup-right {
+  flex: 1;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.signup-form {
+  width: 100%;
+  max-width: 420px;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: fadeIn 0.5s ease;
+}
+
+.signup-form h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111;
+}
+
+.signup-form label {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.terms {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+}
+
+.terms input {
+  margin-right: 6px;
+}
+
+.terms a {
+  color: #6a00ff;
+  text-decoration: none;
+}
+
+.btn {
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364) !important;
+  color: #fff;
+  padding: 12px;
+  font-size: 16px;
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-top: 0.5rem;
+  font-weight: bold;
+}
+
+.btn:hover {
+  background: linear-gradient(to right, #12283b, #2c3e50, #2c5364) !important;
+  opacity: 1;
+}
+
+.signin-link {
+  text-align: center;
+  font-size: 14px;
+}
+
+.signin-link a {
+  color: #6a00ff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* ✨ Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ✅ Mobile Styles */
+@media screen and (max-width: 768px) {
+  .signup-container {
+    flex-direction: column;
+    background-image: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1rem;
+    height: auto;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .signup-left {
+    display: none;
+  }
+
+  .signup-right {
+    width: 100%;
+    height: auto;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+  }
+
+  .signup-form {
+    width: 100%;
+    max-width: 380px;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(6px);
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+    padding-bottom: 120px;
+  }
+
+  .signup-form h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.75rem;
+  }
+
+  .signup-form input,
+  .signup-form select {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 1rem;
+    background: #fff;
+  }
+
+  .terms {
+    margin-bottom: 1rem;
+    font-size: 14px;
+  }
+
+  .btn {
+    background: linear-gradient(to right, #0f2027, #203a43, #2c5364) !important;
+    color: #fff;
+    border-radius: 12px;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    width: 100%;
+  }
+  
+  .btn:hover {
+    background: linear-gradient(to right, #12283b, #2c3e50, #2c5364) !important;
+  }
+
+  .signin-link {
+    text-align: center;
+    font-size: 14px;
+    margin-top: 1rem;
+  }
+}
