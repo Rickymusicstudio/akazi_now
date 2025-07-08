@@ -99,6 +99,7 @@ function Carpool() {
 
   return (
     <div className="carpool-container">
+      {/* ✅ Fixed top bar */}
       <div className="mobile-top-bar carpool-top-bar">
         <div className="mobile-left-group">
           <div className="mobile-profile-pic-wrapper">
@@ -112,6 +113,7 @@ function Carpool() {
         </div>
       </div>
 
+      {/* ✅ Mobile nav */}
       {mobileNavOpen && (
         <div className="mobile-nav-overlay">
           <ul>
@@ -125,6 +127,7 @@ function Carpool() {
         </div>
       )}
 
+      {/* ✅ Desktop nav */}
       <div className="carpool-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -137,6 +140,7 @@ function Carpool() {
         <NotificationBell />
       </div>
 
+      {/* ✅ Scrollable content container */}
       <div className="carpool-right">
         <form onSubmit={handleSubmit} className="carpool-form">
           {message && <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>{message}</p>}
