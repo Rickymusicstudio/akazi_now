@@ -11,19 +11,18 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
         aaptOptions {
-            // Files and dirs to omit from the packaged assets dir
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
 
+    // 🔐 Signing Configuration
     signingConfigs {
         release {
-            storeFile file("akazinow-key.jks")
-            storePassword "123456"    // 🔐 Replace with your actual password
-            keyAlias "akazinow"
-            keyPassword "123456"        // 🔐 Replace with your actual password
+            storeFile file("akazinow-key.keystore") // ✅ updated path
+            storePassword "123456"
+            keyAlias "akazinow-key"
+            keyPassword "123456"
         }
     }
 

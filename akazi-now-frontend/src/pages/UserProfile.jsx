@@ -170,6 +170,38 @@ function UserProfile() {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    const confirmDelete = window.confirm('Are you sure you want to permanently delete your account? This cannot be undone.');
+    if (!confirmDelete) return;
+
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error || !user) {
+      setMessage('❌ Failed to get user.');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/delete-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: user.id }),
+      });
+
+      if (!response.ok) {
+        const res = await response.json();
+        setMessage(`❌ ${res.error}`);
+        return;
+      }
+
+      alert('✅ Account deleted. Logging you out...');
+      await supabase.auth.signOut();
+      navigate('/login');
+    } catch (err) {
+      console.error('❌ Delete error:', err);
+      setMessage('❌ Failed to delete account.');
+    }
+  };
+
   if (!profile) return null;
 
   return (
@@ -265,7 +297,7 @@ function UserProfile() {
             <button className="btn" onClick={() => { setShowSettings(false); setShowChangePassword(true); }}>Change Password</button>
             <button className="btn" onClick={() => alert("🌗 Dark Mode (to be implemented)")}>Toggle Dark Mode</button>
             <button className="btn" onClick={() => alert("📲 Push Notifications (to be implemented)")}>Push Notifications</button>
-            <button className="btn" onClick={() => alert("❌ Delete Account (to be implemented)")}>Delete Account</button>
+            <button className="btn" onClick={handleDeleteAccount}>Delete Account</button>
           </div>
         ) : (
           <form className="profile-form" onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
