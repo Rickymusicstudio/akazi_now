@@ -36,7 +36,9 @@ function Gigs() {
   };
 
   const fetchUserProfile = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return;
     const { data } = await supabase
       .from("users")
@@ -67,7 +69,9 @@ function Gigs() {
   };
 
   const handleApply = async (jobId) => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
       alert("❗Please login to apply.");
       navigate("/login");
@@ -79,12 +83,14 @@ function Gigs() {
       return;
     }
 
-    const { error } = await supabase.from("applications").insert([{
-      gig_id: jobId,
-      worker_id: user.id,
-      message: applicationMessage,
-      status: "pending",
-    }]);
+    const { error } = await supabase.from("applications").insert([
+      {
+        gig_id: jobId,
+        worker_id: user.id,
+        message: applicationMessage,
+        status: "pending",
+      },
+    ]);
 
     if (error) {
       if (error.message.includes("unique_applicant_per_gig")) {
@@ -245,12 +251,13 @@ function Gigs() {
 }
 
 const btnStyle = {
-  background: "linear-gradient(to right, #6a00ff, #ff007a)",
+  background: "linear-gradient(to right, #0f2027, #203a43, #2c5364)",
   color: "white",
   padding: "10px 20px",
   border: "none",
   borderRadius: "999px",
   cursor: "pointer",
+  fontWeight: "bold"
 };
 
 export default Gigs;
