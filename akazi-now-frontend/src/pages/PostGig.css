@@ -84,13 +84,21 @@ body {
   border-radius: 10px;
   border: 1px solid #ccc;
   width: 100%;
+}
+
+/* Updated Textarea */
+.postgig-form textarea {
+  min-height: 160px;
+  padding: 1rem;
+  resize: vertical;
   background-color: #fff !important;
   color: #000 !important;
+  font-size: 1rem;
+  line-height: 1.4;
+  border: 1px solid #ccc;
+  border-radius: 10px;
   -webkit-text-fill-color: #000 !important;
   caret-color: #000;
-  height: 45px; /* ✅ force same height across all fields */
-  resize: none;
-  line-height: 1.2;
 }
 
 .postgig-form button {
