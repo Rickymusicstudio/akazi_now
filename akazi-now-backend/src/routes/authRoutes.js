@@ -3,6 +3,14 @@ const router = express.Router();
 const fetch = require('node-fetch');
 require('dotenv').config();
 
+const { createClient } = require('@supabase/supabase-js');
+
+// ✅ Secure Supabase admin client
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
 // POST /api/auth/signup
 router.post('/signup', async (req, res) => {
   const { email, password } = req.body;
@@ -18,7 +26,6 @@ router.post('/signup', async (req, res) => {
 
   const data = await response.json();
 
-  // ✅ Handle already registered users gracefully
   if (response.status === 422 && (data.msg === 'User already registered' || data.error === 'User already registered')) {
     return res.status(200).json({
       message: 'User already registered. Please log in.',
@@ -61,8 +68,7 @@ router.post('/login', async (req, res) => {
   });
 });
 
-
-// POST /api/auth/delete-user
+// ✅ POST /api/auth/delete-user
 router.post('/delete-user', async (req, res) => {
   const { user_id } = req.body;
 
@@ -70,10 +76,10 @@ router.post('/delete-user', async (req, res) => {
     return res.status(400).json({ error: 'Missing user_id' });
   }
 
-  // 1. Delete from users table
+  // Step 1: Delete from custom 'users' table
   await supabase.from('users').delete().eq('auth_user_id', user_id);
 
-  // 2. Delete from Supabase Auth
+  // Step 2: Delete from Supabase Auth
   const { error } = await supabase.auth.admin.deleteUser(user_id);
   if (error) {
     console.error('❌ Delete error:', error.message);
