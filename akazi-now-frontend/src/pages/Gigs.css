@@ -70,11 +70,6 @@
   object-fit: cover;
 }
 
-.job-info {
-  flex: 1;
-  min-width: 220px;
-}
-
 .job-image {
   width: 150px;
   height: 150px;
@@ -158,7 +153,7 @@
   color: #888;
 }
 
-/* ✅ WELCOME CARD */
+/* ✅ Welcome Message */
 .welcome-card {
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
   color: white;
@@ -175,8 +170,7 @@
   margin-bottom: 0.75rem;
 }
 
-.find-jobs-button,
-.submit-application-button {
+.find-jobs-button {
   background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
   border: none;
   color: white;
@@ -191,7 +185,27 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* ✅ ANIMATIONS */
+/* ✅ New: Sliding Badges */
+.sliding-badges {
+  display: flex;
+  overflow: hidden;
+  margin: 1rem 0;
+  gap: 1rem;
+  padding: 0 1rem;
+}
+
+.badge {
+  background: linear-gradient(to right, #6a11cb, #2575fc);
+  color: white;
+  padding: 0.5rem 1.2rem;
+  border-radius: 999px;
+  font-weight: bold;
+  white-space: nowrap;
+  animation: slideLeft 20s linear infinite;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ Animations */
 @keyframes slideInLeft {
   from {
     opacity: 0;
@@ -203,7 +217,16 @@
   }
 }
 
-/* ✅ MOBILE */
+@keyframes slideLeft {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-200%);
+  }
+}
+
+/* ✅ Mobile */
 .mobile-top-bar {
   display: none;
 }
@@ -304,9 +327,19 @@
   .welcome-card {
     margin-top: 1rem;
   }
+
+  .sliding-badges {
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1rem 0;
+  }
+
+  .badge {
+    animation: none;
+  }
 }
 
-/* ✅ FIX DARK TEXTAREA ON ANDROID */
+/* ✅ Fix Android TextArea Theme */
 .application-textarea {
   background-color: #ffffff !important;
   color: #000000 !important;

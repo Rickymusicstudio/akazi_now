@@ -114,33 +114,21 @@ function Gigs() {
 
   return (
     <div className="gigs-container">
+      {/* Top Bar */}
       <div className="mobile-top-bar" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}>
         <div className="mobile-left-group">
-          <img
-            src={userProfile?.image_url || defaultAvatar}
-            alt="avatar"
-            className="mobile-profile-pic"
-          />
+          <img src={userProfile?.image_url || defaultAvatar} alt="avatar" className="mobile-profile-pic" />
           <FaBars className="mobile-hamburger" onClick={handleHamburgerClick} />
         </div>
         <h2 className="mobile-title">Available Jobs</h2>
         <NotificationBell />
       </div>
 
+      {/* Mobile Nav Overlay */}
       {mobileNavVisible && (
-        <div
-          ref={mobileNavRef}
-          className={`mobile-nav-overlay ${slideDirection}`}
-          style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
-        >
+        <div ref={mobileNavRef} className={`mobile-nav-overlay ${slideDirection}`}>
           <ul>
-            <li onClick={() => {
-              setMobileNavVisible(false);
-              setJobs([]);
-              setJobsFetched(false);
-              setShowWelcome(true);
-              window.scrollTo(0, 0);
-            }}>Home</li>
+            <li onClick={() => { setMobileNavVisible(false); setJobs([]); setJobsFetched(false); setShowWelcome(true); window.scrollTo(0, 0); }}>Home</li>
             <li onClick={() => { setMobileNavVisible(false); navigate("/post-job"); }}>Post a Job</li>
             <li onClick={() => { setMobileNavVisible(false); navigate("/my-jobs"); }}>My Jobs</li>
             <li onClick={() => { setMobileNavVisible(false); navigate("/profile"); }}>Profile</li>
@@ -151,14 +139,10 @@ function Gigs() {
         </div>
       )}
 
+      {/* Left Nav */}
       <div className="gigs-left">
         <div className="nav-buttons">
-          <button onClick={() => {
-            setJobs([]);
-            setJobsFetched(false);
-            setShowWelcome(true);
-            window.scrollTo(0, 0);
-          }}>Home</button>
+          <button onClick={() => { setJobs([]); setJobsFetched(false); setShowWelcome(true); window.scrollTo(0, 0); }}>Home</button>
           <button onClick={() => navigate("/post-job")}>Post a Job</button>
           <button onClick={() => navigate("/my-jobs")}>My Jobs</button>
           <button onClick={() => navigate("/profile")}>Profile</button>
@@ -170,19 +154,31 @@ function Gigs() {
         <NotificationBell />
       </div>
 
+      {/* Right Content */}
       <div className="gigs-right">
         {showWelcome && (
-          <div className="welcome-card slide-in-left">
-            <h3>👋 <strong>Welcome to AkaziNow!</strong></h3>
-            <p>Your Smart Way to Find or Post Quick Gigs in Rwanda.</p>
-            <p>💼 Whether you're looking to earn fast or need help with a task —</p>
-            <p>We've got you covered.</p>
-            <p>🚀 Start now. Find work. Get paid.</p>
-            <button className="find-jobs-button" onClick={fetchJobs}>
-              <FaSearch style={{ marginRight: "0.5rem" }} />
-              Find Jobs
-            </button>
-          </div>
+          <>
+            <div className="welcome-card slide-in-left">
+              <h3>👋 <strong>Welcome to AkaziNow!</strong></h3>
+              <p>Your Smart Way to Find or Post Quick Gigs in Rwanda.</p>
+              <p>💼 Whether you're looking to earn fast or need help with a task —</p>
+              <p>We've got you covered.</p>
+              <p>🚀 Start now. Find work. Get paid.</p>
+              <button className="find-jobs-button" onClick={fetchJobs}>
+                <FaSearch style={{ marginRight: "0.5rem" }} />
+                Find Jobs
+              </button>
+            </div>
+
+            {/* 👇 Sliding Badges */}
+            <div className="badge-slider">
+              <div className="badge">🎯 Fast Hiring</div>
+              <div className="badge">💵 Instant Pay</div>
+              <div className="badge">📍 Local Tasks</div>
+              <div className="badge">⭐ Trusted Workers</div>
+              <div className="badge">📅 Flexible Hours</div>
+            </div>
+          </>
         )}
 
         {!showWelcome && jobsFetched && jobs.length === 0 && (
@@ -193,9 +189,7 @@ function Gigs() {
           <div className="job-list">
             {jobs.map((job) => (
               <div key={job.id} className="job-card">
-                {job.poster_image && (
-                  <img src={job.poster_image} alt="Poster" className="poster-img" />
-                )}
+                {job.poster_image && <img src={job.poster_image} alt="Poster" className="poster-img" />}
                 <div className="job-card-details">
                   <p><strong>Title:</strong> {job.title}</p>
                   <p><strong>Posted by:</strong> {job.employer_name}</p>
@@ -212,13 +206,8 @@ function Gigs() {
                     <button onClick={() => copyJobLink(job.id)} title="Copy Job Link">🔗</button>
                     {job.status === "open" && (applyingJobId === job.id ? (
                       <div style={{ width: "100%" }}>
-                        <textarea
-                          className="application-textarea"
-                          placeholder="Your message"
-                          rows={3}
-                          value={applicationMessage}
-                          onChange={(e) => setApplicationMessage(e.target.value)}
-                        />
+                        <textarea className="application-textarea" placeholder="Your message" rows={3}
+                          value={applicationMessage} onChange={(e) => setApplicationMessage(e.target.value)} />
                         <button style={btnStyle} onClick={() => handleApply(job.id)}>Submit Application</button>
                       </div>
                     ) : (
@@ -228,12 +217,7 @@ function Gigs() {
                 </div>
 
                 {job.image_url && (
-                  <img
-                    src={job.image_url}
-                    alt="Job Visual"
-                    onClick={() => handleImageClick(job.image_url)}
-                    className="job-image"
-                  />
+                  <img src={job.image_url} alt="Job Visual" onClick={() => handleImageClick(job.image_url)} className="job-image" />
                 )}
               </div>
             ))}
