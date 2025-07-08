@@ -46,11 +46,8 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* ✅ Root path redirects to either /gigs or /login based on auth */}
-        <Route
-          path="/"
-          element={<Navigate to={isAuthenticated ? "/gigs" : "/login"} replace />}
-        />
+        {/* ✅ Root path always redirects to /gigs */}
+        <Route path="/" element={<Navigate to="/gigs" replace />} />
 
         {/* 🔐 Protected Routes */}
         <Route path="/gigs" element={<ProtectedRoute><Gigs /></ProtectedRoute>} />
