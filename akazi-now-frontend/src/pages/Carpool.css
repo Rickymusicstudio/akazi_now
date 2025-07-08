@@ -8,49 +8,98 @@
 body {
   font-family: 'Segoe UI', sans-serif;
   background: #f0f2f5;
-  overflow-x: hidden;
 }
 
 /* MAIN CONTAINER */
 .carpool-container {
   display: flex;
-  flex-direction: row;
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* DESKTOP LEFT PANEL */
-.carpool-left {
-  width: 50%;
-  background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
-  color: white;
-  padding: 2rem;
-  display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  position: relative;
-  text-align: center;
-}
-
-.nav-buttons {
-  position: absolute;
-  top: 1.5rem;
-  left: 2rem;
-  display: flex;
-  gap: 1rem;
-  flex-direction: column;
-}
-
-/* RIGHT PANEL */
-.carpool-right {
-  width: 50%;
-  overflow-y: auto;
-  padding: 2rem;
+  padding-top: 80px;
+  padding-bottom: 40px;
+  min-height: 100vh;
   background-color: #f0f2f5;
+  scroll-behavior: smooth;
+}
+
+/* Mobile Top Bar */
+.mobile-top-bar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+  color: white;
+  height: 60px;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+}
+
+.mobile-left-group {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 0.5rem;
+}
+
+.mobile-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.mobile-hamburger {
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.mobile-profile-pic-wrapper {
+  width: 32px;
+  height: 32px;
+}
+
+.mobile-profile-pic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Fullscreen Nav */
+.mobile-nav-overlay {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+  color: white;
+  z-index: 999;
+  padding-top: 1rem;
+}
+
+.mobile-nav-overlay ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mobile-nav-overlay li {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* FORM SECTION */
+.carpool-left {
+  display: none;
+}
+
+.carpool-right {
+  width: 100%;
+  max-width: 600px;
+  padding: 1rem;
 }
 
 .carpool-form {
@@ -59,20 +108,28 @@ body {
   border-radius: 20px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
   width: 100%;
-  max-width: 500px;
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
 }
 
-.carpool-input,
-.carpool-textarea {
+.carpool-form input,
+.carpool-form textarea {
   padding: 12px;
   border: 1px solid #ccc;
   border-radius: 12px;
   font-size: 15px;
   width: 100%;
   resize: vertical;
+  background-color: white !important;
+  color: black !important;
+  -webkit-text-fill-color: black !important;
+  caret-color: black;
+}
+
+.carpool-form label {
+  font-weight: bold;
+  margin-top: 0.5rem;
 }
 
 .submit-btn {
@@ -84,100 +141,12 @@ body {
   font-weight: bold;
   cursor: pointer;
   font-size: 16px;
+  margin-top: 1rem;
 }
 
-/* MOBILE */
-@media (max-width: 768px) {
-  .carpool-container {
-    flex-direction: column;
-    height: 100vh;
-  }
-
-  .carpool-left {
-    display: none;
-  }
-
-  .carpool-right {
-    width: 100%;
-    height: 100vh;
-    overflow-y: auto;
-    padding: 1rem;
-    padding-top: 70px;
-  }
-
-  .carpool-form {
-    padding: 1.5rem;
-  }
-
-  .mobile-top-bar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-    color: white;
-    height: 60px;
-    z-index: 1000;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 1rem;
-  }
-
-  .mobile-left-group {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .mobile-title {
-    font-size: 18px;
-    font-weight: bold;
-  }
-
-  .mobile-hamburger {
-    font-size: 22px;
-    cursor: pointer;
-  }
-
-  .mobile-profile-pic-wrapper {
-    width: 32px;
-    height: 32px;
-  }
-
-  .mobile-profile-pic {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-  }
-
-  .mobile-bell-wrapper {
-    display: flex;
-    align-items: center;
-  }
-
-  .mobile-nav-overlay {
-    position: fixed;
-    top: 60px;
-    left: 0;
-    right: 0;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-    color: white;
-    z-index: 999;
-    padding-top: 1rem;
-  }
-
-  .mobile-nav-overlay ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .mobile-nav-overlay li {
-    padding: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-  }
+/* Optional override: Fix scrolling issues on Android */
+html,
+body {
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
 }
