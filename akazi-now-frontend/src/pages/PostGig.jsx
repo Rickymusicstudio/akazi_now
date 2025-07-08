@@ -171,7 +171,7 @@ function PostGig() {
       </div>
 
       <div className="gigs-right">
-        <form className="signup-form" onSubmit={handleSubmit}>
+        <form className="postgig-form" onSubmit={handleSubmit}>
           <h2 style={{ textAlign: "center", marginBottom: "1rem", fontWeight: "bold" }}>
             Post a Job
           </h2>
