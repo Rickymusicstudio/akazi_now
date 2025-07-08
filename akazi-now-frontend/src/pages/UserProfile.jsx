@@ -181,15 +181,19 @@ function UserProfile() {
     }
 
     try {
-      const response = await fetch('/api/auth/delete-user', {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/delete-user`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_id: user.id }),
       });
 
       if (!response.ok) {
-        const res = await response.json();
-        setMessage(`❌ ${res.error}`);
+        let errorMessage = '❌ Failed to delete account.';
+        try {
+          const res = await response.json();
+          errorMessage = `❌ ${res.error || errorMessage}`;
+        } catch (_) {}
+        setMessage(errorMessage);
         return;
       }
 
