@@ -70,10 +70,10 @@ html {
   color: #000;
 }
 
-/* Textarea fix */
+/* ✅ Fixed Textarea size to match input */
 .postgig-form textarea {
-  height: 120px;
-  resize: vertical;
+  height: 45px;
+  resize: none;
   background-color: #fff !important;
   color: #000 !important;
   font-size: 1rem;
