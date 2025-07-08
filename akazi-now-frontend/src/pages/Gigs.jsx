@@ -207,9 +207,9 @@ function Gigs() {
                     {job.status === "open" && (applyingJobId === job.id ? (
                       <div style={{ width: "100%" }}>
                         <textarea
+                          className="application-textarea"
                           placeholder="Your message"
                           rows={3}
-                          style={{ width: "100%", padding: "0.5rem", borderRadius: "8px", border: "1px solid #ccc" }}
                           value={applicationMessage}
                           onChange={(e) => setApplicationMessage(e.target.value)}
                         />
