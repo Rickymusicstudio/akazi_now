@@ -142,22 +142,22 @@ function Carpool() {
           {message && <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>{message}</p>}
 
           <label>Origin</label>
-          <input type="text" name="origin" placeholder="Origin (e.g. Kigali)" value={form.origin} onChange={handleChange} required />
+          <input type="text" name="origin" className="carpool-input" placeholder="Origin (e.g. Kigali)" value={form.origin} onChange={handleChange} required />
 
           <label>Destination</label>
-          <input type="text" name="destination" placeholder="Destination (e.g. Huye)" value={form.destination} onChange={handleChange} required />
+          <input type="text" name="destination" className="carpool-input" placeholder="Destination (e.g. Huye)" value={form.destination} onChange={handleChange} required />
 
           <label>Available Seats</label>
-          <input type="number" name="available_seats" placeholder="Available Seats" value={form.available_seats} onChange={handleChange} required />
+          <input type="number" name="available_seats" className="carpool-input" placeholder="Available Seats" value={form.available_seats} onChange={handleChange} required />
 
           <label>Date and Time</label>
-          <input type="datetime-local" name="datetime" value={form.datetime} onChange={(e) => { handleChange(e); e.target.blur(); }} required />
+          <input type="datetime-local" name="datetime" className="carpool-input" value={form.datetime} onChange={(e) => { handleChange(e); e.target.blur(); }} required />
 
           <label>Price (Frw)</label>
-          <input type="number" name="price" placeholder="Price (Frw)" value={form.price} onChange={handleChange} />
+          <input type="number" name="price" className="carpool-input" placeholder="Price (Frw)" value={form.price} onChange={handleChange} />
 
           <label>Extra Message</label>
-          <textarea name="notes" placeholder="Extra Message (Optional)" value={form.notes} onChange={handleChange} rows={4} />
+          <textarea name="notes" className="carpool-textarea" placeholder="Extra Message (Optional)" value={form.notes} onChange={handleChange} rows={4} />
 
           <label>Upload Car Picture</label>
           <input type="file" accept="image/*" onChange={(e) => setCarImageFile(e.target.files[0])} />

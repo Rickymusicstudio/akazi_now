@@ -4,15 +4,6 @@ android {
     namespace "com.akazinow.app"
     compileSdk rootProject.ext.compileSdkVersion
 
-    signingConfigs {
-        release {
-            storeFile file('my-release-key.jks')        // ✅ Ensure this file is in android/app/
-            storePassword '123456'                      // ✅ Your keystore password
-            keyAlias 'akazinow-release'                 // ✅ Your key alias
-            keyPassword '123456'                        // ✅ Your key password
-        }
-    }
-
     defaultConfig {
         applicationId "com.akazinow.app"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -21,20 +12,26 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        ndk {
-            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
-        }
-
         aaptOptions {
+            // Files and dirs to omit from the packaged assets dir
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("akazinow-key.jks")
+            storePassword "123456"    // 🔐 Replace with your actual password
+            keyAlias "akazinow"
+            keyPassword "123456"        // 🔐 Replace with your actual password
         }
     }
 
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             shrinkResources false
-            signingConfig signingConfigs.release        // ✅ Use release signing config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -42,7 +39,7 @@ android {
 
 repositories {
     flatDir {
-        dirs file('../capacitor-cordova-android-plugins/src/main/libs'), file('libs')
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
     }
 }
 
@@ -62,7 +59,7 @@ apply from: 'capacitor.build.gradle'
 
 try {
     def servicesJSON = file('google-services.json')
-    if (servicesJSON.exists() && servicesJSON.text) {
+    if (servicesJSON.text) {
         apply plugin: 'com.google.gms.google-services'
     }
 } catch(Exception e) {
