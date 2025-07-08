@@ -190,7 +190,7 @@ function PostGig() {
           <textarea name="job_description" value={form.job_description} onChange={handleChange} required />
 
           <label>Requirement</label>
-          <textarea name="requirement" value={form.requirement} onChange={handleChange} placeholder="E.g. must have a driving license" />
+          <textarea name="requirement" value={form.requirement} onChange={handleChange} />
 
           <label>Price (Frw)</label>
           <input type="number" name="price" value={form.price} onChange={handleChange} />
