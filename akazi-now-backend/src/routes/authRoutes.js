@@ -61,4 +61,26 @@ router.post('/login', async (req, res) => {
   });
 });
 
+
+// POST /api/auth/delete-user
+router.post('/delete-user', async (req, res) => {
+  const { user_id } = req.body;
+
+  if (!user_id) {
+    return res.status(400).json({ error: 'Missing user_id' });
+  }
+
+  // 1. Delete from users table
+  await supabase.from('users').delete().eq('auth_user_id', user_id);
+
+  // 2. Delete from Supabase Auth
+  const { error } = await supabase.auth.admin.deleteUser(user_id);
+  if (error) {
+    console.error('❌ Delete error:', error.message);
+    return res.status(500).json({ error: error.message });
+  }
+
+  return res.status(200).json({ message: '✅ User deleted successfully' });
+});
+
 module.exports = router;
