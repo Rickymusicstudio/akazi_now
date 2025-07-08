@@ -116,10 +116,7 @@ function PostGig() {
 
   return (
     <div className="postgig-container">
-      <div
-        className="mobile-top-bar"
-        style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
-      >
+      <div className="mobile-top-bar" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}>
         <div className="mobile-left-group">
           <img
             src={userProfile?.image_url || defaultAvatar}

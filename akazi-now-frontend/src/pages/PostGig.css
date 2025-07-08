@@ -9,6 +9,7 @@ body {
   font-family: 'Segoe UI', sans-serif;
 }
 
+/* CONTAINER */
 .postgig-container {
   display: flex;
   height: 100vh;
@@ -17,7 +18,7 @@ body {
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* Left panel with profile card */
+/* LEFT PANEL */
 .gigs-left {
   width: 50%;
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
@@ -29,40 +30,6 @@ body {
   justify-content: center;
   position: relative;
   text-align: center;
-}
-
-.profile-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 2rem;
-  border-radius: 20px;
-  margin-top: 2rem;
-}
-
-.profile-card img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.profile-card h2 {
-  margin-top: 1rem;
-  font-size: 22px;
-  color: white;
-}
-
-.profile-card .btn {
-  margin-top: 1rem;
-  background: white;
-  color: #203a43;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 999px;
-  font-weight: bold;
-  cursor: pointer;
 }
 
 .nav-buttons {
@@ -83,7 +50,7 @@ body {
   cursor: pointer;
 }
 
-/* Right panel */
+/* RIGHT PANEL */
 .gigs-right {
   width: 50%;
   background: #f9f9f9;
@@ -92,9 +59,10 @@ body {
   align-items: flex-start;
   padding: 2rem;
   overflow-y: auto;
+  height: 100vh;
 }
 
-/* Form */
+/* FORM */
 .signup-form {
   width: 100%;
   max-width: 500px;
@@ -119,11 +87,18 @@ body {
   border-radius: 10px;
   font-size: 14px;
   resize: vertical;
-  pointer-events: auto;
+  background-color: white;
+  color: black;
 }
 
+.signup-form input::placeholder,
+.signup-form textarea::placeholder {
+  color: #aaa;
+}
+
+/* SUBMIT BUTTON */
 .signup-form .btn {
-  background: linear-gradient(to right, #6a00ff, #ff007a);
+  background: linear-gradient(to right, #0f2027, #203a43);
   color: white;
   padding: 12px;
   border: none;
@@ -132,7 +107,7 @@ body {
   font-weight: bold;
 }
 
-/* Mobile Layout */
+/* MOBILE LAYOUT */
 @media (max-width: 768px) {
   .postgig-container {
     flex-direction: column;
@@ -178,6 +153,19 @@ body {
   .mobile-title {
     font-size: 18px;
     font-weight: bold;
+  }
+
+  .mobile-left-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .mobile-profile-pic {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
   }
 
   .mobile-nav-overlay {
