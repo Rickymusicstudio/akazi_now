@@ -14,7 +14,8 @@ body {
 .carpool-container {
   display: flex;
   height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   flex-direction: row;
 }
 
@@ -55,7 +56,9 @@ body {
 /* RIGHT PANEL */
 .carpool-right {
   width: 50%;
+  height: 100vh;
   overflow-y: auto;
+  scroll-behavior: smooth;
   padding: 2rem;
   background: #f9f9f9;
   display: flex;
@@ -87,6 +90,10 @@ body {
   font-size: 15px;
   width: 100%;
   resize: vertical;
+  background-color: white !important;
+  color: black !important;
+  -webkit-text-fill-color: black !important;
+  caret-color: black;
 }
 
 /* BUTTON */
@@ -153,7 +160,7 @@ body {
   cursor: pointer;
 }
 
-/* 🔒 SCOPED STYLES */
+/* SCOPED STYLES */
 .carpool-top-bar .mobile-left-group {
   display: flex;
   align-items: center;
@@ -188,6 +195,7 @@ body {
 
   .carpool-right {
     width: 100%;
+    height: auto;
     padding: 6rem 1rem 2rem;
     overflow-y: auto;
   }
@@ -199,13 +207,4 @@ body {
   .mobile-nav-overlay {
     display: block;
   }
-}
-
-/* FIX INPUT DARK BACKGROUND ON ANDROID & AUTOFILL */
-.carpool-form input,
-.carpool-form textarea {
-  background-color: white !important;
-  color: black !important;
-  -webkit-text-fill-color: black !important;
-  caret-color: black;
 }
