@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
@@ -8,16 +8,31 @@ import "./MyJobs.css";
 
 function MyJobs() {
   const [jobs, setJobs] = useState([]);
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [navClosing, setNavClosing] = useState(false);
+  const [mobileNavVisible, setMobileNavVisible] = useState(false);
+  const [slideDirection, setSlideDirection] = useState("");
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState(null);
   const navigate = useNavigate();
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     fetchMyJobs();
     fetchUserProfile();
-  }, []);
+
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      if (currentY < lastScrollY.current - 10 && mobileNavVisible) {
+        setSlideDirection("slide-up");
+        setTimeout(() => {
+          setMobileNavVisible(false);
+        }, 300);
+      }
+      lastScrollY.current = currentY;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [mobileNavVisible]);
 
   const fetchUserProfile = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -34,11 +49,7 @@ function MyJobs() {
 
   const fetchMyJobs = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      navigate("/login");
-      return;
-    }
+    if (!user) return navigate("/login");
 
     const { data, error } = await supabase
       .from("jobs")
@@ -46,11 +57,8 @@ function MyJobs() {
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
 
-    if (error) {
-      console.error("❌ Failed to fetch jobs:", error.message);
-    } else {
-      setJobs(data || []);
-    }
+    if (error) console.error("❌ Failed to fetch jobs:", error.message);
+    else setJobs(data || []);
     setLoading(false);
   };
 
@@ -63,40 +71,33 @@ function MyJobs() {
       .delete()
       .eq("gig_id", id);
 
-    if (appDeleteError) {
-      alert("❌ Failed to delete related applications: " + appDeleteError.message);
-      return;
-    }
+    if (appDeleteError) return alert("❌ Failed to delete related applications: " + appDeleteError.message);
 
     const { error: jobDeleteError } = await supabase
       .from("jobs")
       .delete()
       .eq("id", id);
 
-    if (jobDeleteError) {
-      alert("❌ Failed to delete job: " + jobDeleteError.message);
-    } else {
+    if (jobDeleteError) alert("❌ Failed to delete job: " + jobDeleteError.message);
+    else {
       alert("✅ Job deleted");
       fetchMyJobs();
     }
   };
 
   const handleToggleNav = () => {
-    if (mobileNavOpen) {
-      setNavClosing(true);
-      setTimeout(() => {
-        setMobileNavOpen(false);
-        setNavClosing(false);
-      }, 400);
+    if (mobileNavVisible) {
+      setSlideDirection("slide-up");
+      setTimeout(() => setMobileNavVisible(false), 300);
     } else {
-      setMobileNavOpen(true);
+      setSlideDirection("slide-down");
+      setMobileNavVisible(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   return (
     <div className="myjobs-container">
-      {/* MOBILE NAV HEADER */}
       <div className="mobile-top-bar">
         <div className="mobile-left-group">
           <img
@@ -110,9 +111,8 @@ function MyJobs() {
         <NotificationBell />
       </div>
 
-      {/* MOBILE FULLSCREEN NAV */}
-      {mobileNavOpen && (
-        <div className={`mobile-nav-overlay ${navClosing ? "hide" : ""}`}>
+      {mobileNavVisible && (
+        <div className={`mobile-nav-overlay ${slideDirection}`}>
           <ul>
             <li onClick={() => { handleToggleNav(); navigate("/") }}>Home</li>
             <li onClick={() => { handleToggleNav(); navigate("/post-job") }}>Post a Job</li>
@@ -129,7 +129,6 @@ function MyJobs() {
         </div>
       )}
 
-      {/* DESKTOP LEFT NAV */}
       <div className="myjobs-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -152,7 +151,6 @@ function MyJobs() {
         <NotificationBell />
       </div>
 
-      {/* RIGHT CONTENT */}
       <div className="myjobs-right">
         {loading ? null : jobs.length === 0 ? (
           <p className="empty-message">You haven't posted any jobs yet.</p>

@@ -1,3 +1,15 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f0f2f5;
+}
+
 .myjobs-container {
   display: flex;
   height: 100vh;
@@ -9,7 +21,7 @@
 /* LEFT (Desktop) */
 .myjobs-left {
   width: 50%;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ dark blue */
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
   color: white;
   padding: 2rem;
   display: flex;
@@ -60,7 +72,6 @@
   max-width: 500px;
 }
 
-/* Card */
 .job-card {
   width: 100%;
   background: #fff;
@@ -117,7 +128,7 @@
 
 .job-card .delete-btn {
   margin-top: 1.5rem;
-  background: linear-gradient(to right, #0f2027, #203a43, #2c5364); /* ✅ dark blue */
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
   color: white;
   border: none;
   border-radius: 999px;
@@ -127,7 +138,7 @@
   cursor: pointer;
 }
 
-/* MOBILE VIEW */
+/* MOBILE */
 .mobile-top-bar {
   display: none;
 }
@@ -148,7 +159,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ dark blue */
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
     color: white;
     position: fixed;
     top: 0;
@@ -166,6 +177,25 @@
     white-space: nowrap;
   }
 
+  .mobile-profile-pic {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+  }
+
+  .mobile-hamburger {
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: white;
+  }
+
+  .mobile-left-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
   .myjobs-right {
     width: 100%;
     height: 100vh;
@@ -180,31 +210,15 @@
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
   }
 
-  .job-list {
-    width: 100%;
-    max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .job-card {
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  }
-
   .mobile-nav-overlay {
     position: fixed;
-    inset: 0;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ fixed gradient */
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
     z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    animation: slideIn 0.3s ease-out;
+    padding-top: 1rem;
+    transition: transform 0.3s ease, opacity 0.3s ease;
   }
 
   .mobile-nav-overlay ul {
@@ -215,24 +229,26 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    align-items: center;
+    justify-content: center;
   }
 
   .mobile-nav-overlay li {
     cursor: pointer;
   }
 
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateY(-100%);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .mobile-nav-overlay.slide-up {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  .mobile-nav-overlay.slide-down {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
+/* Always ensure nav background color */
 .mobile-top-bar,
 .mobile-nav-overlay {
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364) !important;
