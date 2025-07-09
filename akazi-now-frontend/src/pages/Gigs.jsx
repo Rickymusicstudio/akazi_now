@@ -33,7 +33,10 @@ function Gigs() {
       const currentScrollY = window.scrollY;
       if (currentScrollY < lastScrollY) {
         setSlideDirection("slide-up");
-        setTimeout(() => setMobileNavVisible(false), 300);
+        setTimeout(() => {
+          setMobileNavVisible(false);
+          setSlideDirection("");
+        }, 300);
       }
       lastScrollY = currentScrollY;
     };
@@ -46,7 +49,10 @@ function Gigs() {
       const touchEndY = e.touches[0].clientY;
       if (touchStartY - touchEndY > 50 && mobileNavVisible) {
         setSlideDirection("slide-up");
-        setTimeout(() => setMobileNavVisible(false), 300);
+        setTimeout(() => {
+          setMobileNavVisible(false);
+          setSlideDirection("");
+        }, 300);
       }
     };
 
@@ -91,7 +97,10 @@ function Gigs() {
       setMobileNavVisible(true);
     } else {
       setSlideDirection("slide-up");
-      setTimeout(() => setMobileNavVisible(false), 300);
+      setTimeout(() => {
+        setMobileNavVisible(false);
+        setSlideDirection("");
+      }, 300);
     }
   };
 
@@ -99,6 +108,7 @@ function Gigs() {
     setSlideDirection("slide-up");
     setTimeout(() => {
       setMobileNavVisible(false);
+      setSlideDirection("");
       window.scrollTo(0, 0);
       if (extraFn) extraFn();
       navigate(path);
