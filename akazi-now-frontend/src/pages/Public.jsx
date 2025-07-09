@@ -1,9 +1,10 @@
+// src/pages/Public.jsx
 import "./Public.css";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/kcc_bg_clean.png";
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { FaCalendarCheck } from "react-icons/fa";
+import { FaMapMarkerAlt, FaCalendarAlt, FaUser, FaCalendarCheck } from "react-icons/fa";
 
 function Public() {
   const navigate = useNavigate();
@@ -37,30 +38,6 @@ function Public() {
         <div className="public-hero-content">
           <h1 className="public-heading">Welcome to AkaziNow</h1>
           <p className="public-subheading">Your Smart Gig Finder in Rwanda</p>
-
-          <div className="public-search-bar">
-            <div className="search-field">
-              <span className="icon">📍</span>
-              <input type="text" placeholder="Leaving from" />
-            </div>
-            <div className="search-field">
-              <span className="icon">📍</span>
-              <input type="text" placeholder="Going to" />
-            </div>
-            <div className="search-field">
-              <span className="icon">📅</span>
-              <input type="date" />
-            </div>
-            <div className="search-field">
-              <span className="icon">👤</span>
-              <input type="number" min="1" defaultValue="1" />
-            </div>
-            <button className="search-button">Search</button>
-          </div>
-
-          <div className="public-count">
-            <FaCalendarCheck /> {gigCount} Gigs Available Now
-          </div>
         </div>
       </div>
 
@@ -76,6 +53,33 @@ function Public() {
         <div className="feature-card">
           <h3>✔️ Trusted by Thousands</h3>
           <p>Join a large community of gig workers</p>
+        </div>
+      </section>
+
+      {/* 🔍 SEARCH BAR MOVED HERE */}
+      <section className="public-search-section">
+        <div className="public-search-bar">
+          <div className="search-field">
+            <FaMapMarkerAlt className="icon" />
+            <input type="text" placeholder="Leaving from" />
+          </div>
+          <div className="search-field">
+            <FaMapMarkerAlt className="icon" />
+            <input type="text" placeholder="Going to" />
+          </div>
+          <div className="search-field">
+            <FaCalendarAlt className="icon" />
+            <input type="date" />
+          </div>
+          <div className="search-field">
+            <FaUser className="icon" />
+            <input type="number" placeholder="1" min="1" />
+          </div>
+          <button className="search-button">Search</button>
+        </div>
+
+        <div className="public-count">
+          <FaCalendarCheck /> {gigCount} Gigs Available Now
         </div>
       </section>
     </div>
