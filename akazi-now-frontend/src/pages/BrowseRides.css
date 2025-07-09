@@ -5,28 +5,32 @@
   box-sizing: border-box;
 }
 
-body {
+body, html {
+  height: 100%;
+  width: 100%;
   font-family: 'Segoe UI', sans-serif;
-  background: #f0f2f5;
+  overflow: hidden;
 }
 
-/* MAIN CONTAINER */
+/* CONTAINER */
 .browse-container {
   display: flex;
-  height: 100vh;
   width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* LEFT PANEL */
 .browse-left {
-  width: 50%;
+  flex: 1;
+  min-width: 50%;
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
   color: white;
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   position: relative;
 }
 
@@ -36,8 +40,8 @@ body {
   top: 1rem;
   left: 1.5rem;
   display: flex;
-  flex-wrap: wrap;
   gap: 1rem;
+  flex-wrap: wrap;
   font-weight: bold;
   font-size: 14px;
 }
@@ -47,17 +51,17 @@ body {
   border: none;
   color: white;
   font-weight: bold;
+  font-size: 14px;
   cursor: pointer;
 }
 
 /* RIGHT PANEL */
 .browse-right {
-  width: 50%;
-  height: 100vh;
+  flex: 1;
+  min-width: 50%;
+  background: #fff;
+  padding: 1.5rem 2rem;
   overflow-y: auto;
-  padding: 1rem 2rem 2rem;
-  background-color: white;
-  box-sizing: border-box;
 }
 
 /* RIDE CARD */
@@ -65,11 +69,12 @@ body {
   background: white;
   padding: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
   align-items: flex-start;
+  margin-bottom: 1.5rem;
 }
 
 /* MOBILE TOP BAR */
@@ -77,11 +82,11 @@ body {
   display: none;
 }
 
-/* ✅ MOBILE VERSION */
+/* ✅ MOBILE STYLES */
 @media (max-width: 768px) {
   .browse-container {
     flex-direction: column;
-    height: 100vh;
+    height: auto;
     overflow-y: auto;
   }
 
@@ -91,9 +96,7 @@ body {
 
   .browse-right {
     width: 100%;
-    height: auto;
-    padding: 1.5rem;
-    padding-top: 6rem;
+    padding: 6rem 1rem 2rem;
   }
 
   .mobile-top-bar {
@@ -103,23 +106,16 @@ body {
     padding: 1rem;
     background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
     color: white;
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 100;
-    gap: 1rem;
+    width: 100%;
+    z-index: 1000;
   }
 
   .mobile-left-group {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-  }
-
-  .mobile-hamburger {
-    font-size: 1.8rem;
-    font-weight: bold;
-    cursor: pointer;
-    color: white;
   }
 
   .mobile-profile-pic {
@@ -129,40 +125,60 @@ body {
     object-fit: cover;
   }
 
+  .mobile-hamburger {
+    font-size: 1.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+  }
+
   .mobile-title {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
     font-size: 1.2rem;
     font-weight: bold;
-    text-align: center;
     white-space: nowrap;
   }
 
   .mobile-nav-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
     z-index: 999;
     display: flex;
     justify-content: center;
     align-items: center;
-    opacity: 1;
-    transform: translateY(0%);
-    transition: transform 0.3s ease, opacity 0.3s ease;
   }
 
   .mobile-nav-overlay.browse-slide-down {
-    transform: translateY(0%);
-    opacity: 1;
+    animation: browseSlideDown 0.3s ease forwards;
   }
 
   .mobile-nav-overlay.browse-slide-up {
-    transform: translateY(-100%);
-    opacity: 0;
+    animation: browseSlideUp 0.3s ease forwards;
+  }
+
+  @keyframes browseSlideDown {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0%);
+      opacity: 1;
+    }
+  }
+
+  @keyframes browseSlideUp {
+    from {
+      transform: translateY(0%);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
   }
 
   .mobile-nav-overlay ul {
@@ -177,12 +193,5 @@ body {
 
   .mobile-nav-overlay li {
     cursor: pointer;
-  }
-
-  .notification-bell-container {
-    position: relative;
-    top: 0;
-    right: 0;
-    margin-left: auto;
   }
 }
