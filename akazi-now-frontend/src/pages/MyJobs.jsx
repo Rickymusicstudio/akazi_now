@@ -8,12 +8,13 @@ import "./MyJobs.css";
 
 function MyJobs() {
   const [jobs, setJobs] = useState([]);
-  const [mobileNavVisible, setMobileNavVisible] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [slideDirection, setSlideDirection] = useState("");
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState(null);
   const navigate = useNavigate();
   const lastScrollY = useRef(0);
+  const mobileNavRef = useRef(null);
 
   useEffect(() => {
     fetchMyJobs();
@@ -21,18 +22,16 @@ function MyJobs() {
 
     const handleScroll = () => {
       const currentY = window.scrollY;
-      if (currentY < lastScrollY.current - 10 && mobileNavVisible) {
+      if (currentY < lastScrollY.current - 10 && mobileNavOpen) {
         setSlideDirection("slide-up");
-        setTimeout(() => {
-          setMobileNavVisible(false);
-        }, 300);
+        setTimeout(() => setMobileNavOpen(false), 300);
       }
       lastScrollY.current = currentY;
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [mobileNavVisible]);
+  }, [mobileNavOpen]);
 
   const fetchUserProfile = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -86,13 +85,15 @@ function MyJobs() {
   };
 
   const handleToggleNav = () => {
-    if (mobileNavVisible) {
+    if (mobileNavOpen) {
       setSlideDirection("slide-up");
-      setTimeout(() => setMobileNavVisible(false), 300);
+      setTimeout(() => setMobileNavOpen(false), 300);
     } else {
       setSlideDirection("slide-down");
-      setMobileNavVisible(true);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      setMobileNavOpen(true);
+      if (mobileNavRef.current) {
+        mobileNavRef.current.scrollTo({ top: 0, behavior: "smooth" });
+      }
     }
   };
 
@@ -111,8 +112,12 @@ function MyJobs() {
         <NotificationBell />
       </div>
 
-      {mobileNavVisible && (
-        <div className={`mobile-nav-overlay ${slideDirection}`}>
+      {mobileNavOpen && (
+        <div
+          ref={mobileNavRef}
+          className={`mobile-nav-overlay ${slideDirection}`}
+          style={{ overflowY: "auto" }}
+        >
           <ul>
             <li onClick={() => { handleToggleNav(); navigate("/") }}>Home</li>
             <li onClick={() => { handleToggleNav(); navigate("/post-job") }}>Post a Job</li>
