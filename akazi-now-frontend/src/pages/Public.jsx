@@ -9,7 +9,7 @@ import {
   FaUser,
   FaCalendarCheck,
 } from "react-icons/fa";
-import sticker3 from "../assets/sticker3.png";
+import sticker3 from "../assets/sticker1_transparent.png";
 
 function Public() {
   const navigate = useNavigate();
