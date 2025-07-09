@@ -24,7 +24,7 @@ body, html {
 .browse-left {
   flex: 1;
   min-width: 50%;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* updated to dark blue */
   color: white;
   padding: 2rem;
   display: flex;
