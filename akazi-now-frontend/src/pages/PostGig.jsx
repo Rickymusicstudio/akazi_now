@@ -17,6 +17,7 @@ function PostGig() {
   const [imageFile, setImageFile] = useState(null);
   const [message, setMessage] = useState("");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [slideDirection, setSlideDirection] = useState("");
   const [userProfile, setUserProfile] = useState(null);
   const mobileNavRef = useRef(null);
   const navigate = useNavigate();
@@ -24,6 +25,49 @@ function PostGig() {
   useEffect(() => {
     fetchUserProfile();
   }, []);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    let touchStartY = 0;
+
+    const handleScroll = () => {
+      if (!mobileNavOpen) return;
+      const currentScrollY = window.scrollY;
+      if (currentScrollY < lastScrollY) {
+        setSlideDirection("slide-up");
+        setTimeout(() => {
+          setMobileNavOpen(false);
+          setSlideDirection("");
+        }, 300);
+      }
+      lastScrollY = currentScrollY;
+    };
+
+    const handleTouchStart = (e) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e) => {
+      const touchEndY = e.touches[0].clientY;
+      if (touchStartY - touchEndY > 50 && mobileNavOpen) {
+        setSlideDirection("slide-up");
+        setTimeout(() => {
+          setMobileNavOpen(false);
+          setSlideDirection("");
+        }, 300);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchmove", handleTouchMove);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, [mobileNavOpen]);
 
   const fetchUserProfile = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -114,6 +158,29 @@ function PostGig() {
     }
   };
 
+  const handleMenuToggle = () => {
+    if (!mobileNavOpen) {
+      setSlideDirection("slide-down");
+      setMobileNavOpen(true);
+    } else {
+      setSlideDirection("slide-up");
+      setTimeout(() => {
+        setMobileNavOpen(false);
+        setSlideDirection("");
+      }, 300);
+    }
+  };
+
+  const closeAndNavigate = async (path, logout = false) => {
+    setSlideDirection("slide-up");
+    setTimeout(async () => {
+      setMobileNavOpen(false);
+      setSlideDirection("");
+      if (logout) await supabase.auth.signOut();
+      navigate(path);
+    }, 300);
+  };
+
   return (
     <div className="postgig-container">
       <div className="mobile-top-bar" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}>
@@ -123,42 +190,27 @@ function PostGig() {
             alt="avatar"
             className="mobile-profile-pic"
           />
-          <FaBars
-            className="mobile-hamburger"
-            onClick={() => {
-              setMobileNavOpen((prev) => {
-                const newState = !prev;
-                if (newState && mobileNavRef.current) {
-                  mobileNavRef.current.scrollTo({ top: 0, behavior: "smooth" });
-                }
-                return newState;
-              });
-            }}
-          />
+          <FaBars className="mobile-hamburger" onClick={handleMenuToggle} />
         </div>
         <h2 className="mobile-title">Post a Job</h2>
         <NotificationBell />
       </div>
 
       {mobileNavOpen && (
-        <div
-          ref={mobileNavRef}
-          className="mobile-nav-overlay"
-          style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)", overflowY: "auto" }}
-        >
+        <div ref={mobileNavRef} className={`mobile-nav-overlay ${slideDirection}`}>
           <ul>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/post-job") }}>Post a Job</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/my-jobs") }}>My Jobs</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/profile") }}>Profile</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/inbox") }}>Inbox</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Car Pooling</li>
-            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+            <li onClick={() => closeAndNavigate("/")}>Home</li>
+            <li onClick={() => closeAndNavigate("/post-job")}>Post a Job</li>
+            <li onClick={() => closeAndNavigate("/my-jobs")}>My Jobs</li>
+            <li onClick={() => closeAndNavigate("/profile")}>Profile</li>
+            <li onClick={() => closeAndNavigate("/inbox")}>Inbox</li>
+            <li onClick={() => closeAndNavigate("/carpools")}>Car Pooling</li>
+            <li onClick={() => closeAndNavigate("/login", true)}>Logout</li>
           </ul>
         </div>
       )}
 
-      <div className="gigs-left">
+      <div className="postgig-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
           <button onClick={() => navigate("/post-job")}>Post a Job</button>
@@ -170,7 +222,7 @@ function PostGig() {
         </div>
       </div>
 
-      <div className="gigs-right">
+      <div className="postgig-right">
         <form className="postgig-form" onSubmit={handleSubmit}>
           <h2 style={{ textAlign: "center", marginBottom: "1rem", fontWeight: "bold" }}>
             Post a Job
