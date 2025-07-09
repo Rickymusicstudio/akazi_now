@@ -3,7 +3,13 @@ import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/kcc_bg_clean.png";
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { FaMapMarkerAlt, FaCalendarAlt, FaUser, FaCalendarCheck } from "react-icons/fa";
+import {
+  FaMapMarkerAlt,
+  FaCalendarAlt,
+  FaUser,
+  FaCalendarCheck,
+} from "react-icons/fa";
+import sticker3 from "../assets/sticker3.png";
 
 function Public() {
   const navigate = useNavigate();
@@ -55,7 +61,6 @@ function Public() {
         </div>
       </section>
 
-      {/* 🔍 SEARCH BAR MOVED HERE */}
       <section className="public-search-section">
         <div className="public-search-bar">
           <div className="search-field">
@@ -82,22 +87,20 @@ function Public() {
         </div>
       </section>
 
-      {/* ✅ GIGS PANEL SECTION */}
-      <section className="gig-panel">
-        <div className="gig-panel-content">
-          <div className="gig-panel-text">
-            <h2>Find or Post Gigs Easily</h2>
+      {/* ✅ Abasare Panel */}
+      <section className="abasare-panel">
+        <div className="abasare-panel-content">
+          <div className="abasare-panel-text">
+            <h2>Abasare Drivers You Can Trust</h2>
             <p>
-              Whether you're looking for a quick job or need help with a task — AkaziNow connects Rwandans fast.
-              Post a gig in seconds or apply instantly to available opportunities in your district.
+              Our verified drivers (Abasare) are here to help Rwandans get home
+              safely — whether you're out late or need a responsible driver on
+              the go. We ensure you ride with trusted and rated people.
             </p>
-            <div className="gig-panel-buttons">
-              <button onClick={() => navigate("/gigs")}>Find Gigs</button>
-              <button onClick={() => navigate("/post-gig")}>Post a Gig</button>
-            </div>
+            <button onClick={() => navigate("/abasare")}>View Drivers</button>
           </div>
-          <div className="gig-panel-image">
-            <img src="/assets/gig-post-apply.png" alt="Gig Service Illustration" />
+          <div className="abasare-panel-image">
+            <img src={sticker3} alt="Abasare Illustration" />
           </div>
         </div>
       </section>

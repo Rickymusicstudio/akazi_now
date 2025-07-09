@@ -1,14 +1,15 @@
-/* RESET */
+/* RESET */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   overflow-y: auto;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
   background: #f0f2f5;
 }
 
@@ -183,7 +184,6 @@ html, body {
   cursor: pointer;
 }
 
-/* Gigs count */
 .public-count {
   font-weight: bold;
   font-size: 1.1rem;
@@ -191,6 +191,64 @@ html, body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+/* ✅ Abasare Panel */
+.abasare-panel {
+  width: 100%;
+  background: #74b8f0;
+  padding: 4rem 2rem;
+}
+
+.abasare-panel-content {
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.abasare-panel-text {
+  flex: 1;
+  color: white;
+  padding: 1rem 2rem;
+  min-width: 280px;
+}
+
+.abasare-panel-text h2 {
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.abasare-panel-text p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.abasare-panel-text button {
+  background: white;
+  color: #0f2027;
+  font-weight: bold;
+  padding: 0.7rem 1.5rem;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+}
+
+.abasare-panel-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  min-width: 280px;
+}
+
+.abasare-panel-image img {
+  max-width: 100%;
+  height: auto;
 }
 
 /* RESPONSIVE */
@@ -223,82 +281,13 @@ html, body {
   .feature-card {
     width: 100%;
   }
-}
 
-/* 👇 NEW GIG PANEL SECTION */
-.gig-panel {
-  width: 100%;
-  background: #64b5f6; /* Light blue */
-  padding: 4rem 2rem;
-  display: flex;
-  justify-content: center;
-}
-
-.gig-panel-content {
-  display: flex;
-  gap: 2rem;
-  align-items: center;
-  max-width: 1200px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.gig-panel-text {
-  flex: 1;
-  min-width: 280px;
-  text-align: left;
-}
-
-.gig-panel-text h2 {
-  font-size: 2rem;
-  color: #0f2027;
-  margin-bottom: 1rem;
-}
-
-.gig-panel-text p {
-  font-size: 1rem;
-  color: #033048;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-}
-
-.gig-panel-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.gig-panel-buttons button {
-  background: white;
-  color: #0f2027;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 24px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.gig-panel-buttons button:hover {
-  background: #e4e4e4;
-}
-
-.gig-panel-image img {
-  width: 320px;
-  max-width: 100%;
-}
-
-/* Responsive for gig panel */
-@media (max-width: 768px) {
-  .gig-panel-text {
+  .abasare-panel-content {
+    flex-direction: column;
     text-align: center;
   }
 
-  .gig-panel-buttons {
-    justify-content: center;
-    flex-direction: column;
-  }
-
-  .gig-panel-buttons button {
-    width: 100%;
+  .abasare-panel-text {
+    padding: 1rem;
   }
 }
