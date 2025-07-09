@@ -1,14 +1,18 @@
-// src/pages/Public.jsx
 import "./Public.css";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/kcc_bg_clean.png";
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { FaCalendarCheck, FaSearch } from "react-icons/fa";
+import { FaCalendarCheck, FaSearch, FaUser, FaLocationArrow } from "react-icons/fa";
 
 function Public() {
   const navigate = useNavigate();
   const [gigCount, setGigCount] = useState(0);
+
+  const [leavingFrom, setLeavingFrom] = useState("");
+  const [goingTo, setGoingTo] = useState("");
+  const [date, setDate] = useState("");
+  const [passengers, setPassengers] = useState(1);
 
   useEffect(() => {
     fetchGigCount();
@@ -19,6 +23,11 @@ function Public() {
     if (!error && data) {
       setGigCount(data.length);
     }
+  };
+
+  const handleSearch = () => {
+    alert(`Searching: ${leavingFrom} ➡️ ${goingTo} on ${date} for ${passengers} passenger(s)`);
+    // 🔍 You can redirect to /carpools or filter on a public results page
   };
 
   return (
@@ -39,9 +48,42 @@ function Public() {
           <h1 className="public-heading">Welcome to AkaziNow</h1>
           <p className="public-subheading">Your Smart Gig Finder in Rwanda</p>
 
-          <div className="public-search-wrapper">
-            <FaSearch className="search-icon" />
-            <input className="public-search" placeholder="Search for gigs..." />
+          <div className="search-bar">
+            <div className="search-item">
+              <FaLocationArrow />
+              <input
+                placeholder="Leaving from"
+                value={leavingFrom}
+                onChange={(e) => setLeavingFrom(e.target.value)}
+              />
+            </div>
+            <div className="search-item">
+              <FaLocationArrow />
+              <input
+                placeholder="Going to"
+                value={goingTo}
+                onChange={(e) => setGoingTo(e.target.value)}
+              />
+            </div>
+            <div className="search-item">
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
+            </div>
+            <div className="search-item">
+              <FaUser />
+              <input
+                type="number"
+                min="1"
+                value={passengers}
+                onChange={(e) => setPassengers(e.target.value)}
+              />
+            </div>
+            <button className="search-button" onClick={handleSearch}>
+              Search
+            </button>
           </div>
 
           <div className="public-count">
