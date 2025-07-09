@@ -49,6 +49,7 @@ function Gigs() {
   };
 
   const handleHamburgerClick = () => {
+    window.scrollTo(0, 0); // ✅ Scroll to top
     if (!mobileNavVisible) {
       setSlideDirection("slide-down");
       setMobileNavVisible(true);
