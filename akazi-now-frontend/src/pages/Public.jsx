@@ -22,26 +22,31 @@ function Public() {
   };
 
   return (
-    <div className="public-container" style={{ backgroundImage: `url(${backgroundImage})` }}>
-      <div className="public-topbar">
-        <div className="public-logo">AN</div>
-        <div className="public-auth-buttons">
-          <button onClick={() => navigate("/login")}>Sign In</button>
-          <button onClick={() => navigate("/signup")}>Sign Up</button>
-        </div>
-      </div>
-
-      <div className="public-hero">
-        <h1 className="public-heading">Welcome to AkaziNow</h1>
-        <p className="public-subheading">Your Smart Gig Finder in Rwanda</p>
-
-        <div className="public-search-wrapper">
-          <FaSearch className="search-icon" />
-          <input className="public-search" placeholder="Search for gigs..." />
+    <div className="public-container">
+      <div
+        className="public-hero"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      >
+        <div className="public-topbar">
+          <div className="public-logo">AN</div>
+          <div className="public-auth-buttons">
+            <button onClick={() => navigate("/login")}>Sign In</button>
+            <button onClick={() => navigate("/signup")}>Sign Up</button>
+          </div>
         </div>
 
-        <div className="public-count">
-          <FaCalendarCheck /> {gigCount} Gigs Available Now
+        <div className="public-hero-content">
+          <h1 className="public-heading">Welcome to AkaziNow</h1>
+          <p className="public-subheading">Your Smart Gig Finder in Rwanda</p>
+
+          <div className="public-search-wrapper">
+            <FaSearch className="search-icon" />
+            <input className="public-search" placeholder="Search for gigs..." />
+          </div>
+
+          <div className="public-count">
+            <FaCalendarCheck /> {gigCount} Gigs Available Now
+          </div>
         </div>
       </div>
 
