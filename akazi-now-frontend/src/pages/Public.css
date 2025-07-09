@@ -2,7 +2,6 @@
 
 .public-container {
   min-height: 100vh;
-  background-image: url('../assets/kcc_clean.png');
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
@@ -17,7 +16,6 @@
   position: relative;
 }
 
-/* Top Left Logo */
 .public-topbar {
   position: absolute;
   top: 1rem;
@@ -35,7 +33,6 @@
   border-radius: 12px;
 }
 
-/* Top Right Auth Buttons */
 .public-auth-buttons {
   position: absolute;
   top: 1.5rem;
@@ -59,7 +56,6 @@
   background: #ddd;
 }
 
-/* Main Heading */
 .public-heading {
   font-size: 3rem;
   font-weight: bold;
@@ -74,7 +70,6 @@
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
 }
 
-/* Search Box */
 .public-search {
   background: white;
   padding: 0.8rem 1rem;
@@ -91,7 +86,6 @@
   outline: none;
 }
 
-/* Gig Count */
 .public-count {
   margin-top: 0.5rem;
   font-weight: bold;
@@ -103,7 +97,6 @@
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
 }
 
-/* Features Section */
 .public-features {
   background: white;
   color: #0f2027;
@@ -139,7 +132,6 @@
   margin-top: 0.5rem;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .public-heading {
     font-size: 2rem;

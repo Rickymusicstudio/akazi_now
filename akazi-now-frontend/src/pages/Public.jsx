@@ -1,7 +1,7 @@
 // src/pages/Public.jsx
 import "./Public.css";
 import { useNavigate } from "react-router-dom";
-import backgroundImage from "../assets/kcc_clean.png";
+import backgroundImage from "../assets/kcc_bg_clean.png";
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { FaCalendarCheck } from "react-icons/fa";
@@ -22,7 +22,10 @@ function Public() {
   };
 
   return (
-    <div className="public-container">
+    <div
+      className="public-container"
+      style={{ backgroundImage: `url(${backgroundImage})` }}
+    >
       <div className="public-topbar">
         <div className="public-logo">AN</div>
       </div>
