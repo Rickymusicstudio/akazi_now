@@ -15,19 +15,18 @@ body {
   display: flex;
   height: 100vh;
   width: 100vw;
-  overflow: hidden;
 }
 
-/* LEFT PANEL (DESKTOP) */
+/* LEFT PANEL */
 .browse-left {
   width: 50%;
-  background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
   color: white;
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   position: relative;
 }
 
@@ -37,8 +36,10 @@ body {
   top: 1rem;
   left: 1.5rem;
   display: flex;
-  gap: 1rem;
   flex-wrap: wrap;
+  gap: 1rem;
+  font-weight: bold;
+  font-size: 14px;
 }
 
 .nav-buttons button {
@@ -46,7 +47,6 @@ body {
   border: none;
   color: white;
   font-weight: bold;
-  font-size: 14px;
   cursor: pointer;
 }
 
@@ -55,124 +55,34 @@ body {
   width: 50%;
   height: 100vh;
   overflow-y: auto;
-  padding: 2rem;
-  background-color: #fff;
+  padding: 1rem 2rem 2rem;
+  background-color: white;
   box-sizing: border-box;
 }
 
 /* RIDE CARD */
 .ride-card {
-  background: #fff;
+  background: white;
   padding: 1.5rem;
-  border-radius: 16px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
   display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
 }
 
 /* MOBILE TOP BAR */
 .mobile-top-bar {
   display: none;
-  width: 100%;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-  color: white;
-  padding: 1rem;
-  justify-content: space-between;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  z-index: 1000;
-  gap: 1rem;
 }
 
-.mobile-hamburger {
-  font-size: 1.6rem;
-  color: white;
-  cursor: pointer;
-}
-
-.mobile-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-
-.mobile-profile-pic {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-/* MOBILE NAV OVERLAY */
-.mobile-nav-overlay {
-  position: fixed;
-  inset: 0;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-  color: white;
-  z-index: 999;
-  padding-top: 5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* ✅ SCOPED ANIMATIONS TO BROWSE PAGE ONLY */
-.mobile-nav-overlay.browse-slide-up {
-  animation: browseSlideUp 0.3s ease forwards;
-}
-
-.mobile-nav-overlay.browse-slide-down {
-  animation: browseSlideDown 0.3s ease forwards;
-}
-
-@keyframes browseSlideUp {
-  from {
-    transform: translateY(0%);
-    opacity: 1;
-  }
-  to {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-}
-
-@keyframes browseSlideDown {
-  from {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0%);
-    opacity: 1;
-  }
-}
-
-/* NAV OVERLAY CONTENT */
-.mobile-nav-overlay ul {
-  list-style: none;
-  font-size: 1.6rem;
-  font-weight: bold;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.mobile-nav-overlay li {
-  cursor: pointer;
-}
-
-/* MEDIA QUERIES FOR MOBILE */
+/* ✅ MOBILE VERSION */
 @media (max-width: 768px) {
   .browse-container {
     flex-direction: column;
+    height: 100vh;
     overflow-y: auto;
-    min-height: 100vh;
   }
 
   .browse-left {
@@ -181,29 +91,98 @@ body {
 
   .browse-right {
     width: 100%;
-    padding: 6rem 1rem 2rem;
     height: auto;
-    box-sizing: border-box;
+    padding: 1.5rem;
+    padding-top: 6rem;
   }
 
   .mobile-top-bar {
     display: flex;
-  }
-
-  .ride-card {
-    flex-direction: column;
-    align-items: flex-start;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 100;
     gap: 1rem;
   }
 
-  .ride-card img {
-    width: 100%;
-    height: auto;
-    border-radius: 12px;
+  .mobile-left-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
   }
 
-  .ride-card input[type="number"] {
+  .mobile-hamburger {
+    font-size: 1.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+  }
+
+  .mobile-profile-pic {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .mobile-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .mobile-nav-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    margin-top: 0.5rem;
+    height: 100%;
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transform: translateY(0%);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .mobile-nav-overlay.browse-slide-down {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+
+  .mobile-nav-overlay.browse-slide-up {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  .mobile-nav-overlay ul {
+    list-style: none;
+    color: white;
+    font-weight: bold;
+    font-size: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .mobile-nav-overlay li {
+    cursor: pointer;
+  }
+
+  .notification-bell-container {
+    position: relative;
+    top: 0;
+    right: 0;
+    margin-left: auto;
   }
 }
