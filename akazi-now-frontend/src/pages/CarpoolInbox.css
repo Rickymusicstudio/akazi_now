@@ -1,13 +1,25 @@
-/* Base layout */
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f5f7fa;
+}
+
+/* Layout */
 .carpool-inbox-container {
   display: flex;
   height: 100vh;
   width: 100vw;
-  font-family: 'Segoe UI', sans-serif;
   overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-/* Left navigation panel for desktop */
+/* Desktop Left Navigation */
 .carpool-inbox-left {
   width: 50%;
   background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
@@ -38,7 +50,7 @@
   cursor: pointer;
 }
 
-/* Right content panel */
+/* Desktop Right Panel */
 .carpool-inbox-right {
   width: 50%;
   height: 100vh;
@@ -48,7 +60,7 @@
   box-sizing: border-box;
 }
 
-/* Ride card styling */
+/* Ride Card */
 .inbox-card {
   background: #fff;
   padding: 1.5rem;
@@ -57,7 +69,7 @@
   margin-bottom: 1.5rem;
 }
 
-/* Mobile top navigation bar */
+/* Mobile Top Bar */
 .mobile-top-bar {
   display: none;
   width: 100%;
@@ -100,7 +112,38 @@
   font-weight: bold;
 }
 
-/* Mobile nav overlay dropdown */
+/* Scoped Mobile Nav Overlay Animation */
+.mobile-nav-overlay.carpoolinbox-slide-up {
+  animation: carpoolInboxSlideUp 0.3s ease forwards;
+}
+
+.mobile-nav-overlay.carpoolinbox-slide-down {
+  animation: carpoolInboxSlideDown 0.3s ease forwards;
+}
+
+@keyframes carpoolInboxSlideUp {
+  from {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes carpoolInboxSlideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+}
+
+/* Mobile Nav Overlay */
 .mobile-nav-overlay {
   position: fixed;
   inset: 0;
@@ -111,7 +154,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  animation: slideIn 0.3s ease-out;
 }
 
 .mobile-nav-overlay ul {
@@ -128,19 +170,7 @@
   cursor: pointer;
 }
 
-/* Animation */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-100%);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Mobile styles */
+/* Responsive Mobile Styles */
 @media (max-width: 768px) {
   .carpool-inbox-container {
     flex-direction: column;
@@ -163,7 +193,6 @@
     display: flex;
   }
 
-  .ride-card,
   .inbox-card {
     flex-direction: column;
     align-items: flex-start;
