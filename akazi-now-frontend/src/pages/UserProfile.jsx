@@ -26,6 +26,40 @@ function UserProfile() {
     loadDistricts();
   }, []);
 
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    let touchStartY = 0;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY < lastScrollY && mobileNavOpen) {
+        setMobileNavOpen(false);
+      }
+      lastScrollY = currentScrollY;
+    };
+
+    const handleTouchStart = (e) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e) => {
+      const touchEndY = e.touches[0].clientY;
+      if (touchStartY - touchEndY > 50 && mobileNavOpen) {
+        setMobileNavOpen(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchmove", handleTouchMove);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, [mobileNavOpen]);
+
   const toggleMobileNav = () => setMobileNavOpen(prev => !prev);
 
   const loadProfile = async () => {
@@ -227,7 +261,7 @@ function UserProfile() {
       </div>
 
       {mobileNavOpen && (
-        <div className="mobile-nav-overlay" onClick={toggleMobileNav}>
+        <div className={`mobile-nav-overlay`} onClick={toggleMobileNav}>
           <ul onClick={(e) => e.stopPropagation()}>
             <li onClick={() => { toggleMobileNav(); navigate("/") }}>Home</li>
             <li onClick={() => { toggleMobileNav(); navigate("/post-job") }}>Post a Job</li>
