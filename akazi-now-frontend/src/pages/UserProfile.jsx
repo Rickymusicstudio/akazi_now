@@ -14,6 +14,7 @@ function UserProfile() {
   const [sectors, setSectors] = useState([]);
   const [message, setMessage] = useState('');
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [slideDirection, setSlideDirection] = useState('');
   const [showSettings, setShowSettings] = useState(true);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [passwords, setPasswords] = useState({ newPassword: '', confirmPassword: '' });
@@ -33,7 +34,11 @@ function UserProfile() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       if (currentScrollY < lastScrollY && mobileNavOpen) {
-        setMobileNavOpen(false);
+        setSlideDirection('slide-up');
+        setTimeout(() => {
+          setMobileNavOpen(false);
+          setSlideDirection('');
+        }, 300);
       }
       lastScrollY = currentScrollY;
     };
@@ -45,7 +50,11 @@ function UserProfile() {
     const handleTouchMove = (e) => {
       const touchEndY = e.touches[0].clientY;
       if (touchStartY - touchEndY > 50 && mobileNavOpen) {
-        setMobileNavOpen(false);
+        setSlideDirection('slide-up');
+        setTimeout(() => {
+          setMobileNavOpen(false);
+          setSlideDirection('');
+        }, 300);
       }
     };
 
@@ -60,7 +69,18 @@ function UserProfile() {
     };
   }, [mobileNavOpen]);
 
-  const toggleMobileNav = () => setMobileNavOpen(prev => !prev);
+  const toggleMobileNav = () => {
+    if (!mobileNavOpen) {
+      setSlideDirection("slide-down");
+      setMobileNavOpen(true);
+    } else {
+      setSlideDirection("slide-up");
+      setTimeout(() => {
+        setMobileNavOpen(false);
+        setSlideDirection('');
+      }, 300);
+    }
+  };
 
   const loadProfile = async () => {
     const { data: { user }, error } = await supabase.auth.getUser();
@@ -244,7 +264,6 @@ function UserProfile() {
 
   return (
     <div className="profile-container">
-      {/* Mobile Top Bar */}
       <div className="mobile-top-bar">
         <div className="mobile-left-group">
           <img
@@ -261,7 +280,7 @@ function UserProfile() {
       </div>
 
       {mobileNavOpen && (
-        <div className={`mobile-nav-overlay`} onClick={toggleMobileNav}>
+        <div className={`mobile-nav-overlay ${slideDirection}`} onClick={toggleMobileNav}>
           <ul onClick={(e) => e.stopPropagation()}>
             <li onClick={() => { toggleMobileNav(); navigate("/") }}>Home</li>
             <li onClick={() => { toggleMobileNav(); navigate("/post-job") }}>Post a Job</li>
@@ -274,7 +293,6 @@ function UserProfile() {
         </div>
       )}
 
-      {/* Left Sidebar */}
       <div className="profile-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -309,7 +327,6 @@ function UserProfile() {
         </div>
       </div>
 
-      {/* Right Panel */}
       <div className="profile-right">
         {showChangePassword ? (
           <form className="profile-form" onSubmit={handlePasswordChange}>

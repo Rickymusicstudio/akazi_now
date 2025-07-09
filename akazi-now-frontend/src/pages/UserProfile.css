@@ -1,4 +1,4 @@
-/* UserProfile.css */
+/* RESET */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -27,7 +27,7 @@ input:-webkit-autofill {
   -webkit-text-fill-color: #000 !important;
 }
 
-/* === Container === */
+/* === Main Container === */
 .profile-container {
   display: flex;
   height: 100vh;
@@ -36,7 +36,7 @@ input:-webkit-autofill {
   flex-direction: row;
 }
 
-/* === Desktop Left === */
+/* === Left Panel (Desktop) === */
 .profile-left {
   flex: 1;
   background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
@@ -68,6 +68,7 @@ input:-webkit-autofill {
   cursor: pointer;
 }
 
+/* Profile Card */
 .profile-card {
   background-color: white;
   border-radius: 16px;
@@ -86,7 +87,7 @@ input:-webkit-autofill {
   object-fit: cover;
 }
 
-/* === Desktop Right === */
+/* === Right Panel === */
 .profile-right {
   flex: 1;
   background-color: #fff;
@@ -98,6 +99,7 @@ input:-webkit-autofill {
   overflow-y: auto;
 }
 
+/* Settings and Form */
 .profile-menu {
   width: 100%;
   max-width: 420px;
@@ -150,6 +152,7 @@ input:-webkit-autofill {
   font-size: 1rem;
 }
 
+/* Buttons */
 .btn {
   background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
   color: #fff;
@@ -166,11 +169,12 @@ input:-webkit-autofill {
   opacity: 0.9;
 }
 
-/* === Mobile Layout === */
+/* === Mobile Top Bar === */
 .mobile-top-bar {
   display: none;
 }
 
+/* === Responsive Mobile Layout === */
 @media screen and (max-width: 768px) {
   .profile-container {
     flex-direction: column;
@@ -210,7 +214,6 @@ input:-webkit-autofill {
     padding: 0.75rem;
   }
 
-  /* === Mobile Top Bar === */
   .mobile-top-bar {
     display: flex;
     align-items: center;
@@ -264,19 +267,8 @@ input:-webkit-autofill {
     color: white;
     z-index: 1000;
     padding-top: 1rem;
-    transition: transform 0.3s ease, opacity 0.3s ease;
     transform: translateY(0%);
     opacity: 1;
-  }
-
-  .mobile-nav-overlay.slide-down {
-    transform: translateY(0%);
-    opacity: 1;
-  }
-
-  .mobile-nav-overlay.slide-up {
-    transform: translateY(-100%);
-    opacity: 0;
   }
 
   .mobile-nav-overlay ul {
@@ -291,5 +283,36 @@ input:-webkit-autofill {
 
   .mobile-nav-overlay li {
     cursor: pointer;
+  }
+
+  /* === Slide Animations === */
+  .mobile-nav-overlay.slide-up {
+    animation: slideUp 0.3s ease forwards;
+  }
+
+  .mobile-nav-overlay.slide-down {
+    animation: slideDown 0.3s ease forwards;
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(0%);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+  }
+
+  @keyframes slideDown {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0%);
+      opacity: 1;
+    }
   }
 }
