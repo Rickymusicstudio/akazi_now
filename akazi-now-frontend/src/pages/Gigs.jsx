@@ -24,6 +24,15 @@ function Gigs() {
     fetchUserProfile();
   }, []);
 
+  useEffect(() => {
+    if (slideDirection === "slide-up") {
+      const timer = setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [slideDirection]);
+
   const fetchJobs = async () => {
     const { data, error } = await supabase.from("jobs").select("*");
     setJobsFetched(true);
@@ -49,7 +58,6 @@ function Gigs() {
   };
 
   const handleHamburgerClick = () => {
-    window.scrollTo(0, 0); // ✅ Scroll to top
     if (!mobileNavVisible) {
       setSlideDirection("slide-down");
       setMobileNavVisible(true);
@@ -140,7 +148,6 @@ function Gigs() {
               setJobs([]);
               setJobsFetched(false);
               setShowWelcome(true);
-              window.scrollTo(0, 0);
             }}>Home</li>
             <li onClick={() => { setMobileNavVisible(false); navigate("/post-job"); }}>Post a Job</li>
             <li onClick={() => { setMobileNavVisible(false); navigate("/my-jobs"); }}>My Jobs</li>
