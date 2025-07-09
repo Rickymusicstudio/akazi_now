@@ -70,6 +70,8 @@ function Abasare() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return alert("Please log in to rate.");
 
+    if (user.id === umusareId) return alert("You cannot rate yourself.");
+
     const { error: insertError } = await supabase
       .from("ratings")
       .insert([{ umusare_id: umusareId, rated_by: user.id, rating: stars }]);
@@ -108,7 +110,7 @@ function Abasare() {
   return (
     <>
       {/* Mobile Top Bar */}
-      <div className="mobile-top-bar">
+      <div className="mobile-top-bar" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}>
         <div className="mobile-left-group">
           <img
             src={userProfile?.image_url || defaultAvatar}
@@ -135,7 +137,7 @@ function Abasare() {
       )}
 
       <div className="abasare-container">
-        <div className="abasare-left">
+        <div className="abasare-left" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}>
           <div className="nav-buttons">
             <button onClick={() => navigate("/")}>Home</button>
             <button onClick={() => navigate("/carpools")}>Browse Rides</button>
@@ -166,7 +168,7 @@ function Abasare() {
               />
               <label style={{ marginLeft: "0.5rem" }}>Available now</label>
             </div>
-            <button type="submit" className="submit-btn">Submit</button>
+            <button type="submit" style={submitBtnStyle}>Submit</button>
           </form>
 
           {abasareList.some((a) => a.user_id === userId) && (
@@ -233,20 +235,26 @@ function Abasare() {
                         {item.is_available ? "Available" : "Unavailable"}
                       </td>
                       <td>
-                        {Array.from({ length: 5 }, (_, i) => (
-                          <span
-                            key={i}
-                            onClick={() => handleRating(item.user_id, i + 1)}
-                            className={
-                              item.average_rating && i < Math.round(item.average_rating)
-                                ? "star-green"
-                                : "star-yellow"
-                            }
-                            style={{ cursor: "pointer" }}
-                          >
-                            ★
+                        {userId === item.user_id ? (
+                          <span style={{ color: "gray", fontStyle: "italic", fontSize: "13px" }}>
+                            (self)
                           </span>
-                        ))}
+                        ) : (
+                          Array.from({ length: 5 }, (_, i) => (
+                            <span
+                              key={i}
+                              onClick={() => handleRating(item.user_id, i + 1)}
+                              className={
+                                item.average_rating && i < Math.round(item.average_rating)
+                                  ? "star-green"
+                                  : "star-yellow"
+                              }
+                              style={{ cursor: "pointer" }}
+                            >
+                              ★
+                            </span>
+                          ))
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -258,5 +266,20 @@ function Abasare() {
     </>
   );
 }
+
+const submitBtnStyle = {
+  padding: "12px 24px",
+  borderRadius: "999px",
+  background: "linear-gradient(to right, #0f2027, #203a43, #2c5364)",
+  color: "white",
+  border: "none",
+  fontWeight: "bold",
+  fontSize: "16px",
+  cursor: "pointer",
+  marginTop: "1rem",
+  WebkitAppearance: "none",
+  appearance: "none",
+  backgroundImage: "linear-gradient(to right, #0f2027, #203a43, #2c5364) !important",
+};
 
 export default Abasare;
