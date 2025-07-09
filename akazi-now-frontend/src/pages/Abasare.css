@@ -207,6 +207,19 @@ input:-webkit-autofill:hover {
   font-weight: bold;
 }
 
+.mobile-left-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mobile-profile-pic {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 /* Navigation Overlay */
 .mobile-nav-overlay {
   position: fixed;
