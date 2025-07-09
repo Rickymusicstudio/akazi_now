@@ -21,7 +21,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Abasare from "./pages/Abasare";
 import AbasareDetail from "./pages/AbasareDetail";
 import Settings from "./pages/Settings";
-import Public from "./pages/Public"; // ✅ Still available if you want to use it directly
+import Public from "./pages/Public";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
@@ -47,9 +47,14 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* ✅ Root path redirects to Gigs (welcome page) */}
-        <Route path="/" element={<Navigate to="/gigs" replace />} />
-        <Route path="/public" element={<Public />} /> {/* Optional public page */}
+        {/* ✅ Root path dynamically redirects */}
+        <Route
+          path="/"
+          element={
+            isAuthenticated ? <Navigate to="/gigs" replace /> : <Public />
+          }
+        />
+        <Route path="/public" element={<Public />} />
 
         {/* 🔐 Protected Routes */}
         <Route path="/gigs" element={<ProtectedRoute><Gigs /></ProtectedRoute>} />
