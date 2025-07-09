@@ -24,7 +24,7 @@ body, html {
 .browse-left {
   flex: 1;
   min-width: 50%;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ Dark blue gradient */
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ Updated to AkaziNow dark blue */
   color: white;
   padding: 2rem;
   display: flex;
@@ -104,7 +104,7 @@ body, html {
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ Mobile top bar same blue */
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ Top bar same dark blue */
     color: white;
     position: fixed;
     top: 0;
@@ -144,7 +144,7 @@ body, html {
   .mobile-nav-overlay {
     position: fixed;
     inset: 0;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ Mobile nav overlay blue */
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ Nav overlay same dark blue */
     z-index: 999;
     display: flex;
     justify-content: center;
