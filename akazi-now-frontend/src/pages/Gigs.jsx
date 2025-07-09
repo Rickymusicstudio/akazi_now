@@ -17,21 +17,28 @@ function Gigs() {
   const [slideDirection, setSlideDirection] = useState("");
   const [userProfile, setUserProfile] = useState(null);
   const [showWelcome, setShowWelcome] = useState(true);
-  const mobileNavRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchUserProfile();
   }, []);
 
+  // 🔁 Close menu on upward scroll
   useEffect(() => {
-    if (slideDirection === "slide-up") {
-      const timer = setTimeout(() => {
-        window.scrollTo(0, 0);
-      }, 300);
-      return () => clearTimeout(timer);
-    }
-  }, [slideDirection]);
+    let lastScrollY = window.scrollY;
+    const handleScroll = () => {
+      if (!mobileNavVisible) return;
+      const currentScrollY = window.scrollY;
+      if (currentScrollY < lastScrollY) {
+        setSlideDirection("slide-up");
+        setTimeout(() => setMobileNavVisible(false), 300);
+      }
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [mobileNavVisible]);
 
   const fetchJobs = async () => {
     const { data, error } = await supabase.from("jobs").select("*");
@@ -67,9 +74,14 @@ function Gigs() {
     }
   };
 
-  const handleImageClick = (url) => {
-    setSelectedImage(url);
-    setShowModal(true);
+  const closeMenuAndNavigate = (path, extraFn = null) => {
+    setSlideDirection("slide-up");
+    setTimeout(() => {
+      setMobileNavVisible(false);
+      window.scrollTo(0, 0);
+      if (extraFn) extraFn();
+      navigate(path);
+    }, 300);
   };
 
   const closeModal = () => {
@@ -123,7 +135,7 @@ function Gigs() {
 
   return (
     <div className="gigs-container">
-      <div className="mobile-top-bar" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}>
+      <div className="mobile-top-bar">
         <div className="mobile-left-group">
           <img
             src={userProfile?.image_url || defaultAvatar}
@@ -137,24 +149,20 @@ function Gigs() {
       </div>
 
       {mobileNavVisible && (
-        <div
-          ref={mobileNavRef}
-          className={`mobile-nav-overlay ${slideDirection}`}
-          style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
-        >
+        <div className={`mobile-nav-overlay ${slideDirection}`}>
           <ul>
-            <li onClick={() => {
-              setMobileNavVisible(false);
-              setJobs([]);
-              setJobsFetched(false);
-              setShowWelcome(true);
-            }}>Home</li>
-            <li onClick={() => { setMobileNavVisible(false); navigate("/post-job"); }}>Post a Job</li>
-            <li onClick={() => { setMobileNavVisible(false); navigate("/my-jobs"); }}>My Jobs</li>
-            <li onClick={() => { setMobileNavVisible(false); navigate("/profile"); }}>Profile</li>
-            <li onClick={() => { setMobileNavVisible(false); navigate("/inbox"); }}>Inbox</li>
-            <li onClick={() => { setMobileNavVisible(false); navigate("/carpools"); }}>Car Pooling</li>
-            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+            <li onClick={() => closeMenuAndNavigate("/", () => {
+              setJobs([]); setJobsFetched(false); setShowWelcome(true);
+            })}>Home</li>
+            <li onClick={() => closeMenuAndNavigate("/post-job")}>Post a Job</li>
+            <li onClick={() => closeMenuAndNavigate("/my-jobs")}>My Jobs</li>
+            <li onClick={() => closeMenuAndNavigate("/profile")}>Profile</li>
+            <li onClick={() => closeMenuAndNavigate("/inbox")}>Inbox</li>
+            <li onClick={() => closeMenuAndNavigate("/carpools")}>Car Pooling</li>
+            <li onClick={async () => {
+              await supabase.auth.signOut();
+              closeMenuAndNavigate("/login");
+            }}>Logout</li>
           </ul>
         </div>
       )}
@@ -162,9 +170,7 @@ function Gigs() {
       <div className="gigs-left">
         <div className="nav-buttons">
           <button onClick={() => {
-            setJobs([]);
-            setJobsFetched(false);
-            setShowWelcome(true);
+            setJobs([]); setJobsFetched(false); setShowWelcome(true);
             window.scrollTo(0, 0);
           }}>Home</button>
           <button onClick={() => navigate("/post-job")}>Post a Job</button>
@@ -172,7 +178,10 @@ function Gigs() {
           <button onClick={() => navigate("/profile")}>Profile</button>
           <button onClick={() => navigate("/inbox")}>Inbox</button>
           <button onClick={() => navigate("/carpools")}>Car Pooling</button>
-          <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
+          <button onClick={async () => {
+            await supabase.auth.signOut();
+            navigate("/login");
+          }} style={{ color: "#ffcccc" }}>Logout</button>
         </div>
         <h2 style={{ fontSize: "32px", fontWeight: "bold", marginTop: "3rem" }}>Available Jobs</h2>
         <NotificationBell />
@@ -239,7 +248,10 @@ function Gigs() {
                   <img
                     src={job.image_url}
                     alt="Job Visual"
-                    onClick={() => handleImageClick(job.image_url)}
+                    onClick={() => {
+                      setSelectedImage(job.image_url);
+                      setShowModal(true);
+                    }}
                     className="job-image"
                   />
                 )}
