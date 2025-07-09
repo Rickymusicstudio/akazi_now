@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../assets/avatar.png";
@@ -12,13 +12,29 @@ function BrowseRides() {
   const [reservationCounts, setReservationCounts] = useState({});
   const [userId, setUserId] = useState(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [slideDirection, setSlideDirection] = useState("");
   const [userProfile, setUserProfile] = useState(null);
   const navigate = useNavigate();
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     getCurrentUser();
     fetchRides();
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      if (currentY < lastScrollY.current - 10 && mobileNavOpen) {
+        setSlideDirection("slide-up");
+        setTimeout(() => setMobileNavOpen(false), 300);
+      }
+      lastScrollY.current = currentY;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [mobileNavOpen]);
 
   const getCurrentUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -127,15 +143,18 @@ function BrowseRides() {
             alt="avatar"
             className="mobile-profile-pic"
           />
-          <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
+          <FaBars className="mobile-hamburger" onClick={() => {
+            setSlideDirection("slide-down");
+            setMobileNavOpen(true);
+          }} />
         </div>
         <h2 className="mobile-title">Browse Rides</h2>
         <NotificationBell />
       </div>
 
-      {/* Mobile Nav Overlay */}
+      {/* ✅ Mobile Nav Overlay */}
       {mobileNavOpen && (
-        <div className="mobile-nav-overlay">
+        <div className={`mobile-nav-overlay ${slideDirection}`}>
           <ul>
             <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Browse Rides</li>
@@ -147,7 +166,6 @@ function BrowseRides() {
         </div>
       )}
 
-      {/* Main Content */}
       <div className="browse-container">
         <div className="browse-left">
           <div className="nav-buttons">
