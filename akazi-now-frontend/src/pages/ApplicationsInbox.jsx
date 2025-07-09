@@ -11,13 +11,54 @@ function ApplicationsInbox() {
   const [notifications, setNotifications] = useState([]);
   const [isPoster, setIsPoster] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [slideDirection, setSlideDirection] = useState("");
   const [userProfile, setUserProfile] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchInbox();
     fetchUserProfile();
-  }, []);
+
+    let lastScrollY = window.scrollY;
+    let touchStartY = 0;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY < lastScrollY && mobileNavOpen) {
+        setSlideDirection("slide-up");
+        setTimeout(() => {
+          setMobileNavOpen(false);
+          setSlideDirection("");
+        }, 300);
+      }
+      lastScrollY = currentScrollY;
+    };
+
+    const handleTouchStart = (e) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e) => {
+      const touchEndY = e.touches[0].clientY;
+      if (touchStartY - touchEndY > 50 && mobileNavOpen) {
+        setSlideDirection("slide-up");
+        setTimeout(() => {
+          setMobileNavOpen(false);
+          setSlideDirection("");
+        }, 300);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchmove", handleTouchMove);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, [mobileNavOpen]);
 
   const fetchUserProfile = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -103,7 +144,6 @@ function ApplicationsInbox() {
 
   return (
     <div className="inbox-container">
-      {/* ✅ MOBILE TOP NAV WITH PROFILE PIC */}
       <div className="mobile-top-bar">
         <div className="mobile-left-group">
           <img
@@ -111,14 +151,17 @@ function ApplicationsInbox() {
             alt="avatar"
             className="mobile-profile-pic"
           />
-          <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
+          <FaBars className="mobile-hamburger" onClick={() => {
+            setSlideDirection("slide-down");
+            setMobileNavOpen(true);
+          }} />
         </div>
         <h2 className="mobile-title">Inbox</h2>
         <NotificationBell />
       </div>
 
       {mobileNavOpen && (
-        <div className="mobile-nav-overlay">
+        <div className={`mobile-nav-overlay ${slideDirection}`}>
           <ul>
             <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/post-job") }}>Post a Job</li>
@@ -131,7 +174,6 @@ function ApplicationsInbox() {
         </div>
       )}
 
-      {/* ✅ DESKTOP LEFT NAV */}
       <div className="inbox-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -140,9 +182,7 @@ function ApplicationsInbox() {
           <button onClick={() => navigate("/profile")}>Profile</button>
           <button onClick={() => navigate("/inbox")}>Inbox</button>
           <button onClick={() => navigate("/carpools")}>Car Pooling</button>
-          <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>
-            Logout
-          </button>
+          <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
         </div>
         <h2>Inbox</h2>
         <NotificationBell />

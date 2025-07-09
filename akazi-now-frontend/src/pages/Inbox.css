@@ -26,7 +26,7 @@ body {
 
 .inbox-left {
   width: 50%;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); /* ✅ updated */
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   color: white;
   padding: 2rem;
   display: flex;
@@ -69,7 +69,6 @@ body {
   align-items: center;
 }
 
-/* CARD */
 .inbox-card {
   display: flex;
   background: #fff;
@@ -119,7 +118,6 @@ body {
   color: #999;
 }
 
-/* MOBILE */
 .mobile-top-bar {
   display: none;
 }
@@ -200,7 +198,36 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    animation: slideIn 0.3s ease-out;
+  }
+
+  .mobile-nav-overlay.slide-up {
+    animation: slideUp 0.3s ease forwards;
+  }
+
+  .mobile-nav-overlay.slide-down {
+    animation: slideDown 0.3s ease forwards;
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(0%);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+  }
+
+  @keyframes slideDown {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0%);
+      opacity: 1;
+    }
   }
 
   .mobile-nav-overlay ul {
@@ -215,16 +242,5 @@ body {
 
   .mobile-nav-overlay li {
     cursor: pointer;
-  }
-
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateY(-100%);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
   }
 }
