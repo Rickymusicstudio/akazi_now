@@ -20,6 +20,8 @@ function MyJobs() {
     fetchMyJobs();
     fetchUserProfile();
 
+    let touchStartY = 0;
+
     const handleScroll = () => {
       const currentY = window.scrollY;
       if (currentY < lastScrollY.current - 10 && mobileNavOpen) {
@@ -29,8 +31,27 @@ function MyJobs() {
       lastScrollY.current = currentY;
     };
 
+    const handleTouchStart = (e) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e) => {
+      const touchEndY = e.touches[0].clientY;
+      if (touchStartY - touchEndY > 50 && mobileNavOpen) {
+        setSlideDirection("slide-up");
+        setTimeout(() => setMobileNavOpen(false), 300);
+      }
+    };
+
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchmove", handleTouchMove);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
   }, [mobileNavOpen]);
 
   const fetchUserProfile = async () => {
