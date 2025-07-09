@@ -23,6 +23,8 @@ function BrowseRides() {
   }, []);
 
   useEffect(() => {
+    let touchStartY = 0;
+
     const handleScroll = () => {
       const currentY = window.scrollY;
       if (currentY < lastScrollY.current - 10 && mobileNavOpen) {
@@ -32,8 +34,27 @@ function BrowseRides() {
       lastScrollY.current = currentY;
     };
 
+    const handleTouchStart = (e) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e) => {
+      const touchEndY = e.touches[0].clientY;
+      if (touchStartY - touchEndY > 50 && mobileNavOpen) {
+        setSlideDirection("slide-up");
+        setTimeout(() => setMobileNavOpen(false), 300);
+      }
+    };
+
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchmove", handleTouchMove);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
   }, [mobileNavOpen]);
 
   const getCurrentUser = async () => {
@@ -135,7 +156,6 @@ function BrowseRides() {
 
   return (
     <>
-      {/* ✅ Mobile Top Bar with Avatar */}
       <div className="mobile-top-bar">
         <div className="mobile-left-group">
           <img
@@ -152,9 +172,8 @@ function BrowseRides() {
         <NotificationBell />
       </div>
 
-      {/* ✅ Mobile Nav Overlay */}
       {mobileNavOpen && (
-        <div className={`mobile-nav-overlay ${slideDirection}`}>
+        <div className={`mobile-nav-overlay ${slideDirection ? `browse-${slideDirection}` : ""}`}>
           <ul>
             <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Browse Rides</li>

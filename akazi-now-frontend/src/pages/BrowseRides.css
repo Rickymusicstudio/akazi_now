@@ -10,6 +10,7 @@ body {
   background: #f0f2f5;
 }
 
+/* MAIN CONTAINER */
 .browse-container {
   display: flex;
   height: 100vh;
@@ -17,6 +18,7 @@ body {
   overflow: hidden;
 }
 
+/* LEFT PANEL (DESKTOP) */
 .browse-left {
   width: 50%;
   background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
@@ -29,6 +31,7 @@ body {
   position: relative;
 }
 
+/* NAV BUTTONS */
 .nav-buttons {
   position: absolute;
   top: 1rem;
@@ -47,6 +50,7 @@ body {
   cursor: pointer;
 }
 
+/* RIGHT PANEL */
 .browse-right {
   width: 50%;
   height: 100vh;
@@ -56,6 +60,7 @@ body {
   box-sizing: border-box;
 }
 
+/* RIDE CARD */
 .ride-card {
   background: #fff;
   padding: 1.5rem;
@@ -67,6 +72,7 @@ body {
   margin-bottom: 1.5rem;
 }
 
+/* MOBILE TOP BAR */
 .mobile-top-bar {
   display: none;
   width: 100%;
@@ -95,6 +101,7 @@ body {
   font-weight: bold;
 }
 
+/* MOBILE NAV OVERLAY */
 .mobile-nav-overlay {
   position: fixed;
   inset: 0;
@@ -107,15 +114,16 @@ body {
   align-items: center;
 }
 
-.mobile-nav-overlay.slide-up {
-  animation: slideUp 0.3s ease forwards;
+/* ✅ SCOPED ANIMATIONS TO BROWSE PAGE ONLY */
+.mobile-nav-overlay.browse-slide-up {
+  animation: browseSlideUp 0.3s ease forwards;
 }
 
-.mobile-nav-overlay.slide-down {
-  animation: slideDown 0.3s ease forwards;
+.mobile-nav-overlay.browse-slide-down {
+  animation: browseSlideDown 0.3s ease forwards;
 }
 
-@keyframes slideUp {
+@keyframes browseSlideUp {
   from {
     transform: translateY(0%);
     opacity: 1;
@@ -126,17 +134,18 @@ body {
   }
 }
 
-@keyframes slideDown {
+@keyframes browseSlideDown {
   from {
     transform: translateY(-100%);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
+    transform: translateY(0%);
     opacity: 1;
   }
 }
 
+/* NAV OVERLAY CONTENT */
 .mobile-nav-overlay ul {
   list-style: none;
   font-size: 1.6rem;
@@ -151,6 +160,7 @@ body {
   cursor: pointer;
 }
 
+/* MEDIA QUERIES FOR MOBILE */
 @media (max-width: 768px) {
   .browse-container {
     flex-direction: column;
@@ -189,8 +199,4 @@ body {
     width: 100%;
     margin-top: 0.5rem;
   }
-}
-
-.browse-left {
-  background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
 }
