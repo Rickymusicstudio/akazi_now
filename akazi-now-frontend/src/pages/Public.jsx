@@ -1,4 +1,3 @@
-// src/pages/Public.jsx
 import "./Public.css";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/kcc_bg_clean.png";
@@ -80,6 +79,26 @@ function Public() {
 
         <div className="public-count">
           <FaCalendarCheck /> {gigCount} Gigs Available Now
+        </div>
+      </section>
+
+      {/* ✅ GIGS PANEL SECTION */}
+      <section className="gig-panel">
+        <div className="gig-panel-content">
+          <div className="gig-panel-text">
+            <h2>Find or Post Gigs Easily</h2>
+            <p>
+              Whether you're looking for a quick job or need help with a task — AkaziNow connects Rwandans fast.
+              Post a gig in seconds or apply instantly to available opportunities in your district.
+            </p>
+            <div className="gig-panel-buttons">
+              <button onClick={() => navigate("/gigs")}>Find Gigs</button>
+              <button onClick={() => navigate("/post-gig")}>Post a Gig</button>
+            </div>
+          </div>
+          <div className="gig-panel-image">
+            <img src="/assets/gig-post-apply.png" alt="Gig Service Illustration" />
+          </div>
         </div>
       </section>
     </div>
