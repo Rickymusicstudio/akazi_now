@@ -21,7 +21,7 @@ body {
 /* LEFT PANEL (DESKTOP) */
 .browse-left {
   width: 50%;
-  background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364); /* ✅ Updated */
+  background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
   color: white;
   padding: 2rem;
   display: flex;
@@ -76,7 +76,7 @@ body {
 .mobile-top-bar {
   display: none;
   width: 100%;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ Updated */
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
   color: white;
   padding: 1rem;
   justify-content: space-between;
@@ -101,11 +101,18 @@ body {
   font-weight: bold;
 }
 
+.mobile-profile-pic {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 /* MOBILE NAV OVERLAY */
 .mobile-nav-overlay {
   position: fixed;
   inset: 0;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* ✅ Updated */
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
   color: white;
   z-index: 999;
   padding-top: 5rem;

@@ -101,7 +101,6 @@ function BrowseRides() {
       ? ride.reservations.reduce((sum, r) => sum + (r.seats_reserved ?? 0), 0)
       : 0;
     const seatsLeft = ride.available_seats - reservedCount;
-
     const numericSeats = parseInt(seatsRequested);
 
     if (!userId) {
@@ -154,6 +153,15 @@ function BrowseRides() {
     }
   };
 
+  const navButtonStyle = {
+    background: "none",
+    color: "white",
+    border: "none",
+    fontWeight: "bold",
+    fontSize: "14px",
+    cursor: "pointer"
+  };
+
   return (
     <>
       <div className="mobile-top-bar">
@@ -175,7 +183,7 @@ function BrowseRides() {
       {mobileNavOpen && (
         <div className={`mobile-nav-overlay ${slideDirection ? `browse-${slideDirection}` : ""}`}>
           <ul>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/gigs") }}>Home</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Browse Rides</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/post-ride") }}>Post Ride</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox") }}>Carpool Inbox</li>
@@ -188,12 +196,17 @@ function BrowseRides() {
       <div className="browse-container">
         <div className="browse-left">
           <div className="nav-buttons">
-            <button onClick={() => navigate("/")}>Home</button>
-            <button onClick={() => navigate("/carpools")}>Browse Rides</button>
-            <button onClick={() => navigate("/post-ride")}>Post Ride</button>
-            <button onClick={() => navigate("/carpool-inbox")}>Carpool Inbox</button>
-            <button onClick={() => navigate("/abasare")}>Abasare</button>
-            <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
+            <button onClick={() => navigate("/gigs")} style={navButtonStyle}>Home</button>
+            <button onClick={() => navigate("/carpools")} style={navButtonStyle}>Browse Rides</button>
+            <button onClick={() => navigate("/post-ride")} style={navButtonStyle}>Post Ride</button>
+            <button onClick={() => navigate("/carpool-inbox")} style={navButtonStyle}>Carpool Inbox</button>
+            <button onClick={() => navigate("/abasare")} style={navButtonStyle}>Abasare</button>
+            <button
+              onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}
+              style={navButtonStyle}
+            >
+              Logout
+            </button>
           </div>
           <h2 style={{ fontSize: "28px", fontWeight: "bold", marginTop: "3rem" }}>Available Rides</h2>
           <NotificationBell />
@@ -232,7 +245,14 @@ function BrowseRides() {
                       <p><strong>Contact:</strong> {ride.driver?.phone || "N/A"}</p>
 
                       {hasReserved ? (
-                        <button onClick={() => cancelReservation(ride.id)} style={{ ...reserveBtnStyle, background: "#ccc", color: "#333" }}>
+                        <button
+                          onClick={() => cancelReservation(ride.id)}
+                          style={{
+                            ...reserveBtnStyle,
+                            background: "#2c5364",
+                            color: "white"
+                          }}
+                        >
                           Cancel Reservation
                         </button>
                       ) : seatsLeft > 0 ? (
