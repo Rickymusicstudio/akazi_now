@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import NotificationBell from "../components/NotificationBell.jsx";
 import { useNavigate } from "react-router-dom";
@@ -9,13 +9,56 @@ import defaultAvatar from "../assets/avatar.png";
 function CarpoolInbox() {
   const [reservations, setReservations] = useState([]);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [slideDirection, setSlideDirection] = useState("");
   const [profilePic, setProfilePic] = useState(defaultAvatar);
   const navigate = useNavigate();
+  const lastScrollY = useRef(0);
+  const touchStartY = useRef(0);
 
   useEffect(() => {
     fetchReservations();
     loadProfilePicture();
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!mobileNavOpen) return;
+      const currentScrollY = window.scrollY;
+      if (currentScrollY < lastScrollY.current - 10) {
+        setSlideDirection("slide-up");
+        setTimeout(() => {
+          setMobileNavOpen(false);
+          setSlideDirection("");
+        }, 300);
+      }
+      lastScrollY.current = currentScrollY;
+    };
+
+    const handleTouchStart = (e) => {
+      touchStartY.current = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e) => {
+      const touchEndY = e.touches[0].clientY;
+      if (touchStartY.current - touchEndY > 50 && mobileNavOpen) {
+        setSlideDirection("slide-up");
+        setTimeout(() => {
+          setMobileNavOpen(false);
+          setSlideDirection("");
+        }, 300);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchmove", handleTouchMove);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, [mobileNavOpen]);
 
   const fetchReservations = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -59,32 +102,42 @@ function CarpoolInbox() {
     }
   };
 
+  const closeAndNavigate = async (path, logout = false) => {
+    setSlideDirection("slide-up");
+    setTimeout(async () => {
+      setMobileNavOpen(false);
+      setSlideDirection("");
+      if (logout) await supabase.auth.signOut();
+      navigate(path);
+    }, 300);
+  };
+
   return (
     <div className="carpool-inbox-container">
-      {/* Mobile Top Bar */}
       <div className="mobile-top-bar">
         <div className="mobile-left-group">
           <img src={profilePic} alt="avatar" className="mobile-profile-pic" />
-          <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
+          <FaBars className="mobile-hamburger" onClick={() => {
+            setSlideDirection("slide-down");
+            setMobileNavOpen(true);
+          }} />
         </div>
         <div className="mobile-title">Inbox</div>
         <NotificationBell />
       </div>
 
-      {/* Mobile Dropdown Navigation */}
       {mobileNavOpen && (
-        <div className="mobile-nav-overlay">
+        <div className={`mobile-nav-overlay ${slideDirection}`}>
           <ul>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/"); }}>Home</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools"); }}>Browse Rides</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool"); }}>Post Ride</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox"); }}>Carpool Inbox</li>
-            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+            <li onClick={() => closeAndNavigate("/")}>Home</li>
+            <li onClick={() => closeAndNavigate("/carpools")}>Browse Rides</li>
+            <li onClick={() => closeAndNavigate("/carpool")}>Post Ride</li>
+            <li onClick={() => closeAndNavigate("/carpool-inbox")}>Carpool Inbox</li>
+            <li onClick={() => closeAndNavigate("/login", true)}>Logout</li>
           </ul>
         </div>
       )}
 
-      {/* Left Panel for Desktop */}
       <div className="carpool-inbox-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
@@ -97,7 +150,6 @@ function CarpoolInbox() {
         <NotificationBell />
       </div>
 
-      {/* Right Panel */}
       <div className="carpool-inbox-right">
         {reservations.length === 0 ? (
           <p>No reservations yet.</p>

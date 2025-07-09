@@ -1,3 +1,10 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 /* Base layout */
 .carpool-inbox-container {
   display: flex;
@@ -128,7 +135,16 @@
   cursor: pointer;
 }
 
-/* Animation */
+/* Slide down/up animation classes */
+.mobile-nav-overlay.slide-down {
+  animation: slideIn 0.3s ease-out;
+}
+
+.mobile-nav-overlay.slide-up {
+  animation: slideOut 0.3s ease-in forwards;
+}
+
+/* Keyframes */
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -136,11 +152,22 @@
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0%);
   }
 }
 
-/* Mobile styles */
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0%);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+
+/* Responsive Mobile Styles */
 @media (max-width: 768px) {
   .carpool-inbox-container {
     flex-direction: column;
