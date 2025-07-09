@@ -253,40 +253,43 @@ input:-webkit-autofill {
     color: white;
   }
 
-  /* === Mobile Fullscreen Nav === */
+  /* === Slide Mobile Nav Overlay === */
   .mobile-nav-overlay {
     position: fixed;
-    inset: 0;
+    top: 60px;
+    left: 0;
+    right: 0;
+    height: calc(100% - 60px);
     background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    color: white;
     z-index: 1000;
-    animation: slideIn 0.3s ease-out;
+    padding-top: 1rem;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform: translateY(0%);
+    opacity: 1;
+  }
+
+  .mobile-nav-overlay.slide-down {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+
+  .mobile-nav-overlay.slide-up {
+    transform: translateY(-100%);
+    opacity: 0;
   }
 
   .mobile-nav-overlay ul {
     list-style: none;
     text-align: center;
     font-size: 1.5rem;
-    color: white;
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    margin-top: 2rem;
   }
 
   .mobile-nav-overlay li {
     cursor: pointer;
-  }
-
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateY(-100%);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
   }
 }
