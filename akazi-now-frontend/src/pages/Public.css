@@ -1,0 +1,141 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f4f4f4;
+  color: #333;
+}
+
+/* Container */
+.public-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* Hero Section */
+.public-hero {
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  color: white;
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.public-hero h1 {
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+}
+
+.public-hero p {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.public-hero-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.public-hero-buttons button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  background: white;
+  color: #2c5364;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.public-hero-buttons button:hover {
+  opacity: 0.9;
+}
+
+/* Search */
+.public-search {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.public-search input {
+  width: 100%;
+  max-width: 600px;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+/* Job list */
+.public-jobs {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Job card */
+.public-job-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.public-job-card img {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  object-fit: cover;
+  max-height: 200px;
+}
+
+.public-job-card h2 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.public-job-card p {
+  margin-bottom: 0.4rem;
+  line-height: 1.4;
+}
+
+.public-job-card button {
+  margin-top: 1rem;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  background: #203a43;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.public-job-card button:hover {
+  background: #2c5364;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .public-hero h1 {
+    font-size: 1.6rem;
+  }
+
+  .public-hero-buttons {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .public-job-card img {
+    max-height: 160px;
+  }
+}
