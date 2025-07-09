@@ -1,4 +1,4 @@
-/* RESET */
+/* RESET */
 * {
   margin: 0;
   padding: 0;
@@ -193,11 +193,11 @@ body {
   gap: 0.5rem;
 }
 
-/* ✅ Abasare Panel */
+/* ✅ Updated Abasare Panel */
 .abasare-panel {
   width: 100%;
-  background: #74b8f0;
-  padding: 4rem 2rem;
+  background: #6db6ff; /* BlaBlaCar-like blue */
+  padding: 2.5rem 1.5rem;
 }
 
 .abasare-panel-content {
@@ -217,13 +217,13 @@ body {
 }
 
 .abasare-panel-text h2 {
-  font-size: 2.2rem;
+  font-size: 1.8rem;
   font-weight: bold;
   margin-bottom: 1rem;
 }
 
 .abasare-panel-text p {
-  font-size: 1.1rem;
+  font-size: 1rem;
   margin-bottom: 1.5rem;
 }
 
@@ -231,7 +231,7 @@ body {
   background: white;
   color: #0f2027;
   font-weight: bold;
-  padding: 0.7rem 1.5rem;
+  padding: 0.6rem 1.2rem;
   border-radius: 30px;
   border: none;
   cursor: pointer;
@@ -247,7 +247,7 @@ body {
 }
 
 .abasare-panel-image img {
-  max-width: 100%;
+  max-width: 300px;
   height: auto;
 }
 
@@ -289,5 +289,9 @@ body {
 
   .abasare-panel-text {
     padding: 1rem;
+  }
+
+  .abasare-panel-image img {
+    max-width: 240px;
   }
 }
