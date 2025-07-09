@@ -1,26 +1,35 @@
-/* Full background container */
+/* Container with full image top and full white below */
 .public-container {
-  min-height: 100vh;
-  background-size: cover;
-  background-position: center top;
-  background-repeat: no-repeat;
-  color: white;
+  width: 100%;
   font-family: 'Segoe UI', sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+}
+
+/* Hero section with fixed height and background */
+.public-hero {
+  width: 100%;
+  height: 90vh;
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  color: white;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
 }
 
 /* Top nav */
 .public-topbar {
-  width: 100%;
   position: absolute;
   top: 1rem;
-  left: 0;
-  right: 0;
-  padding: 0 2rem;
+  left: 2rem;
+  right: 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -49,12 +58,7 @@
   cursor: pointer;
 }
 
-/* Centered Hero Text */
-.public-hero {
-  margin-top: 8rem;
-  padding: 2rem;
-}
-
+/* Welcome text */
 .public-heading {
   font-size: 3rem;
   font-weight: bold;
@@ -68,7 +72,7 @@
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
 }
 
-/* Search bar with icon */
+/* Search bar */
 .public-search-wrapper {
   background: white;
   border-radius: 12px;
@@ -78,7 +82,7 @@
   gap: 0.5rem;
   width: 80%;
   max-width: 600px;
-  margin: 0 auto 1rem auto;
+  margin-bottom: 1rem;
 }
 
 .search-icon {
@@ -106,11 +110,11 @@
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
 }
 
-/* White feature section */
+/* White feature section that fills rest of page */
 .public-features {
   background: white;
-  color: #0f2027;
   width: 100%;
+  flex: 1;
   padding: 3rem 2rem;
   display: flex;
   justify-content: center;
@@ -118,6 +122,7 @@
   flex-wrap: wrap;
 }
 
+/* Feature cards */
 .feature-card {
   background: #f9f9f9;
   padding: 1.5rem;
