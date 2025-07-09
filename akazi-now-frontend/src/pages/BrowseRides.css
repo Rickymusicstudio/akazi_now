@@ -11,7 +11,6 @@ body {
   background: #f0f2f5;
 }
 
-/* MAIN CONTAINER */
 .browse-container {
   display: flex;
   height: 100vh;
@@ -19,18 +18,17 @@ body {
   flex-direction: row;
 }
 
-/* DESKTOP LEFT PANEL */
 .browse-left {
   width: 50%;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364) !important;
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
   color: white;
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   position: relative;
-  text-align: center;
+  text-align: left;
 }
 
 .nav-buttons {
@@ -40,7 +38,6 @@ body {
   display: flex;
   gap: 1rem;
   flex-direction: column;
-  font-weight: bold;
 }
 
 .nav-buttons button {
@@ -48,42 +45,38 @@ body {
   border: none;
   color: white;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 1.1rem;
   cursor: pointer;
+  text-align: left;
 }
 
-/* RIGHT PANEL */
 .browse-right {
   width: 50%;
   height: 100vh;
   overflow-y: auto;
   padding: 2rem;
-  background-color: white;
-  box-sizing: border-box;
+  background-color: #fff;
 }
 
-/* RIDE CARDS */
 .ride-card {
   background: #fff;
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 1rem;
-  align-items: flex-start;
 }
 
-/* MOBILE STYLES */
 .mobile-top-bar {
   display: none;
 }
 
+/* Responsive layout */
 @media (max-width: 768px) {
   .browse-container {
     flex-direction: column;
-    height: 100vh;
-    overflow-y: auto;
+    height: auto;
   }
 
   .browse-left {
@@ -93,8 +86,6 @@ body {
   .browse-right {
     width: 100%;
     height: auto;
-    overflow-y: visible;
-    padding: 1.5rem;
     padding-top: 6rem;
   }
 
@@ -103,7 +94,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364) !important;
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
     color: white;
     position: sticky;
     top: 0;
@@ -117,18 +108,16 @@ body {
     gap: 0.75rem;
   }
 
-  .mobile-hamburger {
-    font-size: 1.8rem;
-    font-weight: bold;
-    cursor: pointer;
-    color: white;
-  }
-
   .mobile-profile-pic {
     width: 36px;
     height: 36px;
     border-radius: 50%;
     object-fit: cover;
+  }
+
+  .mobile-hamburger {
+    font-size: 1.8rem;
+    cursor: pointer;
   }
 
   .mobile-title {
@@ -137,8 +126,6 @@ body {
     transform: translateX(-50%);
     font-size: 1.2rem;
     font-weight: bold;
-    text-align: center;
-    white-space: nowrap;
   }
 
   .mobile-nav-overlay {
@@ -147,24 +134,12 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364) !important;
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
     z-index: 999;
     display: flex;
     justify-content: center;
     align-items: center;
-    opacity: 1;
-    transform: translateY(0%);
     transition: transform 0.3s ease, opacity 0.3s ease;
-  }
-
-  .mobile-nav-overlay.browse-slide-down {
-    transform: translateY(0%);
-    opacity: 1;
-  }
-
-  .mobile-nav-overlay.browse-slide-up {
-    transform: translateY(-100%);
-    opacity: 0;
   }
 
   .mobile-nav-overlay ul {
