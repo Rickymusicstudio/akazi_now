@@ -7,10 +7,10 @@
   text-align: center;
 }
 
-/* HERO SECTION WITH RESIZED HEIGHT */
+/* HERO SECTION */
 .public-hero {
   width: 100%;
-  height: 65vh; /* ⬅️ Resized from 90vh */
+  height: 65vh;
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
@@ -39,6 +39,7 @@
   background: #0f2027;
   padding: 0.5rem 1rem;
   border-radius: 12px;
+  color: white;
 }
 
 .public-auth-buttons {
@@ -56,7 +57,7 @@
   cursor: pointer;
 }
 
-/* Centered hero text */
+/* Hero text */
 .public-hero-content {
   text-align: center;
 }
@@ -74,32 +75,54 @@
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
 }
 
-/* Search bar */
-.public-search-wrapper {
+/* Blablacar-style search */
+.public-search-bar {
   background: white;
-  border-radius: 12px;
-  padding: 0.8rem 1rem;
+  border-radius: 16px;
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  margin-top: 1rem;
+}
+
+.search-field {
   display: flex;
   align-items: center;
+  background: #f3f4f6;
+  border-radius: 10px;
+  padding: 0.6rem 1rem;
   gap: 0.5rem;
-  width: 80%;
-  max-width: 600px;
-  margin: 0 auto 1rem auto;
 }
 
-.search-icon {
-  color: #333;
-}
-
-.public-search {
+.search-field input {
   border: none;
-  width: 100%;
-  font-size: 1rem;
+  background: transparent;
+  font-size: 0.95rem;
+  width: 120px;
   color: #333;
 }
 
-.public-search:focus {
+.search-field input:focus {
   outline: none;
+}
+
+.icon {
+  font-size: 1rem;
+  color: #555;
+}
+
+.search-button {
+  background: #5da9ff;
+  color: white;
+  font-weight: bold;
+  padding: 0.7rem 1.5rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
 }
 
 .public-count {
@@ -110,9 +133,10 @@
   align-items: center;
   gap: 0.5rem;
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+  margin-top: 1rem;
 }
 
-/* Feature section with white background */
+/* Features */
 .public-features {
   background: white;
   width: 100%;
@@ -123,7 +147,6 @@
   flex-wrap: wrap;
 }
 
-/* Feature cards */
 .feature-card {
   background: #f9f9f9;
   padding: 1.5rem;
@@ -158,95 +181,20 @@
     gap: 0.5rem;
   }
 
-  .public-search-wrapper {
-    width: 90%;
-  }
-
-  .feature-card {
-    width: 100%;
-  }
-}
-
-/* 🔵 New Multi-field Search Bar */
-.search-bar {
-  display: flex;
-  gap: 1rem;
-  background: white;
-  padding: 1rem;
-  border-radius: 2rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  width: 90%;
-  max-width: 1000px;
-  margin: 0 auto 1.5rem auto;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-}
-
-.search-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: #f0f2f5;
-  padding: 0.75rem 1rem;
-  border-radius: 1rem;
-  font-size: 0.95rem;
-  color: #333;
-}
-
-.search-item input {
-  border: none;
-  background: transparent;
-  outline: none;
-  font-size: 1rem;
-  width: 120px;
-}
-
-.search-item input[type="date"] {
-  width: 140px;
-}
-
-.search-item input[type="number"] {
-  width: 60px;
-}
-
-.search-button {
-  background: #5cadff;
-  color: white;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  font-size: 1rem;
-  border-radius: 1.5rem;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.2s ease-in-out;
-}
-
-.search-button:hover {
-  background: #4a9be0;
-}
-
-/* 🔄 Responsive search stack */
-@media (max-width: 768px) {
-  .search-bar {
+  .public-search-bar {
     flex-direction: column;
-    gap: 0.75rem;
-    padding: 1rem 1rem;
-    border-radius: 1rem;
+    align-items: stretch;
   }
 
-  .search-item {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .search-item input {
+  .search-field input {
     width: 100%;
   }
 
   .search-button {
     width: 100%;
-    padding: 0.9rem;
-    font-size: 1.1rem;
+  }
+
+  .feature-card {
+    width: 100%;
   }
 }
