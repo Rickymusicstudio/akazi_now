@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { FaPhone, FaBars, FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -23,9 +23,11 @@ function Gigs() {
     fetchUserProfile();
   }, []);
 
-  // 🔁 Close menu on upward scroll
+  // 🔁 Close menu on upward scroll or swipe up
   useEffect(() => {
     let lastScrollY = window.scrollY;
+    let touchStartY = 0;
+
     const handleScroll = () => {
       if (!mobileNavVisible) return;
       const currentScrollY = window.scrollY;
@@ -36,8 +38,27 @@ function Gigs() {
       lastScrollY = currentScrollY;
     };
 
+    const handleTouchStart = (e) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e) => {
+      const touchEndY = e.touches[0].clientY;
+      if (touchStartY - touchEndY > 50 && mobileNavVisible) {
+        setSlideDirection("slide-up");
+        setTimeout(() => setMobileNavVisible(false), 300);
+      }
+    };
+
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchmove", handleTouchMove);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
   }, [mobileNavVisible]);
 
   const fetchJobs = async () => {
