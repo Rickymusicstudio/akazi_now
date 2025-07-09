@@ -1,141 +1,105 @@
-/* RESET */
-* {
+/* PUBLIC.css - Hero Landing Page */
+
+body, html {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-}
-
-body {
   font-family: 'Segoe UI', sans-serif;
-  background: #f4f4f4;
-  color: #333;
+  background-color: #f9f9f9;
 }
 
-/* Container */
-.public-container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-}
-
-/* Hero Section */
-.public-hero {
-  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+.hero-section {
+  background-image: url('../assets/kcc-rwanda-flag-hero.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  position: relative;
   color: white;
-  border-radius: 20px;
-  padding: 3rem 2rem;
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.public-hero h1 {
-  font-size: 2.2rem;
-  margin-bottom: 1rem;
-}
-
-.public-hero p {
-  font-size: 1.1rem;
-  margin-bottom: 2rem;
-}
-
-.public-hero-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.public-hero-buttons button {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 10px;
-  background: white;
-  color: #2c5364;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.public-hero-buttons button:hover {
-  opacity: 0.9;
-}
-
-/* Search */
-.public-search {
-  margin-bottom: 2rem;
-  display: flex;
-  justify-content: center;
-}
-
-.public-search input {
-  width: 100%;
-  max-width: 600px;
-  padding: 0.75rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  font-size: 1rem;
-}
-
-/* Job list */
-.public-jobs {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
 }
 
-/* Job card */
-.public-job-card {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+.hero-section .top-bar {
+  position: absolute;
+  top: 1rem;
+  right: 2rem;
+  display: flex;
+  gap: 1rem;
 }
 
-.public-job-card img {
-  width: 100%;
-  border-radius: 12px;
-  margin-bottom: 1rem;
-  object-fit: cover;
-  max-height: 200px;
+.hero-section .top-bar a {
+  text-decoration: none;
+  color: white;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
 }
 
-.public-job-card h2 {
-  font-size: 1.4rem;
+.hero-section h1 {
+  font-size: 3rem;
   margin-bottom: 0.5rem;
 }
 
-.public-job-card p {
-  margin-bottom: 0.4rem;
-  line-height: 1.4;
+.hero-section p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
 }
 
-.public-job-card button {
-  margin-top: 1rem;
-  padding: 0.6rem 1.2rem;
-  border: none;
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: white;
   border-radius: 8px;
-  background: #203a43;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
+  padding: 0.75rem 1rem;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-.public-job-card button:hover {
-  background: #2c5364;
+.search-bar input {
+  border: none;
+  flex: 1;
+  font-size: 1rem;
+  padding: 0.5rem;
+  outline: none;
+}
+
+.stats-bar {
+  margin-top: 1.5rem;
+  font-size: 1.1rem;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+  font-weight: 500;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .public-hero h1 {
-    font-size: 1.6rem;
+  .hero-section h1 {
+    font-size: 2rem;
   }
-
-  .public-hero-buttons {
+  .hero-section p {
+    font-size: 1rem;
+  }
+  .search-bar {
     flex-direction: column;
-    gap: 0.8rem;
+    gap: 0.5rem;
   }
-
-  .public-job-card img {
-    max-height: 160px;
+  .search-bar input {
+    width: 100%;
+  }
+  .hero-section .top-bar {
+    flex-direction: column;
+    top: 1rem;
+    right: 1rem;
   }
 }
