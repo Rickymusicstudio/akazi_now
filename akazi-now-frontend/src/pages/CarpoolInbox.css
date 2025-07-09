@@ -1,25 +1,13 @@
-/* RESET */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #f5f7fa;
-}
-
-/* Layout */
+/* Base layout */
 .carpool-inbox-container {
   display: flex;
   height: 100vh;
   width: 100vw;
-  overflow: hidden;
   font-family: 'Segoe UI', sans-serif;
+  overflow: hidden;
 }
 
-/* Desktop Left Navigation */
+/* Left navigation panel for desktop */
 .carpool-inbox-left {
   width: 50%;
   background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
@@ -50,7 +38,7 @@ body {
   cursor: pointer;
 }
 
-/* Desktop Right Panel */
+/* Right content panel */
 .carpool-inbox-right {
   width: 50%;
   height: 100vh;
@@ -60,7 +48,7 @@ body {
   box-sizing: border-box;
 }
 
-/* Ride Card */
+/* Ride card styling */
 .inbox-card {
   background: #fff;
   padding: 1.5rem;
@@ -69,7 +57,7 @@ body {
   margin-bottom: 1.5rem;
 }
 
-/* Mobile Top Bar */
+/* Mobile top navigation bar */
 .mobile-top-bar {
   display: none;
   width: 100%;
@@ -112,38 +100,7 @@ body {
   font-weight: bold;
 }
 
-/* Scoped Mobile Nav Overlay Animation */
-.mobile-nav-overlay.carpoolinbox-slide-up {
-  animation: carpoolInboxSlideUp 0.3s ease forwards;
-}
-
-.mobile-nav-overlay.carpoolinbox-slide-down {
-  animation: carpoolInboxSlideDown 0.3s ease forwards;
-}
-
-@keyframes carpoolInboxSlideUp {
-  from {
-    transform: translateY(0%);
-    opacity: 1;
-  }
-  to {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-}
-
-@keyframes carpoolInboxSlideDown {
-  from {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0%);
-    opacity: 1;
-  }
-}
-
-/* Mobile Nav Overlay */
+/* Mobile nav overlay dropdown */
 .mobile-nav-overlay {
   position: fixed;
   inset: 0;
@@ -154,6 +111,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  animation: slideIn 0.3s ease-out;
 }
 
 .mobile-nav-overlay ul {
@@ -170,7 +128,19 @@ body {
   cursor: pointer;
 }
 
-/* Responsive Mobile Styles */
+/* Animation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile styles */
 @media (max-width: 768px) {
   .carpool-inbox-container {
     flex-direction: column;
@@ -193,6 +163,7 @@ body {
     display: flex;
   }
 
+  .ride-card,
   .inbox-card {
     flex-direction: column;
     align-items: flex-start;

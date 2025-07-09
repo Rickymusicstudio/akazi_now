@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import NotificationBell from "../components/NotificationBell.jsx";
 import { useNavigate } from "react-router-dom";
@@ -9,29 +9,13 @@ import defaultAvatar from "../assets/avatar.png";
 function CarpoolInbox() {
   const [reservations, setReservations] = useState([]);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [slideDirection, setSlideDirection] = useState("");
   const [profilePic, setProfilePic] = useState(defaultAvatar);
   const navigate = useNavigate();
-  const lastScrollY = useRef(0);
 
   useEffect(() => {
     fetchReservations();
     loadProfilePicture();
   }, []);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentY = window.scrollY;
-      if (currentY < lastScrollY.current - 10 && mobileNavOpen) {
-        setSlideDirection("slide-up");
-        setTimeout(() => setMobileNavOpen(false), 300);
-      }
-      lastScrollY.current = currentY;
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [mobileNavOpen]);
 
   const fetchReservations = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -53,7 +37,9 @@ function CarpoolInbox() {
       .eq("user_id", user.id)
       .order("reserved_at", { ascending: false });
 
-    if (!error) {
+    if (error) {
+      console.error("❌ Failed to fetch reservations:", error.message);
+    } else {
       setReservations(data || []);
     }
   };
@@ -79,10 +65,7 @@ function CarpoolInbox() {
       <div className="mobile-top-bar">
         <div className="mobile-left-group">
           <img src={profilePic} alt="avatar" className="mobile-profile-pic" />
-          <FaBars className="mobile-hamburger" onClick={() => {
-            setSlideDirection("slide-down");
-            setMobileNavOpen(true);
-          }} />
+          <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
         </div>
         <div className="mobile-title">Inbox</div>
         <NotificationBell />
@@ -90,7 +73,7 @@ function CarpoolInbox() {
 
       {/* Mobile Dropdown Navigation */}
       {mobileNavOpen && (
-        <div className={`mobile-nav-overlay ${slideDirection ? `carpoolinbox-${slideDirection}` : ""}`}>
+        <div className="mobile-nav-overlay">
           <ul>
             <li onClick={() => { setMobileNavOpen(false); navigate("/"); }}>Home</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/carpools"); }}>Browse Rides</li>
