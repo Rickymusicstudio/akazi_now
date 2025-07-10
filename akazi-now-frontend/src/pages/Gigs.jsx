@@ -1,12 +1,10 @@
-import "./index.css";
-import "./Gigs.css";
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
+import { FaPhone, FaBars, FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../assets/avatar.png";
-import { FaBars, FaSearch, FaPhone } from "react-icons/fa";
-import NotificationBell from "../components/NotificationBell";
-import backgroundImage from "../assets/kcc_bg_clean.png";
+import NotificationBell from "../components/NotificationBell.jsx";
+import "./Gigs.css";
 
 function Gigs() {
   const [jobs, setJobs] = useState([]);
@@ -15,9 +13,10 @@ function Gigs() {
   const [applicationMessage, setApplicationMessage] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [userProfile, setUserProfile] = useState(null);
   const [mobileNavVisible, setMobileNavVisible] = useState(false);
   const [slideDirection, setSlideDirection] = useState("");
+  const [userProfile, setUserProfile] = useState(null);
+  const [showWelcome, setShowWelcome] = useState(true);
   const mobileNavRef = useRef(null);
   const navigate = useNavigate();
 
@@ -28,7 +27,12 @@ function Gigs() {
   const fetchJobs = async () => {
     const { data, error } = await supabase.from("jobs").select("*");
     setJobsFetched(true);
-    if (!error) setJobs(data || []);
+    setShowWelcome(false);
+    if (error) {
+      console.error("❌ Failed to fetch jobs:", error.message);
+    } else {
+      setJobs(data || []);
+    }
   };
 
   const fetchUserProfile = async () => {
@@ -52,6 +56,16 @@ function Gigs() {
       setSlideDirection("slide-up");
       setTimeout(() => setMobileNavVisible(false), 300);
     }
+  };
+
+  const handleImageClick = (url) => {
+    setSelectedImage(url);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedImage(null);
   };
 
   const handleApply = async (jobId) => {
@@ -98,18 +112,9 @@ function Gigs() {
     });
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-    setSelectedImage(null);
-  };
-
   return (
-    <div className="public-container">
-      {/* ✅ Top Mobile Nav from OG */}
-      <div
-        className="mobile-top-bar"
-        style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
-      >
+    <div className="gigs-container">
+      <div className="mobile-top-bar" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}>
         <div className="mobile-left-group">
           <img
             src={userProfile?.image_url || defaultAvatar}
@@ -118,11 +123,10 @@ function Gigs() {
           />
           <FaBars className="mobile-hamburger" onClick={handleHamburgerClick} />
         </div>
-        <h2 className="mobile-title">Available Gigs</h2>
+        <h2 className="mobile-title">Available Jobs</h2>
         <NotificationBell />
       </div>
 
-      {/* ✅ Slide-up/down mobile nav */}
       {mobileNavVisible && (
         <div
           ref={mobileNavRef}
@@ -130,124 +134,130 @@ function Gigs() {
           style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
         >
           <ul>
-            <li onClick={() => navigate("/")}>Home</li>
-            <li onClick={() => navigate("/post-job")}>Post a Job</li>
-            <li onClick={() => navigate("/my-jobs")}>My Jobs</li>
-            <li onClick={() => navigate("/profile")}>Profile</li>
-            <li onClick={() => navigate("/inbox")}>Inbox</li>
-            <li onClick={() => navigate("/carpools")}>Car Pooling</li>
-            <li
-              onClick={async () => {
-                await supabase.auth.signOut();
-                navigate("/login");
-              }}
-            >
-              Logout
-            </li>
+            <li onClick={() => {
+              setMobileNavVisible(false);
+              setJobs([]);
+              setJobsFetched(false);
+              setShowWelcome(true);
+              window.scrollTo(0, 0);
+            }}>Home</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/post-job"); }}>Post a Job</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/my-jobs"); }}>My Jobs</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/profile"); }}>Profile</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/inbox"); }}>Inbox</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/carpools"); }}>Car Pooling</li>
+            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
           </ul>
         </div>
       )}
 
-      {/* ✅ Background Hero */}
-      <div
-        className="public-hero"
-        style={{ backgroundImage: `url(${backgroundImage})` }}
-      >
-        <div className="public-hero-content">
-          <h1 className="public-heading">🛠️ Find Freelance Gigs Fast</h1>
-          <p className="public-subheading">
-            Browse job opportunities and apply instantly with AkaziNow.
-          </p>
+      <div className="gigs-left">
+        <div className="nav-buttons">
+          <button onClick={() => {
+            setJobs([]);
+            setJobsFetched(false);
+            setShowWelcome(true);
+            window.scrollTo(0, 0);
+          }}>Home</button>
+          <button onClick={() => navigate("/post-job")}>Post a Job</button>
+          <button onClick={() => navigate("/my-jobs")}>My Jobs</button>
+          <button onClick={() => navigate("/profile")}>Profile</button>
+          <button onClick={() => navigate("/inbox")}>Inbox</button>
+          <button onClick={() => navigate("/carpools")}>Car Pooling</button>
+          <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
         </div>
+        <h2 style={{ fontSize: "32px", fontWeight: "bold", marginTop: "3rem" }}>Available Jobs</h2>
+        <NotificationBell />
       </div>
 
-      {/* ✅ Gigs White Panel */}
-      <section className="public-search-section">
-        <h2 className="public-search-title">Available Gigs</h2>
-
-        {!jobsFetched && (
-          <div style={{ textAlign: "center" }}>
-            <p>
-              👋 Welcome! Click below to browse gigs near you and start earning fast.
-            </p>
-            <button className="search-button" onClick={fetchJobs}>
+      <div className="gigs-right">
+        {showWelcome && (
+          <div className="welcome-card slide-in-left">
+            <h3>👋 <strong>Welcome to AkaziNow!</strong></h3>
+            <p>Your Smart Way to Find or Post Quick Gigs in Rwanda.</p>
+            <p>💼 Whether you're looking to earn fast or need help with a task —</p>
+            <p>We've got you covered.</p>
+            <p>🚀 Start now. Find work. Get paid.</p>
+            <button className="find-jobs-button" onClick={fetchJobs}>
               <FaSearch style={{ marginRight: "0.5rem" }} />
-              Show Gigs
+              Find Jobs
             </button>
           </div>
         )}
 
-        {jobsFetched && jobs.length === 0 && (
-          <p className="gigs-empty">No gigs available at the moment.</p>
+        {!showWelcome && jobsFetched && jobs.length === 0 && (
+          <p className="empty-message">No jobs available right now.</p>
         )}
 
         {jobs.length > 0 && (
-          <div className="gigs-list">
+          <div className="job-list">
             {jobs.map((job) => (
-              <div key={job.id} className="gigs-card">
-                <h3>{job.title}</h3>
-                <p><strong>By:</strong> {job.employer_name}</p>
-                <p><strong>Address:</strong> {job.address}</p>
-                <p><strong>Description:</strong> {job.job_description}</p>
-                <p><strong>Requirement:</strong> {job.requirement || "-"}</p>
-                <p><strong>Price:</strong> {job.price ? `${Number(job.price).toLocaleString()} Frw` : "Not specified"}</p>
-                <p style={{ display: "flex", alignItems: "center", color: "#6a00ff" }}>
-                  <FaPhone style={{ marginRight: "0.5rem" }} /> {job.contact_info}
-                </p>
-                <p><strong>Status:</strong> <span style={{ color: job.status === "open" ? "green" : "red" }}>{job.status}</span></p>
+              <div key={job.id} className="job-card">
+                {job.poster_image && (
+                  <img src={job.poster_image} alt="Poster" className="poster-img" />
+                )}
+                <div className="job-card-details">
+                  <p><strong>Title:</strong> {job.title}</p>
+                  <p><strong>Posted by:</strong> {job.employer_name}</p>
+                  <p><strong>Address:</strong> {job.address}</p>
+                  <p><strong>Description:</strong> {job.job_description}</p>
+                  <p><strong>Requirement:</strong> {job.requirement || "-"}</p>
+                  <p><strong>Price:</strong> {job.price ? `${Number(job.price).toLocaleString()} Frw` : "Not specified"}</p>
+                  <p style={{ display: "flex", alignItems: "center", color: "#6a00ff" }}>
+                    <FaPhone style={{ marginRight: "0.5rem" }} /> {job.contact_info}
+                  </p>
+                  <p><strong>Status:</strong> <span style={{ color: job.status === "open" ? "green" : "red" }}>{job.status}</span></p>
 
-                <div className="gigs-actions">
-                  <button onClick={() => copyJobLink(job.id)}>🔗 Copy Link</button>
-                  {job.status === "open" && (applyingJobId === job.id ? (
-                    <>
-                      <textarea
-                        rows={2}
-                        value={applicationMessage}
-                        onChange={(e) => setApplicationMessage(e.target.value)}
-                        placeholder="Write your message"
-                      />
-                      <button onClick={() => handleApply(job.id)}>Submit</button>
-                    </>
-                  ) : (
-                    <button onClick={() => setApplyingJobId(job.id)}>Apply</button>
-                  ))}
+                  <div style={{ marginTop: "1rem", display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                    <button onClick={() => copyJobLink(job.id)} title="Copy Job Link">🔗</button>
+                    {job.status === "open" && (applyingJobId === job.id ? (
+                      <div style={{ width: "100%" }}>
+                        <textarea
+                          className="application-textarea"
+                          placeholder="Your message"
+                          rows={3}
+                          value={applicationMessage}
+                          onChange={(e) => setApplicationMessage(e.target.value)}
+                        />
+                        <button style={btnStyle} onClick={() => handleApply(job.id)}>Submit Application</button>
+                      </div>
+                    ) : (
+                      <button style={btnStyle} onClick={() => setApplyingJobId(job.id)}>Apply</button>
+                    ))}
+                  </div>
                 </div>
 
                 {job.image_url && (
                   <img
                     src={job.image_url}
-                    alt="Preview"
-                    className="gigs-preview-img"
-                    onClick={() => {
-                      setSelectedImage(job.image_url);
-                      setShowModal(true);
-                    }}
+                    alt="Job Visual"
+                    onClick={() => handleImageClick(job.image_url)}
+                    className="job-image"
                   />
                 )}
               </div>
             ))}
           </div>
         )}
-      </section>
+      </div>
 
-      {/* ✅ Modal */}
       {showModal && selectedImage && (
-        <div className="gigs-modal" onClick={closeModal}>
+        <div className="image-modal" onClick={closeModal}>
           <img src={selectedImage} alt="Preview" />
         </div>
       )}
-
-      {/* ✅ Footer */}
-      <footer className="public-footer">
-        <p>&copy; {new Date().getFullYear()} AkaziNow. All rights reserved.</p>
-        <div className="footer-links">
-          <button onClick={() => navigate("/about")}>About</button>
-          <button onClick={() => navigate("/help")}>Help</button>
-          <button onClick={() => navigate("/contact")}>Contact</button>
-        </div>
-      </footer>
     </div>
   );
 }
+
+const btnStyle = {
+  background: "linear-gradient(to right, #0f2027, #203a43, #2c5364)",
+  color: "white",
+  padding: "10px 20px",
+  border: "none",
+  borderRadius: "999px",
+  cursor: "pointer",
+  fontWeight: "bold"
+};
 
 export default Gigs;
