@@ -49,31 +49,29 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* ✅ Landing Page */}
+        {/* ✅ Public Landing Page */}
         <Route
           path="/"
           element={isAuthenticated ? <Navigate to="/gigs" replace /> : <Index />}
         />
 
-        {/* 🔐 Protected Routes */}
-        <Route path="/gigs" element={<ProtectedRoute><Gigs /></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+        {/* ✅ Public Browsing */}
+        <Route path="/gigs" element={<Gigs />} />
+        <Route path="/carpools" element={<BrowseRides />} />
+        <Route path="/abasare" element={<Abasare />} />
+
+        {/* 🔐 Actions That Require Login */}
         <Route path="/post-job" element={<ProtectedRoute><PostGig /></ProtectedRoute>} />
+        <Route path="/carpool" element={<ProtectedRoute><Carpool /></ProtectedRoute>} />
         <Route path="/applications" element={<ProtectedRoute><MyApplications /></ProtectedRoute>} />
         <Route path="/inbox" element={<ProtectedRoute><ApplicationsInbox /></ProtectedRoute>} />
         <Route path="/my-jobs" element={<ProtectedRoute><MyJobs /></ProtectedRoute>} />
         <Route path="/jobs/:id" element={<ProtectedRoute><JobDetails /></ProtectedRoute>} />
-        <Route path="/carpools" element={<ProtectedRoute><BrowseRides /></ProtectedRoute>} />
-        <Route path="/post-ride" element={<Navigate to="/carpool" replace />} />
-        <Route path="/carpool" element={<ProtectedRoute><Carpool /></ProtectedRoute>} />
         <Route path="/carpool-inbox" element={<ProtectedRoute><CarpoolInbox /></ProtectedRoute>} />
         <Route path="/notifications/:id" element={<ProtectedRoute><NotificationsDetail /></ProtectedRoute>} />
 
-        {/* ✅ Abasare */}
-        <Route path="/abasare" element={<ProtectedRoute><Abasare /></ProtectedRoute>} />
+        {/* 🔐 Detailed Views */}
         <Route path="/abasare/:id" element={<ProtectedRoute><AbasareDetail /></ProtectedRoute>} />
-
-        {/* ✅ Settings */}
         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
       </Routes>
     </Router>
