@@ -193,15 +193,14 @@ body {
   gap: 0.5rem;
 }
 
-/* ✅ Yellow job/gig panel */
-.abasare-panel {
+/* ✅ Gigs Panel - Yellow Section */
+.gigs-panel {
   width: 100%;
-  background: #fffbe6;
-  border-top: 2px solid #fdd835;
+  background: #fdd835;
   padding: 2.5rem 1rem;
 }
 
-.abasare-panel-content {
+.gigs-panel-content {
   max-width: 1100px;
   margin: auto;
   display: flex;
@@ -210,30 +209,28 @@ body {
   flex-wrap: wrap;
 }
 
-.abasare-panel-text {
+.gigs-panel-text {
   flex: 1;
-  color: #333;
+  color: #0f2027;
   padding: 0.5rem 1rem;
   min-width: 260px;
   text-align: left;
 }
 
-.abasare-panel-text h2 {
+.gigs-panel-text h2 {
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 0.6rem;
-  color: #333;
 }
 
-.abasare-panel-text p {
+.gigs-panel-text p {
   font-size: 0.95rem;
   margin-bottom: 1rem;
-  color: #333;
 }
 
-.abasare-panel-text button {
-  background: #fdd835;
-  color: #0f2027;
+.gigs-panel-text button {
+  background: #0f2027;
+  color: white;
   font-weight: bold;
   padding: 0.5rem 1rem;
   border-radius: 24px;
@@ -242,7 +239,7 @@ body {
   font-size: 0.9rem;
 }
 
-.abasare-panel-image {
+.gigs-panel-image {
   flex: 1;
   display: flex;
   justify-content: center;
@@ -251,12 +248,12 @@ body {
   min-width: 260px;
 }
 
-.abasare-panel-image img {
+.gigs-panel-image img {
   max-width: 220px;
   height: auto;
 }
 
-/* RESPONSIVE */
+/* Mobile Responsive */
 @media (max-width: 768px) {
   .public-heading {
     font-size: 2rem;
@@ -287,25 +284,25 @@ body {
     width: 100%;
   }
 
-  .abasare-panel-content {
+  .gigs-panel-content {
     flex-direction: column;
     text-align: center;
   }
 
-  .abasare-panel-text {
+  .gigs-panel-text {
     padding: 1rem;
     text-align: center;
   }
 
-  .abasare-panel-image img {
+  .gigs-panel-image img {
     max-width: 180px;
   }
 
-  .abasare-panel-text h2 {
+  .gigs-panel-text h2 {
     font-size: 1.3rem;
   }
 
-  .abasare-panel-text p {
+  .gigs-panel-text p {
     font-size: 0.9rem;
   }
 }
