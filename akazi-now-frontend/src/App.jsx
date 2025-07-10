@@ -21,7 +21,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Abasare from "./pages/Abasare";
 import AbasareDetail from "./pages/AbasareDetail";
 import Settings from "./pages/Settings";
-import Public from "./pages/Public";
+
+// ✅ Replace Public with new Index landing page
+import Index from "./pages/index";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
@@ -47,14 +49,14 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* ✅ Root path dynamically redirects */}
+        {/* ✅ Root path shows Index.jsx */}
         <Route
           path="/"
           element={
-            isAuthenticated ? <Navigate to="/gigs" replace /> : <Public />
+            isAuthenticated ? <Navigate to="/gigs" replace /> : <Index />
           }
         />
-        <Route path="/public" element={<Public />} />
+        <Route path="/public" element={<Index />} />
 
         {/* 🔐 Protected Routes */}
         <Route path="/gigs" element={<ProtectedRoute><Gigs /></ProtectedRoute>} />
