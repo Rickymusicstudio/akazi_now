@@ -3,7 +3,7 @@ import { supabase } from "../supabaseClient";
 import { FaSearch } from "react-icons/fa";
 import NotificationBell from "../components/NotificationBell.jsx";
 import "./Gigs.css";
-import kccBackground from "../assets/kcc.png";
+import kccBackground from "../assets/kcc_bg_clean.png";
 
 function Gigs() {
   const [jobs, setJobs] = useState([]);
