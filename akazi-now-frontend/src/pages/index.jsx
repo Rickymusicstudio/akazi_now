@@ -2,8 +2,8 @@ import "./index.css";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/kcc_bg_clean.png";
 import stickerJobs from "../assets/sticker1_transparent.png";
-import stickerCar from "../assets/sticker3_transparent.png";
-import stickerDriver from "../assets/sticker_driver.png";
+import stickerCar from "../assets/sticker_clean_2.png";
+import stickerDriver from "../assets/sticker_clean_1.png";
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import {
