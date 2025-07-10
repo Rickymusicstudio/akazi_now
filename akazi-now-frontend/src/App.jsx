@@ -22,7 +22,7 @@ import Abasare from "./pages/Abasare";
 import AbasareDetail from "./pages/AbasareDetail";
 import Settings from "./pages/Settings";
 
-// ✅ Replace Public with new Index landing page
+// ✅ Replaced old Public import with new landing page
 import Index from "./pages/index";
 
 function App() {
@@ -49,14 +49,14 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* ✅ Root path shows Index.jsx */}
+        {/* ✅ Public Landing Page */}
         <Route
           path="/"
           element={
             isAuthenticated ? <Navigate to="/gigs" replace /> : <Index />
           }
         />
-        <Route path="/public" element={<Index />} />
+        <Route path="/index" element={<Index />} />
 
         {/* 🔐 Protected Routes */}
         <Route path="/gigs" element={<ProtectedRoute><Gigs /></ProtectedRoute>} />
