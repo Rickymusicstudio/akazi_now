@@ -10,6 +10,7 @@ import {
   FaCalendarCheck,
 } from "react-icons/fa";
 import sticker3 from "../assets/sticker1_transparent.png";
+import carpoolSticker from "../assets/sticker_clean_1.png"; // Replace with your carpool image
 
 function Public() {
   const navigate = useNavigate();
@@ -87,20 +88,37 @@ function Public() {
         </div>
       </section>
 
-      {/* ✅ Abasare Panel */}
+      {/* ✅ JOBS PROMO PANEL */}
       <section className="abasare-panel">
         <div className="abasare-panel-content">
           <div className="abasare-panel-text">
-            <h2>Abasare Drivers You Can Trust</h2>
+            <h2>Find Jobs or Post Work Easily</h2>
             <p>
-              Our verified drivers (Abasare) are here to help Rwandans get home
-              safely — whether you're out late or need a responsible driver on
-              the go. We ensure you ride with trusted and rated people.
+              Whether you're looking for quick gigs or want to hire someone fast,
+              AkaziNow makes it simple. Post jobs and find qualified workers in your area —
+              trusted by thousands of Rwandans.
             </p>
-            <button onClick={() => navigate("/abasare")}>View Drivers</button>
+            <button onClick={() => navigate("/gigs")}>Explore Gigs</button>
           </div>
           <div className="abasare-panel-image">
-            <img src={sticker3} alt="Abasare Illustration" />
+            <img src={sticker3} alt="Job Offer Illustration" />
+          </div>
+        </div>
+      </section>
+
+      {/* ✅ CARPOOL / ABASARE PANEL */}
+      <section className="abasare-panel" style={{ background: "#f5f7fa" }}>
+        <div className="abasare-panel-content">
+          <div className="abasare-panel-text">
+            <h2>Need a Ride? Discover Trusted Carpool Drivers</h2>
+            <p>
+              Our verified Abasare drivers are here to help you get home safely.
+              Book or offer rides anytime — ideal for late nights, weekends, or events.
+            </p>
+            <button onClick={() => navigate("/abasare")}>Meet Abasare</button>
+          </div>
+          <div className="abasare-panel-image">
+            <img src={carpoolSticker} alt="Carpool Illustration" />
           </div>
         </div>
       </section>
