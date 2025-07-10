@@ -94,6 +94,14 @@ body {
   position: relative;
 }
 
+.public-search-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: #2c3e50;
+}
+
 .public-search-bar {
   display: flex;
   flex-wrap: wrap;
@@ -246,4 +254,3 @@ body {
     gap: 1rem;
   }
 }
- 

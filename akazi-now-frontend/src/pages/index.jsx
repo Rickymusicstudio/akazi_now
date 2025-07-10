@@ -53,6 +53,8 @@ function Index() {
 
       {/* SEARCH SECTION */}
       <section className="public-search-section">
+        <h2 className="public-search-title">🚗 Search Carpool</h2>
+
         <div className="public-search-bar">
           <div className="search-field">
             <FaMapMarkerAlt className="icon" />
@@ -122,4 +124,3 @@ function Index() {
 }
 
 export default Index;
- 
