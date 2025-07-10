@@ -255,9 +255,10 @@ body {
   height: auto;
 }
 
-/* Light variation for second section */
+/* ✅ Yellow variation for job/gig section */
 .abasare-panel:nth-of-type(2) {
-  background: #f5f7fa;
+  background: #fffbe6;
+  border-top: 2px solid #fdd835;
 }
 
 .abasare-panel:nth-of-type(2) .abasare-panel-text h2,
@@ -266,8 +267,8 @@ body {
 }
 
 .abasare-panel:nth-of-type(2) .abasare-panel-text button {
-  background: #0f2027;
-  color: white;
+  background: #fdd835;
+  color: #0f2027;
 }
 
 /* RESPONSIVE */

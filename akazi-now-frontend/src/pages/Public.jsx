@@ -1,8 +1,7 @@
 import "./Public.css";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/kcc_bg_clean.png";
-import stickerJobs from "../assets/sticker1_transparent.png"; // Use job-related illustration
-import stickerAbasare from "../assets/By my car-rafiki.png";  // Abasare/carpool-related illustration
+import stickerJobs from "../assets/sticker1_transparent.png"; // Job-related
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import {
@@ -109,19 +108,22 @@ function Public() {
         </div>
       </section>
 
-      {/* ✅ ABASARE / CARPOOL SECTION */}
-      <section className="abasare-panel" style={{ background: "#f5f7fa" }}>
+      {/* ✅ EXTRA JOB PANEL (YELLOW SECTION) */}
+      <section
+        className="abasare-panel"
+        style={{ background: "#fffbe6", borderTop: "2px solid #fdd835" }}
+      >
         <div className="abasare-panel-content">
           <div className="abasare-panel-text">
-            <h2>Need a Ride? Discover Trusted Carpool Drivers</h2>
+            <h2>Looking for Your Next Gig?</h2>
             <p>
-              Our verified Abasare drivers are here to help you get home safely.
-              Book or offer rides anytime — ideal for late nights, weekends, or events.
+              Discover hundreds of short-term jobs in various fields—from delivery
+              to tech to household help. AkaziNow connects talent to opportunity.
             </p>
-            <button onClick={() => navigate("/abasare")}>Meet Abasare</button>
+            <button onClick={() => navigate("/public")}>Browse Public Gigs</button>
           </div>
           <div className="abasare-panel-image">
-            <img src={stickerAbasare} alt="Carpool Illustration" />
+            <img src={stickerJobs} alt="Browse Gigs Illustration" />
           </div>
         </div>
       </section>
