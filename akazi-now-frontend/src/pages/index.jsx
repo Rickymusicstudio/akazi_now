@@ -72,7 +72,9 @@ function Index() {
             <FaUser className="icon" />
             <input type="number" placeholder="1" min="1" />
           </div>
-          <button className="search-button">Search</button>
+          <button className="search-button" onClick={() => navigate("/carpools")}>
+            Search
+          </button>
         </div>
 
         <div className="public-count">
@@ -86,7 +88,7 @@ function Index() {
           <div className="service-text">
             <h2>Find a Gig</h2>
             <p>Explore short jobs in tech, delivery, house help and more.</p>
-            <button onClick={() => navigate("/public")}>Browse Gigs</button>
+            <button onClick={() => navigate("/gigs")}>Browse Gigs</button>
           </div>
           <img src={stickerJobs} alt="Gigs" />
         </div>
@@ -95,7 +97,7 @@ function Index() {
           <div className="service-text">
             <h2>Book a Ride</h2>
             <p>Find or share a ride quickly and affordably.</p>
-            <button onClick={() => navigate("/public-rides")}>Browse Rides</button>
+            <button onClick={() => navigate("/carpools")}>Browse Rides</button>
           </div>
           <img src={stickerCar} alt="Carpool" />
         </div>
@@ -104,7 +106,7 @@ function Index() {
           <div className="service-text">
             <h2>Find a Driver</h2>
             <p>Connect with trusted Abasare to get home safe.</p>
-            <button onClick={() => navigate("/public-abasare")}>View Drivers</button>
+            <button onClick={() => navigate("/abasare")}>View Drivers</button>
           </div>
           <img src={stickerDriver} alt="Abasare" />
         </div>
