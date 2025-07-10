@@ -5,7 +5,6 @@ import backgroundImage from "../assets/kcc_bg_clean.png";
 import defaultAvatar from "../assets/avatar.png";
 import NotificationBell from "../components/NotificationBell.jsx";
 import { FaBars, FaCalendarCheck } from "react-icons/fa";
-import "./Gigs.css";
 
 function Gigs() {
   const [jobs, setJobs] = useState([]);
@@ -51,10 +50,7 @@ function Gigs() {
   return (
     <div className="public-container">
       {/* TOP NAV (mobile) */}
-      <div
-        className="mobile-top-bar"
-        style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
-      >
+      <div className="mobile-top-bar" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}>
         <div className="mobile-left-group">
           <img
             src={userProfile?.image_url || defaultAvatar}
@@ -67,7 +63,6 @@ function Gigs() {
         <NotificationBell />
       </div>
 
-      {/* NAV OVERLAY (mobile) */}
       {mobileNavVisible && (
         <div
           ref={mobileNavRef}
@@ -85,19 +80,6 @@ function Gigs() {
           </ul>
         </div>
       )}
-
-      {/* DESKTOP NAVIGATION */}
-      <div className="desktop-nav">
-        <ul>
-          <li onClick={() => navigate("/gigs")}>Gigs</li>
-          <li onClick={() => navigate("/post-job")}>Post a Job</li>
-          <li onClick={() => navigate("/my-jobs")}>My Jobs</li>
-          <li onClick={() => navigate("/profile")}>Profile</li>
-          <li onClick={() => navigate("/inbox")}>Inbox</li>
-          <li onClick={() => navigate("/carpools")}>Car Pooling</li>
-          <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
-        </ul>
-      </div>
 
       {/* HERO */}
       <div
