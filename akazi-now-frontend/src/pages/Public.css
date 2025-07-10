@@ -193,10 +193,11 @@ body {
   gap: 0.5rem;
 }
 
-/* ✅ Universal Panel for Job or Carpool */
+/* ✅ Yellow job/gig panel */
 .abasare-panel {
   width: 100%;
-  background: #6db6ff;
+  background: #fffbe6;
+  border-top: 2px solid #fdd835;
   padding: 2.5rem 1rem;
 }
 
@@ -211,7 +212,7 @@ body {
 
 .abasare-panel-text {
   flex: 1;
-  color: white;
+  color: #333;
   padding: 0.5rem 1rem;
   min-width: 260px;
   text-align: left;
@@ -221,17 +222,17 @@ body {
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 0.6rem;
-  color: white;
+  color: #333;
 }
 
 .abasare-panel-text p {
   font-size: 0.95rem;
   margin-bottom: 1rem;
-  color: white;
+  color: #333;
 }
 
 .abasare-panel-text button {
-  background: white;
+  background: #fdd835;
   color: #0f2027;
   font-weight: bold;
   padding: 0.5rem 1rem;
@@ -253,22 +254,6 @@ body {
 .abasare-panel-image img {
   max-width: 220px;
   height: auto;
-}
-
-/* ✅ Yellow variation for job/gig section */
-.abasare-panel:nth-of-type(2) {
-  background: #fffbe6;
-  border-top: 2px solid #fdd835;
-}
-
-.abasare-panel:nth-of-type(2) .abasare-panel-text h2,
-.abasare-panel:nth-of-type(2) .abasare-panel-text p {
-  color: #333;
-}
-
-.abasare-panel:nth-of-type(2) .abasare-panel-text button {
-  background: #fdd835;
-  color: #0f2027;
 }
 
 /* RESPONSIVE */

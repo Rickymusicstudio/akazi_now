@@ -90,25 +90,7 @@ function Public() {
         </div>
       </section>
 
-      {/* ✅ JOB OFFER PANEL */}
-      <section className="abasare-panel">
-        <div className="abasare-panel-content">
-          <div className="abasare-panel-text">
-            <h2>Find Jobs or Post Work Easily</h2>
-            <p>
-              Whether you're looking for quick gigs or want to hire someone fast,
-              AkaziNow makes it simple. Post jobs and find qualified workers in your area —
-              trusted by thousands of Rwandans.
-            </p>
-            <button onClick={() => navigate("/gigs")}>Explore Gigs</button>
-          </div>
-          <div className="abasare-panel-image">
-            <img src={stickerJobs} alt="Job Offer Illustration" />
-          </div>
-        </div>
-      </section>
-
-      {/* ✅ EXTRA JOB PANEL (YELLOW SECTION) */}
+      {/* ✅ JOB OFFER PANEL (YELLOW SECTION) */}
       <section
         className="abasare-panel"
         style={{ background: "#fffbe6", borderTop: "2px solid #fdd835" }}
