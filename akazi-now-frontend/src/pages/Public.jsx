@@ -1,6 +1,8 @@
 import "./Public.css";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/kcc_bg_clean.png";
+import stickerJobs from "../assets/sticker1_transparent.png"; // Use job-related illustration
+import stickerAbasare from "../assets/By my car-rafiki.png";  // Abasare/carpool-related illustration
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import {
@@ -9,8 +11,6 @@ import {
   FaUser,
   FaCalendarCheck,
 } from "react-icons/fa";
-import sticker3 from "../assets/sticker1_transparent.png";
-import carpoolSticker from "../assets/sticker_clean_1.png"; // Replace with your carpool image
 
 function Public() {
   const navigate = useNavigate();
@@ -29,6 +29,7 @@ function Public() {
 
   return (
     <div className="public-container">
+      {/* HERO */}
       <div
         className="public-hero"
         style={{ backgroundImage: `url(${backgroundImage})` }}
@@ -47,6 +48,7 @@ function Public() {
         </div>
       </div>
 
+      {/* FEATURES */}
       <section className="public-features">
         <div className="feature-card">
           <h3>✔️ Post Gigs Easily</h3>
@@ -62,6 +64,7 @@ function Public() {
         </div>
       </section>
 
+      {/* SEARCH */}
       <section className="public-search-section">
         <div className="public-search-bar">
           <div className="search-field">
@@ -88,7 +91,7 @@ function Public() {
         </div>
       </section>
 
-      {/* ✅ JOBS PROMO PANEL */}
+      {/* ✅ JOB OFFER PANEL */}
       <section className="abasare-panel">
         <div className="abasare-panel-content">
           <div className="abasare-panel-text">
@@ -101,12 +104,12 @@ function Public() {
             <button onClick={() => navigate("/gigs")}>Explore Gigs</button>
           </div>
           <div className="abasare-panel-image">
-            <img src={sticker3} alt="Job Offer Illustration" />
+            <img src={stickerJobs} alt="Job Offer Illustration" />
           </div>
         </div>
       </section>
 
-      {/* ✅ CARPOOL / ABASARE PANEL */}
+      {/* ✅ ABASARE / CARPOOL SECTION */}
       <section className="abasare-panel" style={{ background: "#f5f7fa" }}>
         <div className="abasare-panel-content">
           <div className="abasare-panel-text">
@@ -118,7 +121,7 @@ function Public() {
             <button onClick={() => navigate("/abasare")}>Meet Abasare</button>
           </div>
           <div className="abasare-panel-image">
-            <img src={carpoolSticker} alt="Carpool Illustration" />
+            <img src={stickerAbasare} alt="Carpool Illustration" />
           </div>
         </div>
       </section>

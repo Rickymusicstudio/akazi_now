@@ -193,11 +193,11 @@ body {
   gap: 0.5rem;
 }
 
-/* ✅ Compact Abasare Panel */
+/* ✅ Universal Panel for Job or Carpool */
 .abasare-panel {
   width: 100%;
   background: #6db6ff;
-  padding: 1.8rem 1rem;
+  padding: 2.5rem 1rem;
 }
 
 .abasare-panel-content {
@@ -214,17 +214,20 @@ body {
   color: white;
   padding: 0.5rem 1rem;
   min-width: 260px;
+  text-align: left;
 }
 
 .abasare-panel-text h2 {
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 0.6rem;
+  color: white;
 }
 
 .abasare-panel-text p {
   font-size: 0.95rem;
   margin-bottom: 1rem;
+  color: white;
 }
 
 .abasare-panel-text button {
@@ -250,6 +253,21 @@ body {
 .abasare-panel-image img {
   max-width: 220px;
   height: auto;
+}
+
+/* Light variation for second section */
+.abasare-panel:nth-of-type(2) {
+  background: #f5f7fa;
+}
+
+.abasare-panel:nth-of-type(2) .abasare-panel-text h2,
+.abasare-panel:nth-of-type(2) .abasare-panel-text p {
+  color: #333;
+}
+
+.abasare-panel:nth-of-type(2) .abasare-panel-text button {
+  background: #0f2027;
+  color: white;
 }
 
 /* RESPONSIVE */
@@ -290,6 +308,7 @@ body {
 
   .abasare-panel-text {
     padding: 1rem;
+    text-align: center;
   }
 
   .abasare-panel-image img {
