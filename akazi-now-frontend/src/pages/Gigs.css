@@ -7,19 +7,20 @@
 
 html,
 body {
-  height: 100%;
+  height: auto;
+  min-height: 100%;
   overflow-y: auto;
   font-family: 'Segoe UI', sans-serif;
   background: #f0f2f5;
 }
 
-/* CONTAINER */
 .gigs-container {
-  width: 100%;
   display: flex;
   flex-direction: row;
-  overflow-y: auto;
-  min-height: 100vh;
+  width: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* LEFT PANEL */
@@ -28,22 +29,19 @@ body {
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
   color: white;
   padding: 2rem;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: flex-start;
-  position: relative;
-  height: 100vh;
-  overflow-y: auto;
 }
 
-/* NAV BUTTONS */
 .nav-buttons {
+  position: absolute;
+  top: 1rem;
+  left: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  font-weight: bold;
-  font-size: 14px;
+  gap: 1rem;
 }
 
 .nav-buttons button {
@@ -51,19 +49,45 @@ body {
   border: none;
   color: white;
   font-weight: bold;
+  font-size: 16px;
   cursor: pointer;
-  text-align: left;
 }
 
 /* RIGHT PANEL */
 .gigs-right {
   width: 50%;
-  padding: 2rem;
-  min-height: 100vh;
+  height: 100vh;
   overflow-y: auto;
+  padding: 2rem;
+  background-color: #fff;
 }
 
-/* JOB CARDS */
+.welcome-card {
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+  color: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  margin: 2rem auto;
+  animation: slideInLeft 0.5s ease-out forwards;
+  text-align: left;
+}
+
+.find-jobs-button {
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  border: none;
+  color: white;
+  padding: 0.7rem 1.5rem;
+  border-radius: 999px;
+  font-weight: bold;
+  font-size: 1rem;
+  margin-top: 1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
 .job-list {
   display: flex;
   flex-direction: column;
@@ -76,20 +100,27 @@ body {
   border-radius: 12px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 1rem;
+  align-items: flex-start;
 }
 
-.poster-img,
-.job-image {
-  width: 100px;
-  height: 100px;
+.poster-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
   object-fit: cover;
-  border-radius: 8px;
-  cursor: pointer;
 }
 
-/* MODAL */
+.job-image {
+  width: 150px;
+  height: 150px;
+  border-radius: 8px;
+  object-fit: cover;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 .image-modal {
   position: fixed;
   inset: 0;
@@ -104,45 +135,94 @@ body {
   max-width: 90%;
   max-height: 90%;
   border-radius: 12px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
 }
 
-/* EMPTY STATE */
 .empty-message {
   text-align: center;
   color: #555;
   margin-top: 2rem;
 }
 
-/* WELCOME CARD */
-.welcome-card {
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-  color: white;
-  border-radius: 16px;
-  padding: 2rem;
-  max-width: 500px;
-  margin: 2rem auto;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-/* TEXTAREA */
 .application-textarea {
-  width: 100%;
-  border: 1px solid #ccc;
+  background-color: #ffffff !important;
+  color: #000000 !important;
   border-radius: 8px;
   padding: 0.5rem;
+  border: 1px solid #ccc;
+  width: 100%;
   font-family: inherit;
   font-size: 1rem;
 }
 
-/* MOBILE */
-.mobile-top-bar {
-  display: none;
+/* 🔔 Notification Bell */
+.notification-bell-container {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  z-index: 10;
 }
 
+.notification-bell-button {
+  background: #fff;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+}
+
+.notification-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 300px;
+  background: white;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 999;
+}
+
+.notification-item {
+  border-bottom: 1px solid #eee;
+  padding: 0.5rem 0;
+  cursor: pointer;
+}
+
+.notification-message {
+  font-weight: bold;
+  color: #333;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: #888;
+}
+
+/* ✅ Animations */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ✅ MOBILE RESPONSIVENESS */
 @media (max-width: 768px) {
   .gigs-container {
     flex-direction: column;
-    overflow-y: auto;
+    height: auto;
   }
 
   .gigs-left {
@@ -151,10 +231,10 @@ body {
 
   .gigs-right {
     width: 100%;
+    height: auto;
+    overflow-y: visible;
     padding: 1.5rem;
     padding-top: 6rem;
-    min-height: 100vh;
-    overflow-y: auto;
   }
 
   .mobile-top-bar {
@@ -197,6 +277,7 @@ body {
     font-size: 1.2rem;
     font-weight: bold;
     text-align: center;
+    white-space: nowrap;
   }
 
   .mobile-nav-overlay {
@@ -210,7 +291,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    opacity: 1;
+    transform: translateY(0%);
     transition: transform 0.3s ease, opacity 0.3s ease;
+    overflow-y: auto;
   }
 
   .mobile-nav-overlay.slide-down {
@@ -235,5 +319,9 @@ body {
 
   .mobile-nav-overlay li {
     cursor: pointer;
+  }
+
+  .welcome-card {
+    margin-top: 1rem;
   }
 }
