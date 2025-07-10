@@ -1,234 +1,118 @@
-/* RESET */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html, body {
-  font-family: 'Segoe UI', sans-serif;
-  height: 100%;
-  background: #f0f2f5;
-  overflow: auto;
-}
-
-/* MAIN CONTAINER */
-.gigs-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+/* GIGS MAIN BACKGROUND */
+.gigs-index-container {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   min-height: 100vh;
-  width: 100%;
-  padding: 1rem;
+  font-family: "Segoe UI", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
 }
 
-/* TOP NAV */
-.mobile-top-bar {
+.gigs-overlay {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  max-width: 1100px;
+  width: 100%;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* HEADER */
+.gigs-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+}
+
+.gigs-welcome {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.gigs-btn {
+  padding: 0.7rem 1.4rem;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  border: none;
   color: white;
-  padding: 1rem;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.mobile-left-group {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.mobile-profile-pic {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.mobile-hamburger {
-  font-size: 1.8rem;
-  color: white;
+  border-radius: 999px;
+  font-weight: bold;
+  margin-top: 1rem;
   cursor: pointer;
 }
 
-.mobile-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 1.2rem;
-  font-weight: bold;
-  white-space: nowrap;
+.gigs-empty {
+  text-align: center;
+  color: #888;
+  font-size: 1.1rem;
 }
 
-/* NAV OVERLAY */
-.mobile-nav-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
+/* JOB CARD */
+.gigs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.gigs-card {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.gigs-actions {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.gigs-actions button {
+  background: #203a43;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.gigs-actions textarea {
+  border-radius: 8px;
+  padding: 0.5rem;
+  font-family: inherit;
+  font-size: 1rem;
   width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+}
+
+/* IMAGE MODAL */
+.gigs-modal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.8);
   z-index: 999;
   display: flex;
   justify-content: center;
   align-items: center;
-  opacity: 1;
-  transform: translateY(0%);
-  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.mobile-nav-overlay.slide-up {
-  transform: translateY(-100%);
-  opacity: 0;
-}
-
-.mobile-nav-overlay.slide-down {
-  transform: translateY(0%);
-  opacity: 1;
-}
-
-.mobile-nav-overlay ul {
-  list-style: none;
-  color: white;
-  font-weight: bold;
-  font-size: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.mobile-nav-overlay li {
-  cursor: pointer;
-}
-
-/* WELCOME CARD */
-.welcome-card {
-  background: white;
-  color: #0f2027;
-  padding: 2rem;
-  border-radius: 16px;
-  max-width: 500px;
-  text-align: center;
-  margin-top: 2rem;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-  animation: slideIn 0.5s ease-out;
-}
-
-.find-jobs-button {
-  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-  border: none;
-  color: white;
-  padding: 0.7rem 1.5rem;
-  border-radius: 999px;
-  font-weight: bold;
-  font-size: 1rem;
-  margin-top: 1rem;
-  display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-}
-
-/* JOB LIST */
-.job-list {
-  margin-top: 2rem;
-  width: 100%;
-  max-width: 800px;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.job-card {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.poster-img {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.job-card-details p {
-  margin: 0.2rem 0;
-}
-
-.job-image {
-  width: 100%;
-  max-width: 200px;
-  height: auto;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-/* MODAL */
-.image-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.8);
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.image-modal img {
+.gigs-modal img {
   max-width: 90%;
   max-height: 90%;
   border-radius: 12px;
 }
 
-/* EMPTY MESSAGE */
-.empty-message {
-  color: white;
-  text-align: center;
-  margin-top: 3rem;
-}
-
-/* ANIMATIONS */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* TEXTAREA */
-.application-textarea {
-  width: 100%;
-  padding: 0.7rem;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  background: white;
-  color: black;
-  resize: vertical;
-}
-
-/* NOTIFICATION */
-.notification-bell-container {
-  position: relative;
-  margin-left: auto;
-}
-
-/* Responsive Tweaks */
-@media (min-width: 769px) {
-  .mobile-top-bar {
-    display: none;
-  }
+/* IMAGE PREVIEW */
+.gigs-preview-img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-top: 1rem;
+  cursor: pointer;
 }

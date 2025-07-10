@@ -1,137 +1,32 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { FaPhone, FaBars, FaSearch } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import defaultAvatar from "../assets/avatar.png";
+import { FaSearch } from "react-icons/fa";
 import NotificationBell from "../components/NotificationBell.jsx";
 import "./Gigs.css";
+import kccBackground from "../assets/kcc.png";
 
 function Gigs() {
   const [jobs, setJobs] = useState([]);
   const [jobsFetched, setJobsFetched] = useState(false);
-  const [applyingJobId, setApplyingJobId] = useState(null);
   const [applicationMessage, setApplicationMessage] = useState("");
+  const [applyingJobId, setApplyingJobId] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [mobileNavVisible, setMobileNavVisible] = useState(false);
-  const [slideDirection, setSlideDirection] = useState("");
-  const [userProfile, setUserProfile] = useState(null);
-  const [showWelcome, setShowWelcome] = useState(true);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    fetchUserProfile();
-  }, []);
-
-  // 🔁 Close menu on upward scroll or swipe up
-  useEffect(() => {
-    let lastScrollY = window.scrollY;
-    let touchStartY = 0;
-
-    const handleScroll = () => {
-      if (!mobileNavVisible) return;
-      const currentScrollY = window.scrollY;
-      if (currentScrollY < lastScrollY) {
-        setSlideDirection("slide-up");
-        setTimeout(() => {
-          setMobileNavVisible(false);
-          setSlideDirection("");
-        }, 300);
-      }
-      lastScrollY = currentScrollY;
-    };
-
-    const handleTouchStart = (e) => {
-      touchStartY = e.touches[0].clientY;
-    };
-
-    const handleTouchMove = (e) => {
-      const touchEndY = e.touches[0].clientY;
-      if (touchStartY - touchEndY > 50 && mobileNavVisible) {
-        setSlideDirection("slide-up");
-        setTimeout(() => {
-          setMobileNavVisible(false);
-          setSlideDirection("");
-        }, 300);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    window.addEventListener("touchstart", handleTouchStart);
-    window.addEventListener("touchmove", handleTouchMove);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchmove", handleTouchMove);
-    };
-  }, [mobileNavVisible]);
 
   const fetchJobs = async () => {
     const { data, error } = await supabase.from("jobs").select("*");
     setJobsFetched(true);
-    setShowWelcome(false);
-    if (error) {
-      console.error("❌ Failed to fetch jobs:", error.message);
-    } else {
-      setJobs(data || []);
-    }
-  };
-
-  const fetchUserProfile = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return;
-    const { data } = await supabase
-      .from("users")
-      .select("image_url")
-      .eq("auth_user_id", user.id)
-      .single();
-    setUserProfile(data);
-  };
-
-  const handleHamburgerClick = () => {
-    if (!mobileNavVisible) {
-      setSlideDirection("slide-down");
-      setMobileNavVisible(true);
-    } else {
-      setSlideDirection("slide-up");
-      setTimeout(() => {
-        setMobileNavVisible(false);
-        setSlideDirection("");
-      }, 300);
-    }
-  };
-
-  const closeMenuAndNavigate = (path, extraFn = null) => {
-    setSlideDirection("slide-up");
-    setTimeout(() => {
-      setMobileNavVisible(false);
-      setSlideDirection("");
-      window.scrollTo(0, 0);
-      if (extraFn) extraFn();
-      navigate(path);
-    }, 300);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setSelectedImage(null);
+    if (!error) setJobs(data || []);
   };
 
   const handleApply = async (jobId) => {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) {
-      alert("❗Please login to apply.");
-      navigate("/login");
-      return;
-    }
+    if (!user) return alert("Please log in to apply.");
 
     if (!applicationMessage.trim()) {
-      alert("✍️ Please enter a message before submitting.");
+      alert("Please write a message.");
       return;
     }
 
@@ -145,170 +40,121 @@ function Gigs() {
     ]);
 
     if (error) {
-      if (error.message.includes("unique_applicant_per_gig")) {
-        alert("⚠️ You have already applied for this job. Check your Inbox for updates.");
-      } else {
-        alert("❌ Failed to apply: " + error.message);
-      }
+      alert("Error: " + error.message);
     } else {
       alert("✅ Application submitted!");
-      setApplyingJobId(null);
       setApplicationMessage("");
+      setApplyingJobId(null);
     }
   };
 
   const copyJobLink = (jobId) => {
     const jobUrl = `${window.location.origin}/jobs/${jobId}`;
-    navigator.clipboard.writeText(jobUrl).then(() => {
-      alert("🔗 Link copied!");
-    });
+    navigator.clipboard.writeText(jobUrl);
+    alert("🔗 Link copied!");
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedImage(null);
   };
 
   return (
-    <div className="gigs-container">
-      <div className="mobile-top-bar">
-        <div className="mobile-left-group">
-          <img
-            src={userProfile?.image_url || defaultAvatar}
-            alt="avatar"
-            className="mobile-profile-pic"
-          />
-          <FaBars className="mobile-hamburger" onClick={handleHamburgerClick} />
-        </div>
-        <h2 className="mobile-title">Available Jobs</h2>
-        <NotificationBell />
-      </div>
-
-      {mobileNavVisible && (
-        <div className={`mobile-nav-overlay ${slideDirection}`}>
-          <ul>
-            <li onClick={() => closeMenuAndNavigate("/", () => {
-              setJobs([]); setJobsFetched(false); setShowWelcome(true);
-            })}>Home</li>
-            <li onClick={() => closeMenuAndNavigate("/post-job")}>Post a Job</li>
-            <li onClick={() => closeMenuAndNavigate("/my-jobs")}>My Jobs</li>
-            <li onClick={() => closeMenuAndNavigate("/profile")}>Profile</li>
-            <li onClick={() => closeMenuAndNavigate("/inbox")}>Inbox</li>
-            <li onClick={() => closeMenuAndNavigate("/carpools")}>Car Pooling</li>
-            <li onClick={async () => {
-              await supabase.auth.signOut();
-              closeMenuAndNavigate("/login");
-            }}>Logout</li>
-          </ul>
-        </div>
-      )}
-
-      <div className="gigs-left">
-        <div className="nav-buttons">
-          <button onClick={() => {
-            setJobs([]); setJobsFetched(false); setShowWelcome(true);
-            window.scrollTo(0, 0);
-          }}>Home</button>
-          <button onClick={() => navigate("/post-job")}>Post a Job</button>
-          <button onClick={() => navigate("/my-jobs")}>My Jobs</button>
-          <button onClick={() => navigate("/profile")}>Profile</button>
-          <button onClick={() => navigate("/inbox")}>Inbox</button>
-          <button onClick={() => navigate("/carpools")}>Car Pooling</button>
-          <button onClick={async () => {
-            await supabase.auth.signOut();
-            navigate("/login");
-          }} style={{ color: "#ffcccc" }}>Logout</button>
-        </div>
-        <h2 style={{ fontSize: "32px", fontWeight: "bold", marginTop: "3rem" }}>Available Jobs</h2>
-        <NotificationBell />
-      </div>
-
-      <div className="gigs-right">
-        {showWelcome && (
-          <div className="welcome-card slide-in-left">
-            <h3>👋 <strong>Welcome to AkaziNow!</strong></h3>
-            <p>Your Smart Way to Find or Post Quick Gigs in Rwanda.</p>
-            <p>💼 Whether you're looking to earn fast or need help with a task —</p>
-            <p>We've got you covered.</p>
-            <p>🚀 Start now. Find work. Get paid.</p>
-            <button className="find-jobs-button" onClick={fetchJobs}>
-              <FaSearch style={{ marginRight: "0.5rem" }} />
-              Find Jobs
-            </button>
+    <div
+      className="gigs-index-container"
+      style={{ backgroundImage: `url(${kccBackground})` }}
+    >
+      <div className="gigs-overlay">
+        <div className="gigs-white-box">
+          <div className="gigs-header">
+            <h2>🛠️ Browse Available Gigs</h2>
+            <NotificationBell />
           </div>
-        )}
 
-        {!showWelcome && jobsFetched && jobs.length === 0 && (
-          <p className="empty-message">No jobs available right now.</p>
-        )}
+          {!jobsFetched && (
+            <div className="gigs-welcome">
+              <p>
+                🚀 AkaziNow makes it easy to find freelance gigs quickly.
+                Whether you're a task poster or job seeker, we connect you fast.
+              </p>
+              <button className="gigs-btn" onClick={fetchJobs}>
+                <FaSearch style={{ marginRight: "0.5rem" }} />
+                Show Gigs
+              </button>
+            </div>
+          )}
 
-        {jobs.length > 0 && (
-          <div className="job-list">
-            {jobs.map((job) => (
-              <div key={job.id} className="job-card">
-                {job.poster_image && (
-                  <img src={job.poster_image} alt="Poster" className="poster-img" />
-                )}
-                <div className="job-card-details">
-                  <p><strong>Title:</strong> {job.title}</p>
-                  <p><strong>Posted by:</strong> {job.employer_name}</p>
-                  <p><strong>Address:</strong> {job.address}</p>
-                  <p><strong>Description:</strong> {job.job_description}</p>
-                  <p><strong>Requirement:</strong> {job.requirement || "-"}</p>
-                  <p><strong>Price:</strong> {job.price ? `${Number(job.price).toLocaleString()} Frw` : "Not specified"}</p>
-                  <p style={{ display: "flex", alignItems: "center", color: "#6a00ff" }}>
-                    <FaPhone style={{ marginRight: "0.5rem" }} /> {job.contact_info}
+          {jobsFetched && jobs.length === 0 && (
+            <p className="gigs-empty">No gigs available at the moment.</p>
+          )}
+
+          {jobs.length > 0 && (
+            <div className="gigs-list">
+              {jobs.map((job) => (
+                <div key={job.id} className="gigs-card">
+                  <h3>{job.title}</h3>
+                  <p>
+                    <strong>By:</strong> {job.employer_name}
                   </p>
-                  <p><strong>Status:</strong> <span style={{ color: job.status === "open" ? "green" : "red" }}>{job.status}</span></p>
+                  <p>
+                    <strong>Address:</strong> {job.address}
+                  </p>
+                  <p>
+                    <strong>Desc:</strong> {job.job_description}
+                  </p>
+                  <p>
+                    <strong>Price:</strong>{" "}
+                    {job.price
+                      ? `${Number(job.price).toLocaleString()} Frw`
+                      : "Not specified"}
+                  </p>
 
-                  <div style={{ marginTop: "1rem", display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                    <button onClick={() => copyJobLink(job.id)} title="Copy Job Link">🔗</button>
-                    {job.status === "open" && (applyingJobId === job.id ? (
-                      <div style={{ width: "100%" }}>
+                  <div className="gigs-actions">
+                    <button onClick={() => copyJobLink(job.id)}>🔗 Copy Link</button>
+                    {applyingJobId === job.id ? (
+                      <>
                         <textarea
-                          className="application-textarea"
-                          placeholder="Your message"
-                          rows={3}
+                          rows={2}
                           value={applicationMessage}
                           onChange={(e) => setApplicationMessage(e.target.value)}
+                          placeholder="Write your message"
                         />
-                        <button style={btnStyle} onClick={() => handleApply(job.id)}>Submit Application</button>
-                      </div>
+                        <button onClick={() => handleApply(job.id)}>
+                          Submit
+                        </button>
+                      </>
                     ) : (
-                      <button style={btnStyle} onClick={() => setApplyingJobId(job.id)}>Apply</button>
-                    ))}
+                      <button onClick={() => setApplyingJobId(job.id)}>
+                        Apply
+                      </button>
+                    )}
                   </div>
-                </div>
 
-                {job.image_url && (
-                  <img
-                    src={job.image_url}
-                    alt="Job Visual"
-                    onClick={() => {
-                      setSelectedImage(job.image_url);
-                      setShowModal(true);
-                    }}
-                    className="job-image"
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+                  {job.image_url && (
+                    <img
+                      src={job.image_url}
+                      alt="Preview"
+                      className="gigs-preview-img"
+                      onClick={() => {
+                        setSelectedImage(job.image_url);
+                        setShowModal(true);
+                      }}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {showModal && selectedImage && (
-        <div className="image-modal" onClick={closeModal}>
+        <div className="gigs-modal" onClick={closeModal}>
           <img src={selectedImage} alt="Preview" />
         </div>
       )}
     </div>
   );
 }
-
-const btnStyle = {
-  background: "linear-gradient(to right, #0f2027, #203a43, #2c5364)",
-  color: "white",
-  padding: "10px 20px",
-  border: "none",
-  borderRadius: "999px",
-  cursor: "pointer",
-  fontWeight: "bold"
-};
 
 export default Gigs;
