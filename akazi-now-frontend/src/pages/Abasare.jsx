@@ -24,8 +24,7 @@ function Abasare() {
 
   const loadUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) navigate("/login");
-    else setUserId(user.id);
+    if (user) setUserId(user.id); // ✅ No redirect
   };
 
   const fetchAbasare = async () => {
@@ -50,7 +49,8 @@ function Abasare() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!userId || !form.current_location.trim()) return alert("Please fill in your current location.");
+    if (!userId) return alert("Please log in to register as a driver.");
+    if (!form.current_location.trim()) return alert("Please fill in your current location.");
 
     const { error } = await supabase.from("abasare").upsert([{
       user_id: userId,
@@ -69,7 +69,6 @@ function Abasare() {
   const handleRating = async (umusareId, stars) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return alert("Please log in to rate.");
-
     if (user.id === umusareId) return alert("You cannot rate yourself.");
 
     const { error: insertError } = await supabase
@@ -94,6 +93,7 @@ function Abasare() {
   };
 
   const toggleStatus = async (umusareId, currentStatus) => {
+    if (!userId) return;
     const { error } = await supabase
       .from("abasare")
       .update({ is_available: !currentStatus })
@@ -103,6 +103,7 @@ function Abasare() {
   };
 
   const leaveTable = async (umusareId) => {
+    if (!userId) return;
     const { error } = await supabase.from("abasare").delete().eq("user_id", umusareId);
     if (!error) fetchAbasare();
   };
@@ -279,7 +280,6 @@ const submitBtnStyle = {
   marginTop: "1rem",
   WebkitAppearance: "none",
   appearance: "none",
-  backgroundImage: "linear-gradient(to right, #0f2027, #203a43, #2c5364) !important",
 };
 
 export default Abasare;
