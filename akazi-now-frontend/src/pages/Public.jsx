@@ -1,7 +1,9 @@
 import "./Public.css";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/kcc_bg_clean.png";
-import stickerJobs from "../assets/sticker1_transparent.png"; // Job-related
+import stickerJobs from "../assets/sticker1_transparent.png";
+import stickerCar from "../assets/sticker3_transparent.png";
+import stickerDriver from "../assets/sticker_driver.png"; // (optional driver icon)
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import {
@@ -34,7 +36,7 @@ function Public() {
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >
         <div className="public-topbar">
-          <div className="public-logo">AN</div>
+          <div className="public-logo">AkaziNow</div>
           <div className="public-auth-buttons">
             <button onClick={() => navigate("/login")}>Sign In</button>
             <button onClick={() => navigate("/signup")}>Sign Up</button>
@@ -42,28 +44,14 @@ function Public() {
         </div>
 
         <div className="public-hero-content">
-          <h1 className="public-heading">Welcome to AkaziNow</h1>
-          <p className="public-subheading">Your Smart Gig Finder in Rwanda</p>
+          <h1 className="public-heading">Smart Work. Smart Travel. Anytime.</h1>
+          <p className="public-subheading">
+            Find quick jobs, share rides, or get a trusted driver — all in one place.
+          </p>
         </div>
       </div>
 
-      {/* FEATURES */}
-      <section className="public-features">
-        <div className="feature-card">
-          <h3>✔️ Post Gigs Easily</h3>
-          <p>Get hiring done fast with our platform</p>
-        </div>
-        <div className="feature-card">
-          <h3>✔️ Apply Instantly</h3>
-          <p>Find and apply to gigs with one click</p>
-        </div>
-        <div className="feature-card">
-          <h3>✔️ Trusted by Thousands</h3>
-          <p>Join a large community of gig workers</p>
-        </div>
-      </section>
-
-      {/* SEARCH */}
+      {/* SEARCH SECTION */}
       <section className="public-search-section">
         <div className="public-search-bar">
           <div className="search-field">
@@ -90,25 +78,50 @@ function Public() {
         </div>
       </section>
 
-      {/* ✅ JOB OFFER PANEL (YELLOW SECTION) */}
-      <section
-        className="abasare-panel"
-        style={{ background: "#fffbe6", borderTop: "2px solidrgb(219, 182, 19)" }}
-      >
-        <div className="abasare-panel-content">
-          <div className="abasare-panel-text">
-            <h2>Looking for Your Next Gig?</h2>
+      {/* SERVICE PANELS */}
+      <section className="services-section">
+        {/* GIGS */}
+        <div className="service-card" style={{ background: "#fff8d4" }}>
+          <div className="service-text">
+            <h2>Find a Gig</h2>
             <p>
-              Discover hundreds of short-term jobs in various fields—from delivery
-              to tech to household help. AkaziNow connects talent to opportunity.
+              Explore short-term jobs in delivery, tech, domestic help and more.
             </p>
-            <button onClick={() => navigate("/public")}>Browse Public Gigs</button>
+            <button onClick={() => navigate("/public")}>Browse Gigs</button>
           </div>
-          <div className="abasare-panel-image">
-            <img src={stickerJobs} alt="Browse Gigs Illustration" />
+          <img src={stickerJobs} alt="Gigs" />
+        </div>
+
+        {/* CARPOOL */}
+        <div className="service-card" style={{ background: "#e0f7ff" }}>
+          <div className="service-text">
+            <h2>Book a Ride</h2>
+            <p>Going somewhere? Share or book a ride easily and affordably.</p>
+            <button onClick={() => navigate("/public-rides")}>Browse Rides</button>
           </div>
+          <img src={stickerCar} alt="Carpool" />
+        </div>
+
+        {/* ABASARE */}
+        <div className="service-card" style={{ background: "#f0e8ff" }}>
+          <div className="service-text">
+            <h2>Find a Driver</h2>
+            <p>Get home safe. Browse available Abasare near you.</p>
+            <button onClick={() => navigate("/public-abasare")}>View Drivers</button>
+          </div>
+          <img src={stickerDriver} alt="Abasare" />
         </div>
       </section>
+
+      {/* FOOTER */}
+      <footer className="public-footer">
+        <p>&copy; {new Date().getFullYear()} AkaziNow. All rights reserved.</p>
+        <div className="footer-links">
+          <button onClick={() => navigate("/about")}>About</button>
+          <button onClick={() => navigate("/help")}>Help</button>
+          <button onClick={() => navigate("/contact")}>Contact</button>
+        </div>
+      </footer>
     </div>
   );
 }
