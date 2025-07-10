@@ -93,7 +93,7 @@ function Public() {
       {/* ✅ JOB OFFER PANEL (YELLOW SECTION) */}
       <section
         className="abasare-panel"
-        style={{ background: "#fffbe6", borderTop: "2px solid #fdd835" }}
+        style={{ background: "#fffbe6", borderTop: "2px solidrgb(219, 182, 19)" }}
       >
         <div className="abasare-panel-content">
           <div className="abasare-panel-text">
