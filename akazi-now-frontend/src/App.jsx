@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "./supabaseClient";
 
@@ -50,10 +50,7 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* ✅ Public Landing Page */}
-        <Route
-          path="/"
-          element={isAuthenticated ? <Navigate to="/gigs" replace /> : <Index />}
-        />
+        <Route path="/" element={<Index />} />
 
         {/* ✅ Public Browsing */}
         <Route path="/gigs" element={<Gigs />} />
