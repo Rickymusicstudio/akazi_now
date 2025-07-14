@@ -125,10 +125,10 @@ function MyJobs() {
         </div>
       )}
 
-      {/* DESKTOP NAV WITH LOGO */}
+      {/* DESKTOP NAV */}
       <div className="desktop-nav">
-        <div className="logo" onClick={() => navigate("/")}>AkaziNow</div>
         <ul>
+          <li onClick={() => navigate("/")}>Home</li>
           <li onClick={() => navigate("/gigs")}>Gigs</li>
           <li onClick={() => navigate("/post-job")}>Post a Job</li>
           <li onClick={() => navigate("/my-jobs")}>My Jobs</li>
@@ -141,6 +141,14 @@ function MyJobs() {
 
       {/* HERO */}
       <div className="public-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
+        <div className="public-topbar">
+          <div className="public-logo">AkaziNow</div>
+          <div className="public-auth-buttons">
+            <button onClick={() => navigate("/login")}>Sign In</button>
+            <button onClick={() => navigate("/signup")}>Sign Up</button>
+          </div>
+        </div>
+
         <div className="public-hero-content">
           <h1 className="public-heading">Your Posted Gigs</h1>
           <p className="public-subheading">Manage the jobs you've shared with the community.</p>
