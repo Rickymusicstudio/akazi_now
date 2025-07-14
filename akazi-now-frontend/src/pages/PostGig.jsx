@@ -185,7 +185,6 @@ function PostGig() {
 
   return (
     <div className="public-container">
-      {/* Hero Section */}
       <div className="public-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
         <div className="mobile-top-bar">
           <div className="mobile-left-group">
@@ -215,7 +214,6 @@ function PostGig() {
         )}
       </div>
 
-      {/* Main Body */}
       <section className="services-section">
         <div className="service-card" style={{ background: "#fff8d4" }}>
           <form className="postgig-form" onSubmit={handleSubmit}>
@@ -239,12 +237,18 @@ function PostGig() {
           </form>
         </div>
 
-        <div className="service-card" style={{ background: "#f0f2ff" }}>
-          <img src={stickerOffice} alt="Office Sticker" />
+        <div className="service-card postgig-right-sticker" style={{ background: "#f0f2ff" }}>
+          <div className="info-card-content">
+            <h3>Post a Job Easily</h3>
+            <p>
+              Connect with eager job seekers in tech, delivery, domestic help and more.
+              Let AkaziNow handle the reach while you focus on the job!
+            </p>
+            <img src={stickerOffice} alt="Post Job Illustration" className="info-card-image" />
+          </div>
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="public-footer">
         <p>&copy; {new Date().getFullYear()} AkaziNow. All rights reserved.</p>
         <div className="footer-links">

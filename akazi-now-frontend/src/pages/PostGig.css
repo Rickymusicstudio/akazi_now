@@ -27,7 +27,7 @@ html, body {
   padding: 2rem;
 }
 
-/* TOP BAR */
+/* MOBILE TOP BAR */
 .mobile-top-bar {
   position: absolute;
   top: 1rem;
@@ -103,24 +103,26 @@ html, body {
   cursor: pointer;
 }
 
-/* MAIN BODY LAYOUT */
-.postgig-body {
+/* MAIN SECTION */
+.services-section {
   display: flex;
   justify-content: center;
-  align-items: flex-start;
   gap: 2rem;
-  padding: 2rem;
-  background: #f9f9f9;
+  padding: 3rem 2rem;
   flex-wrap: wrap;
+  background: #f9f9f9;
 }
 
-/* LEFT FORM SECTION */
-.postgig-left-form {
+.service-card {
   flex: 1;
   min-width: 300px;
-  max-width: 550px;
+  max-width: 500px;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
 }
 
+/* FORM */
 .postgig-form {
   background: white;
   padding: 2rem;
@@ -144,8 +146,7 @@ html, body {
 }
 
 .postgig-form input,
-.postgig-form textarea,
-.postgig-form select {
+.postgig-form textarea {
   width: 100%;
   padding: 0.75rem;
   border-radius: 10px;
@@ -169,42 +170,87 @@ textarea:-webkit-autofill {
 
 .postgig-form button {
   width: 100%;
-  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  background: #d4a015;
   color: white;
   font-size: 1rem;
   padding: 0.8rem;
   border: none;
   border-radius: 12px;
   cursor: pointer;
+  font-weight: bold;
 }
 
 .postgig-form button:hover {
   opacity: 0.9;
 }
 
-/* RIGHT IMAGE SECTION */
+/* INFO CARD (Right) */
 .postgig-right-sticker {
-  flex: 1;
-  min-width: 300px;
-  max-width: 550px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #f0f2ff;
 }
 
-.postgig-right-sticker img {
-  max-width: 100%;
-  height: auto;
+.info-card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.info-card-content h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.8rem;
+  color: #2c3e50;
+}
+
+.info-card-content p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 1.2rem;
+}
+
+.info-card-image {
+  max-width: 220px;
+  margin: 0 auto;
   object-fit: contain;
-  border-radius: 16px;
+}
+
+/* FOOTER */
+.public-footer {
+  text-align: center;
+  padding: 2rem;
+  background: #f0f0f0;
+  color: #666;
+}
+
+.footer-links {
+  margin-top: 1rem;
+}
+
+.footer-links button {
+  background: none;
+  border: none;
+  color: #333;
+  font-weight: 500;
+  margin: 0 0.5rem;
+  cursor: pointer;
+}
+
+.footer-links button:hover {
+  text-decoration: underline;
 }
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
-  .postgig-body {
+  .services-section {
     flex-direction: column;
     align-items: center;
-    padding: 1rem;
+    padding: 2rem 1rem;
   }
 
   .postgig-form {
@@ -219,5 +265,9 @@ textarea:-webkit-autofill {
 
   .mobile-nav-overlay {
     top: 4.5rem;
+  }
+
+  .info-card-content {
+    padding: 1.5rem 1rem;
   }
 }
