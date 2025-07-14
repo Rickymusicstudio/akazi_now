@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
-import NotificationBell from "../components/NotificationBell.jsx";
+import NotificationBell from "../components/NotificationBell";
 import { FaBars } from "react-icons/fa";
 import defaultAvatar from "../assets/avatar.png";
+import stickerOffice from "../assets/office.png";
 import backgroundImage from "../assets/kcc_bg_clean.png";
 import "./PostGig.css";
 
@@ -29,13 +30,14 @@ function PostGig() {
 
   const fetchUserProfile = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const { data } = await supabase
-      .from("users")
-      .select("image_url, full_name, phone")
-      .eq("auth_user_id", user.id)
-      .single();
-    setUserProfile(data);
+    if (user) {
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("auth_user_id", user.id)
+        .single();
+      if (!error) setUserProfile(data);
+    }
   };
 
   const handleChange = (e) => {
@@ -43,148 +45,96 @@ function PostGig() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = (e) => setImageFile(e.target.files[0]);
+  const handleFileChange = (e) => {
+    setImageFile(e.target.files[0]);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("");
-
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      setMessage("❌ Not authenticated");
-      return;
-    }
+    if (!userProfile) return;
 
     let imageUrl = null;
     if (imageFile) {
-      const fileExt = imageFile.name.split(".").pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `${fileName}`;
-      const { error: uploadError } = await supabase.storage
-        .from("job-images")
-        .upload(filePath, imageFile, { cacheControl: "3600", upsert: true });
-
-      if (uploadError) {
-        setMessage("❌ Upload failed: " + uploadError.message);
-        return;
+      const fileName = `${Date.now()}_${imageFile.name}`;
+      const { data, error } = await supabase.storage
+        .from("job_images")
+        .upload(fileName, imageFile);
+      if (!error) {
+        const { data: urlData } = supabase.storage
+          .from("job_images")
+          .getPublicUrl(fileName);
+        imageUrl = urlData.publicUrl;
       }
-
-      const { data } = supabase.storage.from("job-images").getPublicUrl(filePath);
-      imageUrl = data.publicUrl;
     }
 
-    const { data: profile } = await supabase
-      .from("users")
-      .select("image_url, full_name, phone")
-      .eq("auth_user_id", user.id)
-      .single();
+    const { error } = await supabase.from("jobs").insert([
+      {
+        title: form.title,
+        address: form.address,
+        job_description: form.job_description,
+        requirement: form.requirement,
+        price: form.price,
+        image_url: imageUrl,
+        poster_id: userProfile.auth_user_id,
+        contact: userProfile.phone,
+      },
+    ]);
 
-    const posterImage = profile?.image_url || null;
-    const employerName = profile?.full_name || "Unknown";
-    const contactInfo = profile?.phone || "N/A";
-
-    const { error } = await supabase.from("jobs").insert([{
-      user_id: user.id,
-      ...form,
-      status: "open",
-      image_url: imageUrl,
-      poster_image: posterImage,
-      employer_name: employerName,
-      contact_info: contactInfo,
-    }]);
-
-    if (error) {
-      setMessage("❌ Failed to post job: " + error.message);
-    } else {
+    if (!error) {
       setMessage("✅ Job posted successfully!");
-      setForm({ title: "", address: "", job_description: "", requirement: "", price: "" });
+      setForm({
+        title: "",
+        address: "",
+        job_description: "",
+        requirement: "",
+        price: "",
+      });
       setImageFile(null);
+    } else {
+      setMessage("❌ Error posting job.");
     }
-  };
-
-  const handleMenuToggle = () => {
-    setSlideDirection(mobileNavOpen ? "slide-up" : "slide-down");
-    setTimeout(() => {
-      setMobileNavOpen(!mobileNavOpen);
-      setSlideDirection("");
-    }, 300);
-  };
-
-  const closeAndNavigate = async (path, logout = false) => {
-    setSlideDirection("slide-up");
-    setTimeout(async () => {
-      setMobileNavOpen(false);
-      setSlideDirection("");
-      if (logout) await supabase.auth.signOut();
-      navigate(path);
-    }, 300);
   };
 
   return (
-    <div className="postgig-wrapper">
-      <div className="mobile-top-bar">
-        <div className="mobile-left-group">
-          <img
-            src={userProfile?.image_url || defaultAvatar}
-            alt="avatar"
-            className="mobile-profile-pic"
-          />
-          <FaBars className="mobile-hamburger" onClick={handleMenuToggle} />
-        </div>
-        <h2 className="mobile-title">Post a Job</h2>
-        <NotificationBell />
-      </div>
-
-      {mobileNavOpen && (
-        <div ref={mobileNavRef} className={`mobile-nav-overlay ${slideDirection}`}>
-          <ul>
-            <li onClick={() => closeAndNavigate("/")}>Home</li>
-            <li onClick={() => closeAndNavigate("/post-job")}>Post a Job</li>
-            <li onClick={() => closeAndNavigate("/my-jobs")}>My Jobs</li>
-            <li onClick={() => closeAndNavigate("/profile")}>Profile</li>
-            <li onClick={() => closeAndNavigate("/inbox")}>Inbox</li>
-            <li onClick={() => closeAndNavigate("/carpools")}>Car Pooling</li>
-            <li onClick={() => closeAndNavigate("/login", true)}>Logout</li>
-          </ul>
-        </div>
-      )}
-
-      {/* HERO SECTION */}
+    <div className="postgig-container">
       <div
         className="postgig-hero"
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >
+        <div className="postgig-topbar">
+          <div className="postgig-menu" onClick={() => setMobileNavOpen(!mobileNavOpen)}>
+            <img
+              src={userProfile?.avatar_url || defaultAvatar}
+              alt="avatar"
+              className="postgig-avatar"
+            />
+            <FaBars className="postgig-bars" />
+          </div>
+          <h1 className="postgig-title">Post a Job</h1>
+          <NotificationBell />
+        </div>
         <div className="postgig-hero-text">
-          <h1>Post a Job</h1>
-          <p>Share your gig with thousands nearby</p>
+          <h2>Post a Job. Help Someone Earn Today.</h2>
+          <p>Connect with local talent by sharing your gig.</p>
         </div>
       </div>
 
-      {/* FORM SECTION */}
-      <div className="postgig-form-section">
-        <form className="postgig-form" onSubmit={handleSubmit}>
-          {message && <p className="postgig-message">{message}</p>}
-
-          <label>Job Title</label>
-          <input type="text" name="title" value={form.title} onChange={handleChange} required />
-
-          <label>Address</label>
-          <input type="text" name="address" value={form.address} onChange={handleChange} required />
-
-          <label>Job Description</label>
-          <textarea name="job_description" value={form.job_description} onChange={handleChange} required />
-
-          <label>Requirement</label>
-          <textarea name="requirement" value={form.requirement} onChange={handleChange} />
-
-          <label>Price (Frw)</label>
-          <input type="number" name="price" value={form.price} onChange={handleChange} />
-
-          <label>Upload Job Image</label>
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-
-          <button type="submit">Post Job</button>
-        </form>
+      <div className="postgig-main">
+        <div className="postgig-left">
+          <form className="postgig-form" onSubmit={handleSubmit}>
+            <input name="title" placeholder="Job Title" onChange={handleChange} value={form.title} />
+            <input name="address" placeholder="Address" onChange={handleChange} value={form.address} />
+            <textarea name="job_description" placeholder="Job Description" onChange={handleChange} value={form.job_description} />
+            <textarea name="requirement" placeholder="Requirement" onChange={handleChange} value={form.requirement} />
+            <input name="price" placeholder="Price (Frw)" onChange={handleChange} value={form.price} />
+            <input type="file" onChange={handleFileChange} />
+            <button type="submit">Post Job</button>
+            {message && <p className="postgig-message">{message}</p>}
+          </form>
+        </div>
+        <div className="postgig-right">
+          <img src={stickerOffice} alt="office sticker" className="postgig-sticker" />
+        </div>
       </div>
     </div>
   );
