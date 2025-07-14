@@ -185,8 +185,23 @@ function PostGig() {
 
   return (
     <div className="public-container">
-      {/* Hero Section */}
-      <div className="public-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
+      <div
+        className="public-hero"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      >
+        <div className="desktop-navbar">
+          <div className="desktop-links">
+            <span onClick={() => navigate("/")}>Home</span>
+            <span onClick={() => navigate("/gigs")}>Gigs</span>
+            <span onClick={() => navigate("/post-job")}>Post a Job</span>
+            <span onClick={() => navigate("/my-jobs")}>My Jobs</span>
+            <span onClick={() => navigate("/profile")}>Profile</span>
+          </div>
+          <div className="desktop-bell">
+            <NotificationBell />
+          </div>
+        </div>
+
         <div className="mobile-top-bar">
           <div className="mobile-left-group">
             <img
@@ -215,9 +230,12 @@ function PostGig() {
         )}
       </div>
 
-      {/* Main Body */}
-      <section className="services-section">
-        <div className="service-card" style={{ background: "#fff8d4" }}>
+      <div className="postgig-body">
+        <div className="postgig-right-sticker">
+          <img src={stickerOffice} alt="office sticker" />
+        </div>
+
+        <div className="postgig-left-form">
           <form className="postgig-form" onSubmit={handleSubmit}>
             <h2>Post a Job</h2>
             {message && (
@@ -238,21 +256,7 @@ function PostGig() {
             <button type="submit">Post Job</button>
           </form>
         </div>
-
-        <div className="service-card" style={{ background: "#f0f2ff" }}>
-          <img src={stickerOffice} alt="Office Sticker" />
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="public-footer">
-        <p>&copy; {new Date().getFullYear()} AkaziNow. All rights reserved.</p>
-        <div className="footer-links">
-          <button onClick={() => navigate("/about")}>About</button>
-          <button onClick={() => navigate("/help")}>Help</button>
-          <button onClick={() => navigate("/contact")}>Contact</button>
-        </div>
-      </footer>
+      </div>
     </div>
   );
 }
