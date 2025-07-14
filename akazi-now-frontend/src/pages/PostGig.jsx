@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
+import backgroundImage from "../assets/kcc_bg_clean.png";
+import defaultAvatar from "../assets/avatar.png";
 import NotificationBell from "../components/NotificationBell.jsx";
 import { FaBars } from "react-icons/fa";
-import defaultAvatar from "../assets/avatar.png";
 import "./PostGig.css";
 
 function PostGig() {
@@ -20,6 +21,7 @@ function PostGig() {
   const [slideDirection, setSlideDirection] = useState("");
   const [userProfile, setUserProfile] = useState(null);
   const mobileNavRef = useRef(null);
+  const touchStartY = useRef(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,43 +29,24 @@ function PostGig() {
   }, []);
 
   useEffect(() => {
-    let lastScrollY = window.scrollY;
-    let touchStartY = 0;
-
-    const handleScroll = () => {
-      if (!mobileNavOpen) return;
-      const currentScrollY = window.scrollY;
-      if (currentScrollY < lastScrollY) {
-        setSlideDirection("slide-up");
-        setTimeout(() => {
-          setMobileNavOpen(false);
-          setSlideDirection("");
-        }, 300);
-      }
-      lastScrollY = currentScrollY;
-    };
-
     const handleTouchStart = (e) => {
-      touchStartY = e.touches[0].clientY;
+      touchStartY.current = e.touches[0].clientY;
     };
 
     const handleTouchMove = (e) => {
       const touchEndY = e.touches[0].clientY;
-      if (touchStartY - touchEndY > 50 && mobileNavOpen) {
+      if (touchStartY.current - touchEndY > 50 && mobileNavOpen) {
         setSlideDirection("slide-up");
-        setTimeout(() => {
-          setMobileNavOpen(false);
-          setSlideDirection("");
-        }, 300);
+        setTimeout(() => setMobileNavOpen(false), 300);
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    window.addEventListener("touchstart", handleTouchStart);
-    window.addEventListener("touchmove", handleTouchMove);
+    if (mobileNavOpen) {
+      window.addEventListener("touchstart", handleTouchStart);
+      window.addEventListener("touchmove", handleTouchMove);
+    }
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
     };
@@ -158,58 +141,61 @@ function PostGig() {
     }
   };
 
-  const handleMenuToggle = () => {
+  const toggleMobileNav = () => {
     if (!mobileNavOpen) {
       setSlideDirection("slide-down");
       setMobileNavOpen(true);
     } else {
       setSlideDirection("slide-up");
-      setTimeout(() => {
-        setMobileNavOpen(false);
-        setSlideDirection("");
-      }, 300);
+      setTimeout(() => setMobileNavOpen(false), 300);
     }
   };
 
-  const closeAndNavigate = async (path, logout = false) => {
+  const handleNavClick = async (path, logout = false) => {
     setSlideDirection("slide-up");
     setTimeout(async () => {
-      setMobileNavOpen(false);
-      setSlideDirection("");
       if (logout) await supabase.auth.signOut();
+      setMobileNavOpen(false);
       navigate(path);
     }, 300);
   };
 
   return (
-    <div className="postgig-container">
-      <div className="mobile-top-bar" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}>
+    <div
+      className="postgig-container"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center top",
+      }}
+    >
+      {/* MOBILE NAV BAR */}
+      <div className="mobile-top-bar">
         <div className="mobile-left-group">
-          <img
-            src={userProfile?.image_url || defaultAvatar}
-            alt="avatar"
-            className="mobile-profile-pic"
-          />
-          <FaBars className="mobile-hamburger" onClick={handleMenuToggle} />
+          <img src={userProfile?.image_url || defaultAvatar} alt="avatar" className="mobile-profile-pic" />
+          <FaBars className="mobile-hamburger" onClick={toggleMobileNav} />
         </div>
         <h2 className="mobile-title">Post a Job</h2>
         <NotificationBell />
       </div>
 
+      {/* MOBILE NAV OVERLAY */}
       {mobileNavOpen && (
         <div ref={mobileNavRef} className={`mobile-nav-overlay ${slideDirection}`}>
           <ul>
-            <li onClick={() => closeAndNavigate("/")}>Home</li>
-            <li onClick={() => closeAndNavigate("/post-job")}>Post a Job</li>
-            <li onClick={() => closeAndNavigate("/my-jobs")}>My Jobs</li>
-            <li onClick={() => closeAndNavigate("/profile")}>Profile</li>
-            <li onClick={() => closeAndNavigate("/inbox")}>Inbox</li>
-            <li onClick={() => closeAndNavigate("/carpools")}>Car Pooling</li>
-            <li onClick={() => closeAndNavigate("/login", true)}>Logout</li>
+            <li onClick={() => handleNavClick("/")}>Home</li>
+            <li onClick={() => handleNavClick("/post-job")}>Post a Job</li>
+            <li onClick={() => handleNavClick("/my-jobs")}>My Jobs</li>
+            <li onClick={() => handleNavClick("/profile")}>Profile</li>
+            <li onClick={() => handleNavClick("/inbox")}>Inbox</li>
+            <li onClick={() => handleNavClick("/carpools")}>Car Pooling</li>
+            <li onClick={() => handleNavClick("/login", true)}>Logout</li>
           </ul>
         </div>
       )}
 
+      {/* MAIN CONTENT */}
       <div className="postgig-left">
         <div className="nav-buttons">
           <button onClick={() => navigate("/")}>Home</button>
