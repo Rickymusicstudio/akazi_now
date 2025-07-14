@@ -1,165 +1,246 @@
-/* MyJobs.css */
-
-/* RESET */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f4f6f8;
-}
-
+/* Container */
 .myjobs-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-/* HERO SECTION */
-.myjobs-hero {
-  position: relative;
-  height: 60vh;
-  background-image: url('../assets/kcc_bg_clean.png');
-  background-size: cover;
-  background-position: center;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 2rem;
-}
-
-.myjobs-hero .overlay {
-  background-color: rgba(0, 0, 0, 0.6);
-  padding: 2rem;
-  border-radius: 1rem;
-  max-width: 700px;
-}
-
-.myjobs-hero h1 {
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
-
-.myjobs-hero p {
-  font-size: 1.2rem;
-  opacity: 0.9;
-}
-
-/* SECTION 2 */
-.myjobs-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 3rem 1rem;
-}
-
-.myjobs-card {
-  background: white;
-  border-radius: 1rem;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
-  max-width: 700px;
   width: 100%;
+  min-height: 100vh;
+  background-color: #f7f8fc;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Mobile Top Bar */
+.mobile-top-bar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 15px;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  color: white;
+}
+
+.mobile-left-group {
+  display: flex;
+  align-items: center;
+}
+
+.mobile-profile-pic {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.mobile-hamburger {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.mobile-title {
+  font-size: 18px;
+  font-weight: bold;
   text-align: center;
 }
 
-.myjobs-card h2 {
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
+/* Mobile Nav Overlay */
+.mobile-nav-overlay {
+  position: fixed;
+  top: 50px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 50px);
+  background-color: #0f2027;
+  color: white;
+  z-index: 999;
+  transition: transform 0.3s ease-in-out;
+  overflow-y: auto;
+}
+
+.mobile-nav-overlay.slide-up {
+  transform: translateY(-100%);
+}
+
+.mobile-nav-overlay.slide-down {
+  transform: translateY(0);
+}
+
+.mobile-nav-overlay ul {
+  list-style: none;
+  padding: 20px;
+}
+
+.mobile-nav-overlay li {
+  padding: 15px 0;
+  font-size: 18px;
+  border-bottom: none;
+  cursor: pointer;
+}
+
+/* Desktop Navigation */
+.desktop-nav {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  padding: 10px 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
-.myjobs-card p {
-  color: #666;
-  font-size: 1rem;
-}
-
-.job-list {
-  margin-top: 2rem;
+.desktop-nav ul {
+  list-style: none;
   display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  align-items: center;
+  gap: 25px;
+  padding: 0;
+  margin: 0;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
 }
 
-.job-card {
+.desktop-nav li {
+  cursor: pointer;
+}
+
+/* Hero Section */
+.public-hero {
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 100px 20px 60px;
+  text-align: center;
+  position: relative;
+}
+
+.public-topbar {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: transparent;
+  z-index: 2;
+}
+
+.public-logo {
+  font-size: 24px;
+  font-weight: 800;
+  color: #ffcc00;
+}
+
+.public-hero-content {
+  z-index: 2;
+  position: relative;
+}
+
+.public-heading {
+  font-size: 40px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.public-subheading {
+  font-size: 18px;
+  font-weight: 400;
+}
+
+/* Job Summary */
+.public-search-section {
+  background: white;
+  margin: -40px auto 20px;
+  border-radius: 12px;
+  max-width: 800px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.public-search-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.public-count {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Job Cards */
+.services-section {
+  padding: 20px;
+  max-width: 900px;
+  margin: auto;
+}
+
+.service-card {
   background: white;
   border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
-  width: 100%;
-  max-width: 600px;
-  text-align: left;
-}
-
-.job-card h3 {
-  font-size: 1.4rem;
-  font-weight: bold;
-}
-
-.job-card p {
-  margin: 0.5rem 0;
-  color: #333;
-}
-
-.delete-btn {
-  margin-top: 1rem;
-  background: #ff3b3f;
-  color: white;
-  padding: 0.6rem 1.5rem;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.delete-btn:hover {
-  background: #e13034;
-}
-
-/* NAVIGATION (reuse existing if possible) */
-.desktop-auth-buttons {
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
   display: flex;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 15px;
 }
 
-.desktop-auth-buttons button {
-  padding: 0.4rem 1rem;
-  border-radius: 6px;
-  border: none;
-  background-color: #fff;
-  color: #333;
+.service-card img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.service-text h2 {
+  font-size: 20px;
   font-weight: bold;
-  cursor: pointer;
+  margin-bottom: 5px;
 }
 
-.desktop-auth-buttons button:hover {
-  background-color: #eee;
+.service-text p {
+  font-size: 16px;
+  color: #555;
+  margin: 4px 0;
 }
 
-/* MOBILE RESPONSIVE */
+.empty-message {
+  text-align: center;
+  color: #555;
+  margin-top: 30px;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .myjobs-hero h1 {
-    font-size: 2rem;
+  .mobile-top-bar {
+    display: flex;
   }
 
-  .myjobs-hero p {
-    font-size: 1rem;
+  .desktop-nav {
+    display: none;
   }
 
-  .myjobs-card {
-    padding: 1.5rem;
+  .service-card {
+    padding: 15px;
   }
 
-  .job-card {
-    padding: 1.2rem;
+  .public-hero {
+    padding: 80px 20px 40px;
+  }
+
+  .public-heading {
+    font-size: 28px;
+  }
+
+  .public-subheading {
+    font-size: 16px;
+  }
+
+  .public-search-title {
+    font-size: 20px;
+  }
+
+  .public-count {
+    font-size: 16px;
   }
 }
