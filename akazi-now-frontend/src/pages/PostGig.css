@@ -103,6 +103,30 @@ html, body {
   cursor: pointer;
 }
 
+/* DESKTOP NAV BAR */
+.desktop-nav {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 2rem;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+}
+
+.desktop-nav ul {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+
+.desktop-nav li {
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.desktop-nav li:hover {
+  text-decoration: underline;
+}
+
 /* MAIN SECTION */
 .services-section {
   display: flex;
@@ -189,7 +213,7 @@ textarea:-webkit-autofill {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f0f2ff;
+  background: #fff3e6;
 }
 
 .info-card-content {
@@ -218,6 +242,11 @@ textarea:-webkit-autofill {
   max-width: 220px;
   margin: 0 auto;
   object-fit: contain;
+}
+
+.enlarged-sticker {
+  max-width: 320px;
+  width: 100%;
 }
 
 /* FOOTER */
@@ -269,5 +298,9 @@ textarea:-webkit-autofill {
 
   .info-card-content {
     padding: 1.5rem 1rem;
+  }
+
+  .desktop-nav {
+    display: none;
   }
 }
