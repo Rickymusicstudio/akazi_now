@@ -13,7 +13,6 @@ function Gigs() {
   const [mobileNavVisible, setMobileNavVisible] = useState(false);
   const [slideDirection, setSlideDirection] = useState("");
   const mobileNavRef = useRef(null);
-  const touchStartY = useRef(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,38 +20,15 @@ function Gigs() {
     fetchUserProfile();
   }, []);
 
-  useEffect(() => {
-    const handleTouchStart = (e) => {
-      touchStartY.current = e.touches[0].clientY;
-    };
-
-    const handleTouchMove = (e) => {
-      const touchEndY = e.touches[0].clientY;
-      if (touchStartY.current - touchEndY > 50) {
-        // Swipe up
-        setSlideDirection("slide-up");
-        setTimeout(() => setMobileNavVisible(false), 300);
-      }
-    };
-
-    if (mobileNavVisible) {
-      window.addEventListener("touchstart", handleTouchStart);
-      window.addEventListener("touchmove", handleTouchMove);
-    }
-
-    return () => {
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchmove", handleTouchMove);
-    };
-  }, [mobileNavVisible]);
-
   const fetchJobs = async () => {
     const { data, error } = await supabase.from("jobs").select("*");
     if (!error) setJobs(data);
   };
 
   const fetchUserProfile = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return;
     const { data } = await supabase
       .from("users")
@@ -72,27 +48,26 @@ function Gigs() {
     }
   };
 
-  const handleNavClick = (path) => {
-    setSlideDirection("slide-up");
-    setTimeout(() => {
-      setMobileNavVisible(false);
-      navigate(path);
-    }, 300);
-  };
-
   return (
     <div className="public-container">
-      {/* MOBILE TOP NAV */}
-      <div className="mobile-top-bar" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}>
+      {/* TOP NAV (mobile) */}
+      <div
+        className="mobile-top-bar"
+        style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
+      >
         <div className="mobile-left-group">
-          <img src={userProfile?.image_url || defaultAvatar} alt="avatar" className="mobile-profile-pic" />
+          <img
+            src={userProfile?.image_url || defaultAvatar}
+            alt="avatar"
+            className="mobile-profile-pic"
+          />
           <FaBars className="mobile-hamburger" onClick={handleHamburgerClick} />
         </div>
         <h2 className="mobile-title">Gigs</h2>
         <NotificationBell />
       </div>
 
-      {/* MOBILE NAV OVERLAY */}
+      {/* NAV OVERLAY (mobile) */}
       {mobileNavVisible && (
         <div
           ref={mobileNavRef}
@@ -100,19 +75,19 @@ function Gigs() {
           style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
         >
           <ul>
-            <li onClick={() => handleNavClick("/")}>Home</li>
-            <li onClick={() => handleNavClick("/gigs")}>Gigs</li>
-            <li onClick={() => handleNavClick("/post-job")}>Post a Job</li>
-            <li onClick={() => handleNavClick("/my-jobs")}>My Jobs</li>
-            <li onClick={() => handleNavClick("/profile")}>Profile</li>
-            <li onClick={() => handleNavClick("/inbox")}>Inbox</li>
-            <li onClick={() => handleNavClick("/carpools")}>Car Pooling</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/"); }}>Home</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/gigs"); }}>Gigs</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/post-job"); }}>Post a Job</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/my-jobs"); }}>My Jobs</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/profile"); }}>Profile</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/inbox"); }}>Inbox</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/carpools"); }}>Car Pooling</li>
             <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
           </ul>
         </div>
       )}
 
-      {/* DESKTOP NAV */}
+      {/* DESKTOP NAVIGATION */}
       <div className="desktop-nav">
         <ul>
           <li onClick={() => navigate("/")}>Home</li>
@@ -127,7 +102,10 @@ function Gigs() {
       </div>
 
       {/* HERO */}
-      <div className="public-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
+      <div
+        className="public-hero"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      >
         <div className="public-topbar">
           <div className="public-logo">AkaziNow</div>
           <div className="public-auth-buttons">
@@ -138,7 +116,9 @@ function Gigs() {
 
         <div className="public-hero-content">
           <h1 className="public-heading">Explore Gigs. Earn Fast. Start Today.</h1>
-          <p className="public-subheading">Discover flexible jobs available in your area now.</p>
+          <p className="public-subheading">
+            Discover flexible jobs available in your area now.
+          </p>
         </div>
       </div>
 
@@ -163,11 +143,15 @@ function Gigs() {
                 <p><strong>Contact:</strong> {job.contact_info}</p>
                 <button onClick={() => navigate(`/jobs/${job.id}`)}>View Details</button>
               </div>
-              {job.poster_image && <img src={job.poster_image} alt="gig" />}
+              {job.poster_image && (
+                <img src={job.poster_image} alt="gig" />
+              )}
             </div>
           ))
         ) : (
-          <p style={{ marginTop: "2rem", fontWeight: "bold" }}>No gigs available at the moment.</p>
+          <p style={{ marginTop: "2rem", fontWeight: "bold" }}>
+            No gigs available at the moment.
+          </p>
         )}
       </section>
 
