@@ -1,3 +1,5 @@
+/* MyJobs.css */
+
 /* RESET */
 * {
   margin: 0;
@@ -5,251 +7,159 @@
   box-sizing: border-box;
 }
 
-body, html {
+body {
   font-family: 'Segoe UI', sans-serif;
-  background: #f7f9fc;
-  overflow-x: hidden;
+  background-color: #f4f6f8;
 }
 
 .myjobs-container {
-  width: 100%;
-}
-
-/* DESKTOP NAV */
-.desktop-nav {
   display: flex;
-  justify-content: center;
-  background: #0f2027;
-  padding: 1rem 0;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-.desktop-nav ul {
-  display: flex;
-  gap: 2rem;
-  list-style: none;
-  color: white;
-  font-weight: bold;
-  font-size: 1rem;
-}
-
-.desktop-nav li {
-  cursor: pointer;
-}
-
-/* HERO */
-.public-hero {
-  height: 50vh;
+/* HERO SECTION */
+.myjobs-hero {
+  position: relative;
+  height: 60vh;
+  background-image: url('../assets/kcc_bg_clean.png');
   background-size: cover;
   background-position: center;
-  position: relative;
   color: white;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-}
-
-.public-topbar {
-  display: flex;
-  justify-content: space-between;
-  padding: 1.5rem 2rem;
-  font-weight: bold;
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.public-logo {
-  font-size: 1.5rem;
-}
-
-.public-auth-buttons button {
-  background: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  margin-left: 0.5rem;
-  border-radius: 20px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.public-hero-content {
+  justify-content: center;
   padding: 2rem;
-  background: rgba(0, 0, 0, 0.4);
 }
 
-.public-heading {
+.myjobs-hero .overlay {
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 2rem;
+  border-radius: 1rem;
+  max-width: 700px;
+}
+
+.myjobs-hero h1 {
   font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
 }
 
-.public-subheading {
-  font-size: 1.1rem;
+.myjobs-hero p {
+  font-size: 1.2rem;
+  opacity: 0.9;
 }
 
-/* SECTION */
-.public-search-section {
-  padding: 2rem 1rem;
+/* SECTION 2 */
+.myjobs-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 1rem;
+}
+
+.myjobs-card {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  max-width: 700px;
+  width: 100%;
   text-align: center;
 }
 
-.public-search-title {
-  font-size: 2rem;
+.myjobs-card h2 {
+  font-size: 1.8rem;
   margin-bottom: 1rem;
-}
-
-.public-count {
-  font-size: 1.2rem;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  color: #203a43;
 }
 
-/* CARDS */
-.services-section {
+.myjobs-card p {
+  color: #666;
+  font-size: 1rem;
+}
+
+.job-list {
+  margin-top: 2rem;
   display: flex;
   flex-direction: column;
+  gap: 1.5rem;
   align-items: center;
-  padding: 2rem 1rem;
-  gap: 2rem;
 }
 
-.service-card {
+.job-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   width: 100%;
   max-width: 600px;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  overflow: hidden;
+  text-align: left;
 }
 
-.service-card img {
-  width: 100%;
-  height: auto;
-  border-radius: 12px;
-}
-
-.service-text h2 {
-  font-size: 1.5rem;
+.job-card h3 {
+  font-size: 1.4rem;
   font-weight: bold;
-  color: #0f2027;
 }
 
-.service-text p {
-  font-size: 1rem;
-  color: #444;
+.job-card p {
+  margin: 0.5rem 0;
+  color: #333;
 }
 
-.service-text button {
-  background: #0f2027;
+.delete-btn {
+  margin-top: 1rem;
+  background: #ff3b3f;
   color: white;
+  padding: 0.6rem 1.5rem;
   border: none;
-  border-radius: 20px;
-  padding: 0.5rem 1rem;
+  border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
-  margin-top: 1rem;
 }
 
-.empty-message {
-  text-align: center;
-  font-size: 1.1rem;
-  color: #555;
+.delete-btn:hover {
+  background: #e13034;
 }
 
-/* MOBILE NAV */
-.mobile-top-bar {
-  display: none;
+/* NAVIGATION (reuse existing if possible) */
+.desktop-auth-buttons {
+  display: flex;
+  gap: 1rem;
 }
 
+.desktop-auth-buttons button {
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  border: none;
+  background-color: #fff;
+  color: #333;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.desktop-auth-buttons button:hover {
+  background-color: #eee;
+}
+
+/* MOBILE RESPONSIVE */
 @media (max-width: 768px) {
-  .desktop-nav {
-    display: none;
+  .myjobs-hero h1 {
+    font-size: 2rem;
   }
 
-  .mobile-top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-    color: white;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 999;
+  .myjobs-hero p {
+    font-size: 1rem;
   }
 
-  .mobile-left-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  .myjobs-card {
+    padding: 1.5rem;
   }
 
-  .mobile-title {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.2rem;
-    font-weight: bold;
-  }
-
-  .mobile-profile-pic {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-
-  .mobile-hamburger {
-    font-size: 24px;
-    cursor: pointer;
-  }
-
-  .mobile-nav-overlay {
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    animation-duration: 0.3s;
-    animation-fill-mode: both;
-  }
-
-  .mobile-nav-overlay.slide-down {
-    animation-name: slideDown;
-  }
-
-  .mobile-nav-overlay.slide-up {
-    animation-name: slideUp;
-  }
-
-  @keyframes slideDown {
-    from { transform: translateY(-100%); opacity: 0; }
-    to   { transform: translateY(0); opacity: 1; }
-  }
-
-  @keyframes slideUp {
-    from { transform: translateY(0); opacity: 1; }
-    to   { transform: translateY(-100%); opacity: 0; }
-  }
-
-  .mobile-nav-overlay ul {
-    list-style: none;
-    color: white;
-    font-weight: bold;
-    font-size: 1.6rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-  }
-
-  .mobile-nav-overlay li {
-    cursor: pointer;
+  .job-card {
+    padding: 1.2rem;
   }
 }
