@@ -185,6 +185,7 @@ function PostGig() {
 
   return (
     <div className="public-container">
+      {/* Hero Section */}
       <div className="public-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
         <div className="mobile-top-bar">
           <div className="mobile-left-group">
@@ -214,6 +215,21 @@ function PostGig() {
         )}
       </div>
 
+      {/* Desktop Nav */}
+      <div className="desktop-nav">
+        <ul>
+          <li onClick={() => navigate("/")}>Home</li>
+          <li onClick={() => navigate("/gigs")}>Gigs</li>
+          <li onClick={() => navigate("/post-job")}>Post a Job</li>
+          <li onClick={() => navigate("/my-jobs")}>My Jobs</li>
+          <li onClick={() => navigate("/profile")}>Profile</li>
+          <li onClick={() => navigate("/inbox")}>Inbox</li>
+          <li onClick={() => navigate("/carpools")}>Car Pooling</li>
+          <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+        </ul>
+      </div>
+
+      {/* Main Body */}
       <section className="services-section">
         <div className="service-card" style={{ background: "#fff8d4" }}>
           <form className="postgig-form" onSubmit={handleSubmit}>
@@ -237,18 +253,18 @@ function PostGig() {
           </form>
         </div>
 
-        <div className="service-card postgig-right-sticker" style={{ background: "#f0f2ff" }}>
+        <div className="service-card postgig-right-sticker" style={{ background: "#fff3e6" }}>
           <div className="info-card-content">
             <h3>Post a Job Easily</h3>
             <p>
-              Connect with eager job seekers in tech, delivery, domestic help and more.
-              Let AkaziNow handle the reach while you focus on the job!
+              Reach thousands of Rwandan workers in seconds. AkaziNow helps you connect fast!
             </p>
-            <img src={stickerOffice} alt="Post Job Illustration" className="info-card-image" />
+            <img src={stickerOffice} alt="Post Job Illustration" className="info-card-image enlarged-sticker" />
           </div>
         </div>
       </section>
 
+      {/* Footer */}
       <footer className="public-footer">
         <p>&copy; {new Date().getFullYear()} AkaziNow. All rights reserved.</p>
         <div className="footer-links">

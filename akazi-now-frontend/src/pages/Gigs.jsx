@@ -1,221 +1,118 @@
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
-import NotificationBell from "../components/NotificationBell.jsx";
-import { FaBars } from "react-icons/fa";
-import defaultAvatar from "../assets/avatar.png";
-import stickerOffice from "../assets/office.png";
 import backgroundImage from "../assets/kcc_bg_clean.png";
-import "./PostGig.css";
+import defaultAvatar from "../assets/avatar.png";
+import NotificationBell from "../components/NotificationBell.jsx";
+import { FaBars, FaCalendarCheck } from "react-icons/fa";
+import "./Gigs.css";
 
-function PostGig() {
-  const [form, setForm] = useState({
-    title: "",
-    address: "",
-    job_description: "",
-    requirement: "",
-    price: "",
-  });
-  const [imageFile, setImageFile] = useState(null);
-  const [message, setMessage] = useState("");
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [slideDirection, setSlideDirection] = useState("");
+function Gigs() {
+  const [jobs, setJobs] = useState([]);
   const [userProfile, setUserProfile] = useState(null);
+  const [mobileNavVisible, setMobileNavVisible] = useState(false);
+  const [slideDirection, setSlideDirection] = useState("");
   const mobileNavRef = useRef(null);
+  const touchStartY = useRef(0);
   const navigate = useNavigate();
 
   useEffect(() => {
+    fetchJobs();
     fetchUserProfile();
   }, []);
 
   useEffect(() => {
-    let lastScrollY = window.scrollY;
-    let touchStartY = 0;
-
-    const handleScroll = () => {
-      if (!mobileNavOpen) return;
-      const currentScrollY = window.scrollY;
-      if (currentScrollY < lastScrollY) {
-        setSlideDirection("slide-up");
-        setTimeout(() => {
-          setMobileNavOpen(false);
-          setSlideDirection("");
-        }, 300);
-      }
-      lastScrollY = currentScrollY;
-    };
-
     const handleTouchStart = (e) => {
-      touchStartY = e.touches[0].clientY;
+      touchStartY.current = e.touches[0].clientY;
     };
 
     const handleTouchMove = (e) => {
       const touchEndY = e.touches[0].clientY;
-      if (touchStartY - touchEndY > 50 && mobileNavOpen) {
+      if (touchStartY.current - touchEndY > 50) {
+        // Swipe up
         setSlideDirection("slide-up");
-        setTimeout(() => {
-          setMobileNavOpen(false);
-          setSlideDirection("");
-        }, 300);
+        setTimeout(() => setMobileNavVisible(false), 300);
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    window.addEventListener("touchstart", handleTouchStart);
-    window.addEventListener("touchmove", handleTouchMove);
+    if (mobileNavVisible) {
+      window.addEventListener("touchstart", handleTouchStart);
+      window.addEventListener("touchmove", handleTouchMove);
+    }
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
     };
-  }, [mobileNavOpen]);
+  }, [mobileNavVisible]);
+
+  const fetchJobs = async () => {
+    const { data, error } = await supabase.from("jobs").select("*");
+    if (!error) setJobs(data);
+  };
 
   const fetchUserProfile = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-
     const { data } = await supabase
       .from("users")
-      .select("image_url, full_name, phone")
+      .select("image_url")
       .eq("auth_user_id", user.id)
       .single();
-
     setUserProfile(data);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleImageChange = (e) => {
-    setImageFile(e.target.files[0]);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMessage("");
-
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      setMessage("❌ Not authenticated");
-      return;
-    }
-
-    let imageUrl = null;
-    if (imageFile) {
-      const fileExt = imageFile.name.split(".").pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("job-images")
-        .upload(filePath, imageFile, { cacheControl: "3600", upsert: true });
-
-      if (uploadError) {
-        setMessage("❌ Failed to upload image: " + uploadError.message);
-        return;
-      }
-
-      const { data } = supabase.storage
-        .from("job-images")
-        .getPublicUrl(filePath);
-
-      imageUrl = data.publicUrl;
-    }
-
-    const { data: userProfile } = await supabase
-      .from("users")
-      .select("image_url, full_name, phone")
-      .eq("auth_user_id", user.id)
-      .single();
-
-    const posterImage = userProfile?.image_url || null;
-    const employerName = userProfile?.full_name || "Unknown";
-    const contactInfo = userProfile?.phone || "N/A";
-
-    const { error } = await supabase.from("jobs").insert([{
-      user_id: user.id,
-      ...form,
-      status: "open",
-      image_url: imageUrl,
-      poster_image: posterImage,
-      employer_name: employerName,
-      contact_info: contactInfo,
-    }]);
-
-    if (error) {
-      setMessage("❌ Failed to post job: " + error.message);
-    } else {
-      setMessage("✅ Job posted successfully!");
-      setForm({
-        title: "",
-        address: "",
-        job_description: "",
-        requirement: "",
-        price: "",
-      });
-      setImageFile(null);
-    }
-  };
-
-  const handleMenuToggle = () => {
-    if (!mobileNavOpen) {
+  const handleHamburgerClick = () => {
+    if (!mobileNavVisible) {
       setSlideDirection("slide-down");
-      setMobileNavOpen(true);
+      setMobileNavVisible(true);
     } else {
       setSlideDirection("slide-up");
-      setTimeout(() => {
-        setMobileNavOpen(false);
-        setSlideDirection("");
-      }, 300);
+      setTimeout(() => setMobileNavVisible(false), 300);
     }
   };
 
-  const closeAndNavigate = async (path, logout = false) => {
+  const handleNavClick = (path) => {
     setSlideDirection("slide-up");
-    setTimeout(async () => {
-      setMobileNavOpen(false);
-      setSlideDirection("");
-      if (logout) await supabase.auth.signOut();
+    setTimeout(() => {
+      setMobileNavVisible(false);
       navigate(path);
     }, 300);
   };
 
   return (
     <div className="public-container">
-      {/* Hero Section */}
-      <div className="public-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
-        <div className="mobile-top-bar">
-          <div className="mobile-left-group">
-            <img
-              src={userProfile?.image_url || defaultAvatar}
-              alt="avatar"
-              className="mobile-profile-pic"
-            />
-            <FaBars className="mobile-hamburger" onClick={handleMenuToggle} />
-          </div>
-          <h2 className="mobile-title">Post a Job</h2>
-          <NotificationBell />
+      {/* MOBILE TOP NAV */}
+      <div className="mobile-top-bar" style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}>
+        <div className="mobile-left-group">
+          <img src={userProfile?.image_url || defaultAvatar} alt="avatar" className="mobile-profile-pic" />
+          <FaBars className="mobile-hamburger" onClick={handleHamburgerClick} />
         </div>
-
-        {mobileNavOpen && (
-          <div ref={mobileNavRef} className={`mobile-nav-overlay ${slideDirection}`}>
-            <ul>
-              <li onClick={() => closeAndNavigate("/")}>Home</li>
-              <li onClick={() => closeAndNavigate("/post-job")}>Post a Job</li>
-              <li onClick={() => closeAndNavigate("/my-jobs")}>My Jobs</li>
-              <li onClick={() => closeAndNavigate("/profile")}>Profile</li>
-              <li onClick={() => closeAndNavigate("/inbox")}>Inbox</li>
-              <li onClick={() => closeAndNavigate("/carpools")}>Car Pooling</li>
-              <li onClick={() => closeAndNavigate("/login", true)}>Logout</li>
-            </ul>
-          </div>
-        )}
+        <h2 className="mobile-title">Gigs</h2>
+        <NotificationBell />
       </div>
 
-      {/* Desktop Nav */}
+      {/* MOBILE NAV OVERLAY */}
+      {mobileNavVisible && (
+        <div
+          ref={mobileNavRef}
+          className={`mobile-nav-overlay ${slideDirection}`}
+          style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
+        >
+          <ul>
+            <li onClick={() => handleNavClick("/")}>Home</li>
+            <li onClick={() => handleNavClick("/gigs")}>Gigs</li>
+            <li onClick={() => handleNavClick("/post-job")}>Post a Job</li>
+            <li onClick={() => handleNavClick("/my-jobs")}>My Jobs</li>
+            <li onClick={() => handleNavClick("/profile")}>Profile</li>
+            <li onClick={() => handleNavClick("/inbox")}>Inbox</li>
+            <li onClick={() => handleNavClick("/carpools")}>Car Pooling</li>
+            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+          </ul>
+        </div>
+      )}
+
+      {/* DESKTOP NAV */}
       <div className="desktop-nav">
         <ul>
           <li onClick={() => navigate("/")}>Home</li>
@@ -229,42 +126,52 @@ function PostGig() {
         </ul>
       </div>
 
-      {/* Main Body */}
-      <section className="services-section">
-        <div className="service-card" style={{ background: "#fff8d4" }}>
-          <form className="postgig-form" onSubmit={handleSubmit}>
-            <h2>Post a Job</h2>
-            {message && (
-              <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>{message}</p>
-            )}
-            <label>Job Title</label>
-            <input type="text" name="title" value={form.title} onChange={handleChange} required />
-            <label>Address</label>
-            <input type="text" name="address" value={form.address} onChange={handleChange} required />
-            <label>Job Description</label>
-            <textarea name="job_description" value={form.job_description} onChange={handleChange} required />
-            <label>Requirement</label>
-            <textarea name="requirement" value={form.requirement} onChange={handleChange} />
-            <label>Price (Frw)</label>
-            <input type="number" name="price" value={form.price} onChange={handleChange} />
-            <label>Upload Job Image</label>
-            <input type="file" accept="image/*" onChange={handleImageChange} />
-            <button type="submit">Post Job</button>
-          </form>
+      {/* HERO */}
+      <div className="public-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
+        <div className="public-topbar">
+          <div className="public-logo">AkaziNow</div>
+          <div className="public-auth-buttons">
+            <button onClick={() => navigate("/login")}>Sign In</button>
+            <button onClick={() => navigate("/signup")}>Sign Up</button>
+          </div>
         </div>
 
-        <div className="service-card postgig-right-sticker" style={{ background: "#fff3e6" }}>
-          <div className="info-card-content">
-            <h3>Post a Job Easily</h3>
-            <p>
-              Reach thousands of Rwandan workers in seconds. AkaziNow helps you connect fast!
-            </p>
-            <img src={stickerOffice} alt="Post Job Illustration" className="info-card-image enlarged-sticker" />
-          </div>
+        <div className="public-hero-content">
+          <h1 className="public-heading">Explore Gigs. Earn Fast. Start Today.</h1>
+          <p className="public-subheading">Discover flexible jobs available in your area now.</p>
+        </div>
+      </div>
+
+      {/* GIG COUNT */}
+      <section className="public-search-section">
+        <h2 className="public-search-title">💼 Gigs Available</h2>
+        <div className="public-count">
+          <FaCalendarCheck /> {jobs.length} Gigs Posted
         </div>
       </section>
 
-      {/* Footer */}
+      {/* JOB CARDS */}
+      <section className="services-section">
+        {jobs.length > 0 ? (
+          jobs.map((job) => (
+            <div className="service-card" key={job.id} style={{ background: "#fff8d4" }}>
+              <div className="service-text">
+                <h2>{job.title}</h2>
+                <p>{job.job_description}</p>
+                <p><strong>Price:</strong> {job.price} RWF</p>
+                <p><strong>Location:</strong> {job.address}</p>
+                <p><strong>Contact:</strong> {job.contact_info}</p>
+                <button onClick={() => navigate(`/jobs/${job.id}`)}>View Details</button>
+              </div>
+              {job.poster_image && <img src={job.poster_image} alt="gig" />}
+            </div>
+          ))
+        ) : (
+          <p style={{ marginTop: "2rem", fontWeight: "bold" }}>No gigs available at the moment.</p>
+        )}
+      </section>
+
+      {/* FOOTER */}
       <footer className="public-footer">
         <p>&copy; {new Date().getFullYear()} AkaziNow. All rights reserved.</p>
         <div className="footer-links">
@@ -277,4 +184,4 @@ function PostGig() {
   );
 }
 
-export default PostGig;
+export default Gigs;
