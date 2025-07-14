@@ -185,7 +185,21 @@ function PostGig() {
 
   return (
     <div className="public-container">
-      {/* Hero Section */}
+      {/* Desktop Nav ABOVE Hero */}
+      <div className="desktop-nav">
+        <ul>
+          <li onClick={() => navigate("/")}>Home</li>
+          <li onClick={() => navigate("/gigs")}>Gigs</li>
+          <li onClick={() => navigate("/post-job")}>Post a Job</li>
+          <li onClick={() => navigate("/my-jobs")}>My Jobs</li>
+          <li onClick={() => navigate("/profile")}>Profile</li>
+          <li onClick={() => navigate("/inbox")}>Inbox</li>
+          <li onClick={() => navigate("/carpools")}>Car Pooling</li>
+          <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+        </ul>
+      </div>
+
+      {/* Hero */}
       <div className="public-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
         <div className="mobile-top-bar">
           <div className="mobile-left-group">
@@ -215,21 +229,7 @@ function PostGig() {
         )}
       </div>
 
-      {/* Desktop Nav */}
-      <div className="desktop-nav">
-        <ul>
-          <li onClick={() => navigate("/")}>Home</li>
-          <li onClick={() => navigate("/gigs")}>Gigs</li>
-          <li onClick={() => navigate("/post-job")}>Post a Job</li>
-          <li onClick={() => navigate("/my-jobs")}>My Jobs</li>
-          <li onClick={() => navigate("/profile")}>Profile</li>
-          <li onClick={() => navigate("/inbox")}>Inbox</li>
-          <li onClick={() => navigate("/carpools")}>Car Pooling</li>
-          <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
-        </ul>
-      </div>
-
-      {/* Main Body */}
+      {/* Main */}
       <section className="services-section">
         <div className="service-card" style={{ background: "#fff8d4" }}>
           <form className="postgig-form" onSubmit={handleSubmit}>
