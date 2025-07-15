@@ -1,248 +1,271 @@
 /* RESET */
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-html, body, #root {
-  height: 100%;
+body {
   font-family: 'Segoe UI', sans-serif;
-  background-color: #f9f9f9;
-  overflow-x: hidden;
+  background-color: #f4f6f8;
 }
 
-/* === HERO SECTION === */
-.userprofile-hero {
-  width: 100%;
-  height: 60vh;
-  background-image: url('../assets/kcc_bg_clean.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+/* ========== DESKTOP NAV ========== */
+.profile-desktop-nav {
+  position: relative;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  color: white;
+  padding: 1rem 2rem;
   display: flex;
   align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 2rem;
+  justify-content: flex-start;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.profile-nav-left-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #FFD700;
+  cursor: pointer;
+}
+
+.profile-desktop-nav ul {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+}
+
+.profile-desktop-nav ul li {
+  cursor: pointer;
+  font-weight: bold;
   color: white;
 }
 
-.userprofile-hero h1 {
-  font-size: 2.7rem;
+.profile-desktop-nav ul li:hover {
+  text-decoration: underline;
+}
+
+/* ========== HERO SECTION ========== */
+.profile-hero {
+  width: 100%;
+  height: 55vh;
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 2rem;
+  text-align: center;
+  color: white;
+  position: relative;
+}
+
+.hero-content {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 2rem;
+  border-radius: 1rem;
+}
+
+.hero-title {
+  font-size: 2.5rem;
   font-weight: bold;
 }
 
-.userprofile-hero p {
-  font-size: 1.2rem;
-  opacity: 0.9;
+.hero-subtitle {
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
 }
 
-/* === MAIN SECTION BELOW HERO === */
-.userprofile-main {
+/* ========== MOBILE TOP BAR ========== */
+.mobile-top-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.mobile-left-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mobile-profile-pic {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+
+.mobile-hamburger {
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.mobile-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+}
+
+/* MOBILE NAV OVERLAY */
+.mobile-nav-overlay {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  background: #0f2027;
+  color: white;
+  z-index: 20;
+  padding: 1.5rem;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+/* ========== MAIN PROFILE SECTION ========== */
+.profile-section {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 4rem 2rem;
-  background-color: white;
-  flex-wrap: wrap;
-  gap: 3rem;
-}
-
-/* === LEFT FORM COLUMN === */
-.userprofile-form-container {
-  flex: 1;
-  max-width: 500px;
-  min-width: 280px;
-}
-
-.userprofile-form-container h2 {
-  margin-bottom: 1rem;
-  color: #2c3e50;
-}
-
-.userprofile-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  background: #ffffff;
+  gap: 2rem;
   padding: 2rem;
+  flex-wrap: wrap;
+}
+
+.profile-form-card {
+  background: white;
   border-radius: 12px;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  max-width: 600px;
+  width: 100%;
 }
 
-.userprofile-form label {
-  font-weight: 600;
-  font-size: 0.95rem;
+.profile-form-card h2 {
+  margin-bottom: 1rem;
 }
 
-.userprofile-form input,
-.userprofile-form select {
-  padding: 0.75rem;
-  border-radius: 10px;
+.profile-form-card input {
+  width: 100%;
+  padding: 0.6rem;
+  margin-bottom: 1rem;
+  border-radius: 6px;
   border: 1px solid #ccc;
-  font-size: 1rem;
-  background-color: white;
 }
 
-.userprofile-form button {
-  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+.profile-form-card button {
+  background: #203a43;
   color: white;
   border: none;
-  border-radius: 10px;
-  padding: 0.75rem;
-  font-size: 1rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
   cursor: pointer;
   margin-top: 1rem;
 }
 
-.userprofile-form button:hover {
-  opacity: 0.9;
+.profile-form-card button:hover {
+  background: #2c5364;
 }
 
-/* === RIGHT STICKER IMAGE === */
-.userprofile-sticker {
-  flex: 1;
+/* ========== STICKER PANEL ========== */
+.profile-sticker-card {
+  background: #fff3e6;
+  border-radius: 12px;
+  padding: 2rem;
   max-width: 400px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
 }
 
-.userprofile-sticker img {
-  width: 100%;
-  max-width: 350px;
-  object-fit: contain;
+.profile-sticker-card img {
+  max-width: 100%;
+  height: auto;
 }
 
-/* === MOBILE TOP BAR === */
-.mobile-top-bar {
-  display: none;
+.profile-sticker-card h3 {
+  margin-bottom: 1rem;
 }
 
-@media screen and (max-width: 768px) {
-  .userprofile-hero {
-    height: 45vh;
-    padding: 1.5rem;
+.profile-sticker-card p {
+  color: #333;
+}
+
+/* ========== FOOTER ========== */
+.public-footer {
+  padding: 1.5rem;
+  background: #f9f9f9;
+  text-align: center;
+  margin-top: 3rem;
+}
+
+.footer-links {
+  margin-top: 0.5rem;
+}
+
+.footer-links button {
+  background: none;
+  border: none;
+  color: #333;
+  margin: 0 0.5rem;
+  cursor: pointer;
+}
+
+.footer-links button:hover {
+  text-decoration: underline;
+}
+
+/* ========== RESPONSIVE RULES ========== */
+@media (max-width: 768px) {
+  .profile-desktop-nav {
+    display: none;
   }
 
-  .userprofile-hero h1 {
+  .hero-title {
     font-size: 2rem;
   }
 
-  .userprofile-main {
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .profile-section {
     flex-direction: column;
-    padding: 2rem 1rem;
-    gap: 2rem;
-  }
-
-  .userprofile-form-container,
-  .userprofile-sticker {
-    width: 100%;
-  }
-
-  .userprofile-sticker img {
-    max-width: 280px;
-    margin: 0 auto;
-  }
-
-  .mobile-top-bar {
-    display: flex;
     align-items: center;
-    padding: 1rem;
-    background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 999;
-    gap: 0.75rem;
-    color: white;
   }
 
-  .mobile-left-group {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .mobile-profile-pic {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid white;
-  }
-
-  .mobile-hamburger {
-    font-size: 1.8rem;
-    color: white;
-    cursor: pointer;
-  }
-
-  .mobile-title {
-    flex: 1;
-    text-align: center;
-    font-size: 1.2rem;
-    font-weight: bold;
-  }
-
-  /* === SLIDE NAV === */
-  .mobile-nav-overlay {
-    position: fixed;
-    top: 60px;
-    left: 0;
-    right: 0;
-    height: calc(100% - 60px);
-    background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
-    color: white;
-    z-index: 1000;
-    padding-top: 1rem;
-    transform: translateY(0%);
-    opacity: 1;
-  }
-
-  .mobile-nav-overlay ul {
-    list-style: none;
-    text-align: center;
-    font-size: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+  .profile-sticker-card {
     margin-top: 2rem;
-  }
-
-  .mobile-nav-overlay li {
-    cursor: pointer;
-  }
-
-  .mobile-nav-overlay.slide-up {
-    animation: slideUp 0.3s ease forwards;
-  }
-
-  .mobile-nav-overlay.slide-down {
-    animation: slideDown 0.3s ease forwards;
-  }
-
-  @keyframes slideUp {
-    from {
-      transform: translateY(0%);
-      opacity: 1;
-    }
-    to {
-      transform: translateY(-100%);
-      opacity: 0;
-    }
-  }
-
-  @keyframes slideDown {
-    from {
-      transform: translateY(-100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0%);
-      opacity: 1;
-    }
   }
 }
