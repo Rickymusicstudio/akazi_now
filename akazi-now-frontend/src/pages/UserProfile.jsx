@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
 import { FaBars } from "react-icons/fa";
 import defaultAvatar from "../assets/avatar.png";
-import stickerOffice from "../assets/office.png";
+import stickerOffice from "../assets/profile.png";
 import backgroundImage from "../assets/kcc_bg_clean.png";
 import "./UserProfile.css";
 
