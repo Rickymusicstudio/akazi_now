@@ -1,10 +1,4 @@
-html, body, #root {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-/* RESET STYLES */
+/* RESET */
 * {
   margin: 0;
   padding: 0;
@@ -12,72 +6,67 @@ html, body, #root {
 }
 
 body {
-  margin: 0;
-  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f4f6f8;
+  overflow-x: hidden;
 }
 
-/* DESKTOP */
 .inbox-container {
   display: flex;
-  height: 100vh;
-  width: 100vw;
-  font-family: 'Segoe UI', sans-serif;
-}
-
-.inbox-left {
-  width: 50%;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  color: white;
-  padding: 2rem;
-  display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
+  min-height: 100vh;
 }
 
-.nav-buttons {
-  position: absolute;
-  top: 1rem;
-  left: 1.5rem;
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.nav-buttons button {
-  background: none;
-  border: none;
+/* HERO SECTION */
+.inbox-hero {
+  width: 100%;
+  height: 50vh;
+  background-image: url("../assets/kcc_bg_clean.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: white;
-  font-weight: bold;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.inbox-right {
-  width: 50%;
-  height: 100vh;
-  overflow-y: auto;
-  padding: 2rem;
-  background-color: #fff;
-  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
+  padding: 2rem;
 }
 
+.inbox-hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.inbox-hero p {
+  font-size: 1.2rem;
+  max-width: 600px;
+}
+
+/* MAIN CONTENT */
+.inbox-content {
+  background: white;
+  margin-top: -4rem;
+  margin-inline: auto;
+  padding: 2rem;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 1000px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* INBOX CARD */
 .inbox-card {
   display: flex;
+  flex-direction: column;
   background: #fff;
   padding: 1.5rem;
-  border-radius: 16px;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.08);
-  margin-bottom: 1.5rem;
-  max-width: 700px;
-  margin-inline: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .inbox-avatar {
@@ -85,11 +74,12 @@ body {
   height: 80px;
   border-radius: 50%;
   object-fit: cover;
-  margin-right: 1.5rem;
+  margin-bottom: 1rem;
+  align-self: center;
 }
 
 .inbox-card-details {
-  flex: 1;
+  text-align: left;
 }
 
 .inbox-actions {
@@ -99,148 +89,65 @@ body {
 }
 
 .inbox-actions button {
-  background: linear-gradient(to right, #0f2027, #203a43, #2c5364) !important;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
   color: white;
   border: none;
   border-radius: 999px;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1.2rem;
   font-weight: bold;
   cursor: pointer;
   transition: background 0.3s ease;
 }
 
 .inbox-actions button:hover {
-  background: linear-gradient(to right, #12283b, #2c3e50, #2c5364) !important;
+  background: linear-gradient(to right, #12283b, #2c3e50, #2c5364);
 }
 
 .timestamp {
   font-size: 12px;
-  color: #999;
+  color: #777;
 }
 
-.mobile-top-bar {
-  display: none;
+/* NOTIFICATION CARD COLORING */
+.notification-accepted {
+  border-left: 5px solid green;
 }
 
+.notification-rejected {
+  border-left: 5px solid red;
+}
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
-  .inbox-container {
-    flex-direction: column;
-    height: auto;
-    background: #f9f9f9;
-  }
-
-  .inbox-left {
-    display: none;
-  }
-
-  .mobile-top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364) !important;
-    color: white;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 100;
-    gap: 1rem;
-  }
-
-  .mobile-title {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.2rem;
-    font-weight: bold;
-  }
-
-  .mobile-hamburger {
-    font-size: 1.8rem;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-  }
-
-  .inbox-right {
-    width: 100%;
-    min-height: 100vh;
-    background: #fff;
+  .inbox-hero {
+    height: 40vh;
     padding: 1.5rem;
-    padding-top: 6rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  }
+
+  .inbox-hero h1 {
+    font-size: 2rem;
+  }
+
+  .inbox-hero p {
+    font-size: 1rem;
+  }
+
+  .inbox-content {
+    width: 95%;
+    padding: 1.2rem;
+    margin-top: -3rem;
   }
 
   .inbox-card {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+    padding: 1rem;
   }
 
   .inbox-avatar {
-    margin: 0 auto 1rem;
+    width: 60px;
+    height: 60px;
   }
 
-  .inbox-card-details {
-    text-align: left;
-    width: 100%;
-  }
-
-  .mobile-nav-overlay {
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364) !important;
-    z-index: 999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .mobile-nav-overlay.slide-up {
-    animation: slideUp 0.3s ease forwards;
-  }
-
-  .mobile-nav-overlay.slide-down {
-    animation: slideDown 0.3s ease forwards;
-  }
-
-  @keyframes slideUp {
-    from {
-      transform: translateY(0%);
-      opacity: 1;
-    }
-    to {
-      transform: translateY(-100%);
-      opacity: 0;
-    }
-  }
-
-  @keyframes slideDown {
-    from {
-      transform: translateY(-100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0%);
-      opacity: 1;
-    }
-  }
-
-  .mobile-nav-overlay ul {
-    list-style: none;
-    color: white;
-    font-weight: bold;
-    font-size: 1.6rem;
-    display: flex;
+  .inbox-actions {
     flex-direction: column;
-    gap: 2rem;
-  }
-
-  .mobile-nav-overlay li {
-    cursor: pointer;
   }
 }

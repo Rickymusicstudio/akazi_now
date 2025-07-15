@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../assets/avatar.png";
+import inboxSticker from "../assets/inbox.png";
+import backgroundImage from "../assets/kcc_bg_clean.png";
 import NotificationBell from "../components/NotificationBell.jsx";
 import { FaBars } from "react-icons/fa";
 import "./Inbox.css";
@@ -143,93 +145,64 @@ function ApplicationsInbox() {
   };
 
   return (
-    <div className="inbox-container">
-      <div className="mobile-top-bar">
-        <div className="mobile-left-group">
-          <img
-            src={userProfile?.image_url || defaultAvatar}
-            alt="avatar"
-            className="mobile-profile-pic"
-          />
-          <FaBars className="mobile-hamburger" onClick={() => {
-            setSlideDirection("slide-down");
-            setMobileNavOpen(true);
-          }} />
+    <div className="inbox-page">
+      <div className="inbox-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
+        <div className="inbox-hero-overlay">
+          <h1>Inbox</h1>
+          <p>Manage applications and messages here</p>
         </div>
-        <h2 className="mobile-title">Inbox</h2>
-        <NotificationBell />
       </div>
 
-      {mobileNavOpen && (
-        <div className={`mobile-nav-overlay ${slideDirection}`}>
-          <ul>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/") }}>Home</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/post-job") }}>Post a Job</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/my-jobs") }}>My Jobs</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/profile") }}>Profile</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/inbox") }}>Inbox</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Car Pooling</li>
-            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
-          </ul>
-        </div>
-      )}
-
-      <div className="inbox-left">
-        <div className="nav-buttons">
-          <button onClick={() => navigate("/")}>Home</button>
-          <button onClick={() => navigate("/post-job")}>Post a Job</button>
-          <button onClick={() => navigate("/my-jobs")}>My Jobs</button>
-          <button onClick={() => navigate("/profile")}>Profile</button>
-          <button onClick={() => navigate("/inbox")}>Inbox</button>
-          <button onClick={() => navigate("/carpools")}>Car Pooling</button>
-          <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
-        </div>
-        <h2>Inbox</h2>
-        <NotificationBell />
-      </div>
-
-      <div className="inbox-right">
-        {isPoster ? (
-          applications.length === 0 ? (
-            <p>No one has applied yet.</p>
-          ) : (
-            applications.map((app) => {
-              const user = app.worker || {};
-              return (
-                <div key={app.id} className="inbox-card">
-                  <img src={user.image_url || defaultAvatar} alt="Profile" className="inbox-avatar" />
-                  <div className="inbox-card-details">
-                    <h3>{user.full_name}</h3>
-                    <p><strong>Phone:</strong> {user.phone}</p>
-                    <p><strong>District:</strong> {user.district?.name}</p>
-                    <p><strong>Sector:</strong> {user.sector?.name}</p>
-                    <p><strong>Cell:</strong> {user.cell}</p>
-                    <p><strong>Village:</strong> {user.village}</p>
-                    <p><strong>Message:</strong> {app.message}</p>
-                    <p><strong>Status:</strong> {app.status}</p>
-                    <p className="timestamp">Submitted: {new Date(app.applied_at).toLocaleString()}</p>
-                    <div className="inbox-actions">
-                      <button onClick={() => handleUpdateStatus(app.id, "accepted")}>Accept</button>
-                      <button onClick={() => handleUpdateStatus(app.id, "rejected")}>Reject</button>
+      <div className="inbox-content">
+        <div className="inbox-left-panel">
+          {isPoster ? (
+            applications.length === 0 ? (
+              <p>No one has applied yet.</p>
+            ) : (
+              applications.map((app) => {
+                const user = app.worker || {};
+                return (
+                  <div key={app.id} className="inbox-card">
+                    <img src={user.image_url || defaultAvatar} alt="Profile" className="inbox-avatar" />
+                    <div className="inbox-card-details">
+                      <h3>{user.full_name}</h3>
+                      <p><strong>Phone:</strong> {user.phone}</p>
+                      <p><strong>District:</strong> {user.district?.name}</p>
+                      <p><strong>Sector:</strong> {user.sector?.name}</p>
+                      <p><strong>Cell:</strong> {user.cell}</p>
+                      <p><strong>Village:</strong> {user.village}</p>
+                      <p><strong>Message:</strong> {app.message}</p>
+                      <p><strong>Status:</strong> {app.status}</p>
+                      <p className="timestamp">Submitted: {new Date(app.applied_at).toLocaleString()}</p>
+                      <div className="inbox-actions">
+                        <button onClick={() => handleUpdateStatus(app.id, "accepted")}>Accept</button>
+                        <button onClick={() => handleUpdateStatus(app.id, "rejected")}>Reject</button>
+                      </div>
                     </div>
                   </div>
+                );
+              })
+            )
+          ) : notifications.length > 0 ? (
+            notifications.map((note) => {
+              const color = note.message.includes("accepted") ? "green" : note.message.includes("rejected") ? "red" : "#333";
+              return (
+                <div key={note.id} className="inbox-card" style={{ borderLeft: `6px solid ${color}`, flexDirection: "column" }}>
+                  <p style={{ fontWeight: "bold", color }}>{note.message}</p>
+                  <p className="timestamp">Received: {new Date(note.created_at).toLocaleString()}</p>
                 </div>
               );
             })
-          )
-        ) : notifications.length > 0 ? (
-          notifications.map((note) => {
-            const color = note.message.includes("accepted") ? "green" : note.message.includes("rejected") ? "red" : "#333";
-            return (
-              <div key={note.id} className="inbox-card" style={{ borderLeft: `6px solid ${color}`, flexDirection: "column" }}>
-                <p style={{ fontWeight: "bold", color }}>{note.message}</p>
-                <p className="timestamp">Received: {new Date(note.created_at).toLocaleString()}</p>
-              </div>
-            );
-          })
-        ) : (
-          <p>You have no notifications yet.</p>
-        )}
+          ) : (
+            <p>You have no notifications yet.</p>
+          )}
+        </div>
+
+        <div className="inbox-right-panel">
+          <div className="inbox-sticker-card">
+            <img src={inboxSticker} alt="Inbox Visual" />
+          </div>
+        </div>
       </div>
     </div>
   );
