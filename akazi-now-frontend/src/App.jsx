@@ -30,7 +30,9 @@ function App() {
 
   useEffect(() => {
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       setIsAuthenticated(!!session?.user);
     };
     checkSession();
@@ -58,18 +60,96 @@ function App() {
         <Route path="/abasare" element={<Abasare />} />
 
         {/* 🔐 Actions That Require Login */}
-        <Route path="/post-job" element={<ProtectedRoute><PostGig /></ProtectedRoute>} />
-        <Route path="/carpool" element={<ProtectedRoute><Carpool /></ProtectedRoute>} />
-        <Route path="/applications" element={<ProtectedRoute><MyApplications /></ProtectedRoute>} />
-        <Route path="/inbox" element={<ProtectedRoute><ApplicationsInbox /></ProtectedRoute>} />
-        <Route path="/my-jobs" element={<ProtectedRoute><MyJobs /></ProtectedRoute>} />
-        <Route path="/jobs/:id" element={<ProtectedRoute><JobDetails /></ProtectedRoute>} />
-        <Route path="/carpool-inbox" element={<ProtectedRoute><CarpoolInbox /></ProtectedRoute>} />
-        <Route path="/notifications/:id" element={<ProtectedRoute><NotificationsDetail /></ProtectedRoute>} />
+        <Route
+          path="/post-job"
+          element={
+            <ProtectedRoute>
+              <PostGig />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/carpool"
+          element={
+            <ProtectedRoute>
+              <Carpool />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/applications"
+          element={
+            <ProtectedRoute>
+              <MyApplications />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/inbox"
+          element={
+            <ProtectedRoute>
+              <ApplicationsInbox />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-jobs"
+          element={
+            <ProtectedRoute>
+              <MyJobs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/jobs/:id"
+          element={
+            <ProtectedRoute>
+              <JobDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/carpool-inbox"
+          element={
+            <ProtectedRoute>
+              <CarpoolInbox />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notifications/:id"
+          element={
+            <ProtectedRoute>
+              <NotificationsDetail />
+            </ProtectedRoute>
+          }
+        />
 
         {/* 🔐 Detailed Views */}
-        <Route path="/abasare/:id" element={<ProtectedRoute><AbasareDetail /></ProtectedRoute>} />
-        <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+        <Route
+          path="/abasare/:id"
+          element={
+            <ProtectedRoute>
+              <AbasareDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );
