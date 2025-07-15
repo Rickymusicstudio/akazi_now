@@ -29,29 +29,18 @@ function PostGig() {
   }, []);
 
   useEffect(() => {
-    let lastScrollY = window.scrollY;
-    let touchStartY = 0;
-
-    const handleScroll = () => {
-      if (!mobileNavOpen) return;
-      const currentScrollY = window.scrollY;
-      if (currentScrollY < lastScrollY) {
-        setSlideDirection("slide-up");
-        setTimeout(() => {
-          setMobileNavOpen(false);
-          setSlideDirection("");
-        }, 300);
-      }
-      lastScrollY = currentScrollY;
-    };
+    const touchStartY = { current: 0 };
 
     const handleTouchStart = (e) => {
-      touchStartY = e.touches[0].clientY;
+      touchStartY.current = e.touches[0].clientY;
     };
 
     const handleTouchMove = (e) => {
+      if (!mobileNavOpen) return;
       const touchEndY = e.touches[0].clientY;
-      if (touchStartY - touchEndY > 50 && mobileNavOpen) {
+      const swipeDistance = touchStartY.current - touchEndY;
+
+      if (swipeDistance > 50) {
         setSlideDirection("slide-up");
         setTimeout(() => {
           setMobileNavOpen(false);
@@ -60,14 +49,23 @@ function PostGig() {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      if (!mobileNavOpen) return;
+      setSlideDirection("slide-up");
+      setTimeout(() => {
+        setMobileNavOpen(false);
+        setSlideDirection("");
+      }, 300);
+    };
+
     window.addEventListener("touchstart", handleTouchStart);
     window.addEventListener("touchmove", handleTouchMove);
+    window.addEventListener("scroll", handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, [mobileNavOpen]);
 
@@ -236,7 +234,6 @@ function PostGig() {
           <NotificationBell />
         </div>
 
-        {/* 🔥 New Hero Content */}
         <div className="hero-content">
           <h1 className="hero-title">Post your Gig</h1>
           <p className="hero-subtitle">
