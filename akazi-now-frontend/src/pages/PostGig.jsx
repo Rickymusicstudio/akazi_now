@@ -29,16 +29,16 @@ function PostGig() {
   }, []);
 
   useEffect(() => {
-    const touchStartY = { current: 0 };
+    let touchStartY = 0;
 
     const handleTouchStart = (e) => {
-      touchStartY.current = e.touches[0].clientY;
+      touchStartY = e.touches[0].clientY;
     };
 
     const handleTouchMove = (e) => {
       if (!mobileNavOpen) return;
       const touchEndY = e.touches[0].clientY;
-      const swipeDistance = touchStartY.current - touchEndY;
+      const swipeDistance = touchStartY - touchEndY;
 
       if (swipeDistance > 50) {
         setSlideDirection("slide-up");
@@ -205,22 +205,14 @@ function PostGig() {
           <li onClick={() => navigate("/profile")}>Profile</li>
           <li onClick={() => navigate("/inbox")}>Inbox</li>
           <li onClick={() => navigate("/carpools")}>Car Pooling</li>
-          <li
-            onClick={async () => {
-              await supabase.auth.signOut();
-              navigate("/login");
-            }}
-          >
+          <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>
             Logout
           </li>
         </ul>
       </div>
 
       {/* Hero */}
-      <div
-        className="public-hero"
-        style={{ backgroundImage: `url(${backgroundImage})` }}
-      >
+      <div className="public-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
         <div className="mobile-top-bar">
           <div className="mobile-left-group">
             <img
@@ -248,24 +240,19 @@ function PostGig() {
           >
             <ul>
               <li onClick={() => closeAndNavigate("/")}>Home</li>
-              <li onClick={() => closeAndNavigate("/post-job")}>
-                Post a Job
-              </li>
+              <li onClick={() => closeAndNavigate("/gigs")}>Gigs</li>
+              <li onClick={() => closeAndNavigate("/post-job")}>Post a Job</li>
               <li onClick={() => closeAndNavigate("/my-jobs")}>My Jobs</li>
               <li onClick={() => closeAndNavigate("/profile")}>Profile</li>
               <li onClick={() => closeAndNavigate("/inbox")}>Inbox</li>
-              <li onClick={() => closeAndNavigate("/carpools")}>
-                Car Pooling
-              </li>
-              <li onClick={() => closeAndNavigate("/login", true)}>
-                Logout
-              </li>
+              <li onClick={() => closeAndNavigate("/carpools")}>Car Pooling</li>
+              <li onClick={() => closeAndNavigate("/", true)}>Logout</li>
             </ul>
           </div>
         )}
       </div>
 
-      {/* Main */}
+      {/* Main Form Section */}
       <section className="services-section">
         <div className="service-card" style={{ background: "#fff8d4" }}>
           <form className="postgig-form" onSubmit={handleSubmit}>
@@ -276,51 +263,22 @@ function PostGig() {
               </p>
             )}
             <label>Job Title</label>
-            <input
-              type="text"
-              name="title"
-              value={form.title}
-              onChange={handleChange}
-              required
-            />
+            <input type="text" name="title" value={form.title} onChange={handleChange} required />
             <label>Address</label>
-            <input
-              type="text"
-              name="address"
-              value={form.address}
-              onChange={handleChange}
-              required
-            />
+            <input type="text" name="address" value={form.address} onChange={handleChange} required />
             <label>Job Description</label>
-            <textarea
-              name="job_description"
-              value={form.job_description}
-              onChange={handleChange}
-              required
-            />
+            <textarea name="job_description" value={form.job_description} onChange={handleChange} required />
             <label>Requirement</label>
-            <textarea
-              name="requirement"
-              value={form.requirement}
-              onChange={handleChange}
-            />
+            <textarea name="requirement" value={form.requirement} onChange={handleChange} />
             <label>Price (Frw)</label>
-            <input
-              type="number"
-              name="price"
-              value={form.price}
-              onChange={handleChange}
-            />
+            <input type="number" name="price" value={form.price} onChange={handleChange} />
             <label>Upload Job Image</label>
             <input type="file" accept="image/*" onChange={handleImageChange} />
             <button type="submit">Post Job</button>
           </form>
         </div>
 
-        <div
-          className="service-card postgig-right-sticker"
-          style={{ background: "#fff3e6" }}
-        >
+        <div className="service-card postgig-right-sticker" style={{ background: "#fff3e6" }}>
           <div className="info-card-content">
             <h3>Post a Job Easily</h3>
             <p>
