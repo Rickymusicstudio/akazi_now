@@ -120,7 +120,7 @@ function MyJobs() {
             <li onClick={() => handleNavClick("/profile")}>Profile</li>
             <li onClick={() => handleNavClick("/inbox")}>Inbox</li>
             <li onClick={() => handleNavClick("/carpools")}>Car Pooling</li>
-            <li onClick={async () => { await supabase.auth.signOut(); navigate("/index"); }}>Logout</li>
+            <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Logout</li>
           </ul>
         </div>
       )}
@@ -136,7 +136,7 @@ function MyJobs() {
           <li onClick={() => navigate("/profile")}>Profile</li>
           <li onClick={() => navigate("/inbox")}>Inbox</li>
           <li onClick={() => navigate("/carpools")}>Car Pooling</li>
-          <li onClick={async () => { await supabase.auth.signOut(); navigate("/index"); }}>Logout</li>
+          <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Logout</li>
         </ul>
       </div>
 
