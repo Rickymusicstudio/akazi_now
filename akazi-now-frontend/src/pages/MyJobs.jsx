@@ -126,7 +126,8 @@ function MyJobs() {
       )}
 
       {/* DESKTOP NAV */}
-      <div className="desktop-nav">
+      <div className="myjobs-desktop-nav">
+        <div className="myjobs-nav-left-logo" onClick={() => navigate("/")}>AkaziNow</div>
         <ul>
           <li onClick={() => navigate("/")}>Home</li>
           <li onClick={() => navigate("/gigs")}>Gigs</li>
@@ -140,35 +141,27 @@ function MyJobs() {
       </div>
 
       {/* HERO */}
-      <div className="public-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
-        <div className="public-topbar">
-          <div className="public-logo">AkaziNow</div>
-          <div className="public-auth-buttons">
-            <button onClick={() => navigate("/login")}>Sign In</button>
-            <button onClick={() => navigate("/signup")}>Sign Up</button>
-          </div>
-        </div>
-
-        <div className="public-hero-content">
-          <h1 className="public-heading">Your Posted Gigs</h1>
-          <p className="public-subheading">Manage the jobs you've shared with the community.</p>
+      <div className="myjobs-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
+        <div className="myjobs-hero-content">
+          <h1 className="myjobs-heading">Your Posted Gigs</h1>
+          <p className="myjobs-subheading">Manage the jobs you've shared with the community.</p>
         </div>
       </div>
 
       {/* JOB COUNT SECTION */}
-      <section className="public-search-section">
-        <h2 className="public-search-title">📋 My Jobs</h2>
-        <div className="public-count">
+      <section className="myjobs-count-section">
+        <h2 className="myjobs-count-title">📋 My Jobs</h2>
+        <div className="myjobs-count">
           <FaCalendarCheck /> {jobs.length} Jobs Posted
         </div>
       </section>
 
       {/* JOB CARDS */}
-      <section className="services-section">
+      <section className="myjobs-cards-section">
         {jobs.length > 0 ? (
           jobs.map((job) => (
-            <div className="service-card" key={job.id}>
-              <div className="service-text">
+            <div className="myjobs-card" key={job.id}>
+              <div className="myjobs-card-text">
                 <h2>{job.title}</h2>
                 <p>{job.job_description}</p>
                 <p><strong>Price:</strong> {job.price} RWF</p>
@@ -181,7 +174,7 @@ function MyJobs() {
             </div>
           ))
         ) : (
-          <p className="empty-message">You haven’t posted any jobs yet.</p>
+          <p className="myjobs-empty">You haven’t posted any jobs yet.</p>
         )}
       </section>
     </div>

@@ -5,14 +5,55 @@
   box-sizing: border-box;
 }
 
-html, body {
-  height: 100%;
+body {
   font-family: 'Segoe UI', sans-serif;
-  background: #f9f9f9;
-  overflow-x: hidden;
+  background-color: #f4f6f8;
 }
 
-/* HERO SECTION */
+/* ========== DESKTOP NAV ========== */
+.postgig-desktop-nav {
+  width: 100%;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.postgig-nav-left-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #FFD700;
+  cursor: pointer;
+  user-select: none;
+  margin-right: auto;
+}
+
+.postgig-desktop-nav ul {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  flex-grow: 1;
+  justify-content: center;
+}
+
+.postgig-desktop-nav ul li {
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.postgig-desktop-nav ul li:hover {
+  text-decoration: underline;
+}
+
+/* ========== HERO SECTION ========== */
 .public-hero {
   width: 100%;
   height: 65vh;
@@ -27,7 +68,7 @@ html, body {
   padding: 2rem;
 }
 
-/* MOBILE TOP BAR */
+/* ========== MOBILE TOP BAR ========== */
 .mobile-top-bar {
   position: absolute;
   top: 1rem;
@@ -61,8 +102,10 @@ html, body {
   font-size: 1.4rem;
   font-weight: bold;
   text-align: center;
+  color: white;
 }
 
+/* ========== MOBILE NAV OVERLAY ========== */
 .mobile-nav-overlay {
   position: absolute;
   top: 70px;
@@ -78,18 +121,27 @@ html, body {
 .slide-down {
   animation-name: slideDown;
 }
+
 .slide-up {
   animation-name: slideUp;
 }
 
 @keyframes slideDown {
-  from { transform: translateY(-100%); }
-  to { transform: translateY(0); }
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideUp {
-  from { transform: translateY(0); }
-  to { transform: translateY(-100%); }
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
 }
 
 .mobile-nav-overlay ul {
@@ -103,31 +155,7 @@ html, body {
   font-size: 1.1rem;
 }
 
-/* DESKTOP NAV BAR */
-.desktop-nav {
-  display: flex;
-  justify-content: center;
-  padding: 1rem 2rem;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-}
-
-.desktop-nav ul {
-  display: flex;
-  list-style: none;
-  gap: 2rem;
-}
-
-.desktop-nav li {
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.desktop-nav li:hover {
-  text-decoration: underline;
-}
-
-/* MAIN SECTION */
+/* ========== MAIN SECTION ========== */
 .services-section {
   display: flex;
   justify-content: center;
@@ -146,7 +174,7 @@ html, body {
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
 }
 
-/* FORM */
+/* ========== FORM ========== */
 .postgig-form {
   background: white;
   padding: 2rem;
@@ -208,7 +236,7 @@ textarea:-webkit-autofill {
   opacity: 0.9;
 }
 
-/* INFO CARD (Right) */
+/* ========== INFO CARD (Right) ========== */
 .postgig-right-sticker {
   display: flex;
   align-items: center;
@@ -249,7 +277,7 @@ textarea:-webkit-autofill {
   width: 100%;
 }
 
-/* FOOTER */
+/* ========== FOOTER ========== */
 .public-footer {
   text-align: center;
   padding: 2rem;
@@ -274,8 +302,12 @@ textarea:-webkit-autofill {
   text-decoration: underline;
 }
 
-/* RESPONSIVE */
+/* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
+  .postgig-desktop-nav {
+    display: none;
+  }
+
   .services-section {
     flex-direction: column;
     align-items: center;
@@ -298,9 +330,5 @@ textarea:-webkit-autofill {
 
   .info-card-content {
     padding: 1.5rem 1rem;
-  }
-
-  .desktop-nav {
-    display: none;
   }
 }

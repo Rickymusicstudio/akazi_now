@@ -1,5 +1,3 @@
-/* MyJobs.css */
-
 /* RESET */
 * {
   margin: 0;
@@ -18,148 +16,219 @@ body {
   min-height: 100vh;
 }
 
-/* HERO SECTION */
-.myjobs-hero {
+/* ========== MOBILE TOP BAR (FIXED) ========== */
+.mobile-top-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.mobile-left-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mobile-profile-pic {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+
+.mobile-hamburger {
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.mobile-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+}
+
+/* ========== MOBILE NAV DROPDOWN ========== */
+.mobile-nav-overlay {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  background: #0f2027;
+  color: white;
+  z-index: 20;
+  padding: 1.5rem;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* ========== DESKTOP NAV ========== */
+.myjobs-desktop-nav {
   position: relative;
-  height: 60vh;
-  background-image: url('../assets/kcc_bg_clean.png');
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.myjobs-nav-left-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #FFD700;
+  cursor: pointer;
+}
+
+.myjobs-desktop-nav ul {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+}
+
+.myjobs-desktop-nav ul li {
+  cursor: pointer;
+  font-weight: bold;
+  color: white;
+}
+
+.myjobs-desktop-nav ul li:hover {
+  text-decoration: underline;
+}
+
+/* ========== HERO SECTION ========== */
+.myjobs-hero {
   background-size: cover;
   background-position: center;
-  color: white;
+  height: 60vh;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  padding: 2rem;
+  position: relative;
+  color: white;
 }
 
-.myjobs-hero .overlay {
-  background-color: rgba(0, 0, 0, 0.6);
+.myjobs-hero-content {
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.4);
   padding: 2rem;
   border-radius: 1rem;
-  max-width: 700px;
 }
 
-.myjobs-hero h1 {
+.myjobs-heading {
   font-size: 2.5rem;
   font-weight: bold;
-  margin-bottom: 0.5rem;
 }
 
-.myjobs-hero p {
+.myjobs-subheading {
   font-size: 1.2rem;
-  opacity: 0.9;
+  margin-top: 0.5rem;
 }
 
-/* SECTION 2 */
-.myjobs-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 3rem 1rem;
-}
-
-.myjobs-card {
-  background: white;
-  border-radius: 1rem;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
-  max-width: 700px;
-  width: 100%;
+/* ========== COUNT SECTION ========== */
+.myjobs-count-section {
   text-align: center;
+  padding: 2rem 1rem;
 }
 
-.myjobs-card h2 {
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
+.myjobs-count {
+  margin-top: 0.5rem;
+  font-weight: bold;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
 }
 
-.myjobs-card p {
-  color: #666;
-  font-size: 1rem;
-}
-
-.job-list {
-  margin-top: 2rem;
+/* ========== JOB CARDS ========== */
+.myjobs-cards-section {
+  padding: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
   align-items: center;
 }
 
-.job-card {
+.myjobs-card {
   background: white;
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+  max-width: 700px;
   width: 100%;
-  max-width: 600px;
   text-align: left;
+  display: flex;
+  gap: 1.5rem;
 }
 
-.job-card h3 {
-  font-size: 1.4rem;
-  font-weight: bold;
+.myjobs-card img {
+  max-width: 200px;
+  border-radius: 8px;
 }
 
-.job-card p {
-  margin: 0.5rem 0;
-  color: #333;
+.myjobs-card-text h2 {
+  margin-bottom: 0.5rem;
 }
 
-.delete-btn {
-  margin-top: 1rem;
+.myjobs-card-text button {
   background: #ff3b3f;
   color: white;
-  padding: 0.6rem 1.5rem;
   border: none;
+  padding: 0.6rem 1rem;
   border-radius: 6px;
-  font-weight: bold;
+  margin-top: 1rem;
   cursor: pointer;
 }
 
-.delete-btn:hover {
+.myjobs-card-text button:hover {
   background: #e13034;
 }
 
-/* NAVIGATION (reuse existing if possible) */
-.desktop-auth-buttons {
-  display: flex;
-  gap: 1rem;
+.myjobs-empty {
+  font-size: 1rem;
+  color: #888;
 }
 
-.desktop-auth-buttons button {
-  padding: 0.4rem 1rem;
-  border-radius: 6px;
-  border: none;
-  background-color: #fff;
-  color: #333;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.desktop-auth-buttons button:hover {
-  background-color: #eee;
-}
-
-/* MOBILE RESPONSIVE */
+/* ========== RESPONSIVE RULES ========== */
 @media (max-width: 768px) {
-  .myjobs-hero h1 {
+  .myjobs-desktop-nav {
+    display: none;
+  }
+
+  .myjobs-heading {
     font-size: 2rem;
   }
 
-  .myjobs-hero p {
+  .myjobs-subheading {
     font-size: 1rem;
   }
 
   .myjobs-card {
-    padding: 1.5rem;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
 
-  .job-card {
-    padding: 1.2rem;
+  .myjobs-card img {
+    max-width: 100%;
   }
 }

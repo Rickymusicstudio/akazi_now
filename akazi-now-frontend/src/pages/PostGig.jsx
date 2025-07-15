@@ -72,7 +72,9 @@ function PostGig() {
   }, [mobileNavOpen]);
 
   const fetchUserProfile = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return;
 
     const { data } = await supabase
@@ -97,7 +99,9 @@ function PostGig() {
     e.preventDefault();
     setMessage("");
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
       setMessage("❌ Not authenticated");
       return;
@@ -111,7 +115,10 @@ function PostGig() {
 
       const { error: uploadError } = await supabase.storage
         .from("job-images")
-        .upload(filePath, imageFile, { cacheControl: "3600", upsert: true });
+        .upload(filePath, imageFile, {
+          cacheControl: "3600",
+          upsert: true,
+        });
 
       if (uploadError) {
         setMessage("❌ Failed to upload image: " + uploadError.message);
@@ -135,15 +142,17 @@ function PostGig() {
     const employerName = userProfile?.full_name || "Unknown";
     const contactInfo = userProfile?.phone || "N/A";
 
-    const { error } = await supabase.from("jobs").insert([{
-      user_id: user.id,
-      ...form,
-      status: "open",
-      image_url: imageUrl,
-      poster_image: posterImage,
-      employer_name: employerName,
-      contact_info: contactInfo,
-    }]);
+    const { error } = await supabase.from("jobs").insert([
+      {
+        user_id: user.id,
+        ...form,
+        status: "open",
+        image_url: imageUrl,
+        poster_image: posterImage,
+        employer_name: employerName,
+        contact_info: contactInfo,
+      },
+    ]);
 
     if (error) {
       setMessage("❌ Failed to post job: " + error.message);
@@ -185,8 +194,11 @@ function PostGig() {
 
   return (
     <div className="public-container">
-      {/* Desktop Nav ABOVE Hero */}
-      <div className="desktop-nav">
+      {/* Desktop Nav */}
+      <div className="postgig-desktop-nav">
+        <div className="postgig-nav-left-logo" onClick={() => navigate("/")}>
+          AkaziNow
+        </div>
         <ul>
           <li onClick={() => navigate("/")}>Home</li>
           <li onClick={() => navigate("/gigs")}>Gigs</li>
@@ -195,12 +207,22 @@ function PostGig() {
           <li onClick={() => navigate("/profile")}>Profile</li>
           <li onClick={() => navigate("/inbox")}>Inbox</li>
           <li onClick={() => navigate("/carpools")}>Car Pooling</li>
-          <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+          <li
+            onClick={async () => {
+              await supabase.auth.signOut();
+              navigate("/login");
+            }}
+          >
+            Logout
+          </li>
         </ul>
       </div>
 
       {/* Hero */}
-      <div className="public-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
+      <div
+        className="public-hero"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      >
         <div className="mobile-top-bar">
           <div className="mobile-left-group">
             <img
@@ -214,16 +236,33 @@ function PostGig() {
           <NotificationBell />
         </div>
 
+        {/* 🔥 New Hero Content */}
+        <div className="hero-content">
+          <h1 className="hero-title">Post your Gig</h1>
+          <p className="hero-subtitle">
+            Share your gig and let workers come to you. It's quick and free.
+          </p>
+        </div>
+
         {mobileNavOpen && (
-          <div ref={mobileNavRef} className={`mobile-nav-overlay ${slideDirection}`}>
+          <div
+            ref={mobileNavRef}
+            className={`mobile-nav-overlay ${slideDirection}`}
+          >
             <ul>
               <li onClick={() => closeAndNavigate("/")}>Home</li>
-              <li onClick={() => closeAndNavigate("/post-job")}>Post a Job</li>
+              <li onClick={() => closeAndNavigate("/post-job")}>
+                Post a Job
+              </li>
               <li onClick={() => closeAndNavigate("/my-jobs")}>My Jobs</li>
               <li onClick={() => closeAndNavigate("/profile")}>Profile</li>
               <li onClick={() => closeAndNavigate("/inbox")}>Inbox</li>
-              <li onClick={() => closeAndNavigate("/carpools")}>Car Pooling</li>
-              <li onClick={() => closeAndNavigate("/login", true)}>Logout</li>
+              <li onClick={() => closeAndNavigate("/carpools")}>
+                Car Pooling
+              </li>
+              <li onClick={() => closeAndNavigate("/login", true)}>
+                Logout
+              </li>
             </ul>
           </div>
         )}
@@ -235,31 +274,67 @@ function PostGig() {
           <form className="postgig-form" onSubmit={handleSubmit}>
             <h2>Post a Job</h2>
             {message && (
-              <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>{message}</p>
+              <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>
+                {message}
+              </p>
             )}
             <label>Job Title</label>
-            <input type="text" name="title" value={form.title} onChange={handleChange} required />
+            <input
+              type="text"
+              name="title"
+              value={form.title}
+              onChange={handleChange}
+              required
+            />
             <label>Address</label>
-            <input type="text" name="address" value={form.address} onChange={handleChange} required />
+            <input
+              type="text"
+              name="address"
+              value={form.address}
+              onChange={handleChange}
+              required
+            />
             <label>Job Description</label>
-            <textarea name="job_description" value={form.job_description} onChange={handleChange} required />
+            <textarea
+              name="job_description"
+              value={form.job_description}
+              onChange={handleChange}
+              required
+            />
             <label>Requirement</label>
-            <textarea name="requirement" value={form.requirement} onChange={handleChange} />
+            <textarea
+              name="requirement"
+              value={form.requirement}
+              onChange={handleChange}
+            />
             <label>Price (Frw)</label>
-            <input type="number" name="price" value={form.price} onChange={handleChange} />
+            <input
+              type="number"
+              name="price"
+              value={form.price}
+              onChange={handleChange}
+            />
             <label>Upload Job Image</label>
             <input type="file" accept="image/*" onChange={handleImageChange} />
             <button type="submit">Post Job</button>
           </form>
         </div>
 
-        <div className="service-card postgig-right-sticker" style={{ background: "#fff3e6" }}>
+        <div
+          className="service-card postgig-right-sticker"
+          style={{ background: "#fff3e6" }}
+        >
           <div className="info-card-content">
             <h3>Post a Job Easily</h3>
             <p>
-              Reach thousands of Rwandan workers in seconds. AkaziNow helps you connect fast!
+              Reach thousands of Rwandan workers in seconds. AkaziNow helps you
+              connect fast!
             </p>
-            <img src={stickerOffice} alt="Post Job Illustration" className="info-card-image enlarged-sticker" />
+            <img
+              src={stickerOffice}
+              alt="Post Job Illustration"
+              className="info-card-image enlarged-sticker"
+            />
           </div>
         </div>
       </section>
