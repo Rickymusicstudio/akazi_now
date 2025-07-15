@@ -123,7 +123,7 @@ function Gigs() {
             <li onClick={() => { setMobileNavVisible(false); navigate("/profile"); }}>Profile</li>
             <li onClick={() => { setMobileNavVisible(false); navigate("/inbox"); }}>Inbox</li>
             <li onClick={() => { setMobileNavVisible(false); navigate("/carpools"); }}>Car Pooling</li>
-            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+            <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Logout</li>
           </ul>
         </div>
       )}
@@ -138,7 +138,7 @@ function Gigs() {
           <li onClick={() => navigate("/profile")}>Profile</li>
           <li onClick={() => navigate("/inbox")}>Inbox</li>
           <li onClick={() => navigate("/carpools")}>Car Pooling</li>
-          <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+          <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Logout</li>
         </ul>
       </div>
 
