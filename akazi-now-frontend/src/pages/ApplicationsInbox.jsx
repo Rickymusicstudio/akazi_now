@@ -1,66 +1,50 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
+import NotificationBell from "../components/NotificationBell.jsx";
+import { FaBars, FaCalendarCheck } from "react-icons/fa";
 import defaultAvatar from "../assets/avatar.png";
 import inboxSticker from "../assets/inbox.png";
 import backgroundImage from "../assets/kcc_bg_clean.png";
-import NotificationBell from "../components/NotificationBell.jsx";
-import { FaBars } from "react-icons/fa";
 import "./Inbox.css";
 
 function ApplicationsInbox() {
   const [applications, setApplications] = useState([]);
-  const [notifications, setNotifications] = useState([]);
-  const [isPoster, setIsPoster] = useState(false);
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [slideDirection, setSlideDirection] = useState("");
   const [userProfile, setUserProfile] = useState(null);
+  const [mobileNavVisible, setMobileNavVisible] = useState(false);
+  const [slideDirection, setSlideDirection] = useState("");
+  const mobileNavRef = useRef(null);
+  const touchStartY = useRef(0);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchInbox();
+    fetchApplications();
     fetchUserProfile();
+  }, []);
 
-    let lastScrollY = window.scrollY;
-    let touchStartY = 0;
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY < lastScrollY && mobileNavOpen) {
-        setSlideDirection("slide-up");
-        setTimeout(() => {
-          setMobileNavOpen(false);
-          setSlideDirection("");
-        }, 300);
-      }
-      lastScrollY = currentScrollY;
-    };
-
+  useEffect(() => {
     const handleTouchStart = (e) => {
-      touchStartY = e.touches[0].clientY;
+      touchStartY.current = e.touches[0].clientY;
     };
 
     const handleTouchMove = (e) => {
       const touchEndY = e.touches[0].clientY;
-      if (touchStartY - touchEndY > 50 && mobileNavOpen) {
+      if (touchStartY.current - touchEndY > 50) {
         setSlideDirection("slide-up");
-        setTimeout(() => {
-          setMobileNavOpen(false);
-          setSlideDirection("");
-        }, 300);
+        setTimeout(() => setMobileNavVisible(false), 300);
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    window.addEventListener("touchstart", handleTouchStart);
-    window.addEventListener("touchmove", handleTouchMove);
+    if (mobileNavVisible) {
+      window.addEventListener("touchstart", handleTouchStart);
+      window.addEventListener("touchmove", handleTouchMove);
+    }
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
     };
-  }, [mobileNavOpen]);
+  }, [mobileNavVisible]);
 
   const fetchUserProfile = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -75,135 +59,107 @@ function ApplicationsInbox() {
     setUserProfile(data);
   };
 
-  const fetchInbox = async () => {
+  const fetchApplications = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return navigate("/login");
 
-    const { data: appsData } = await supabase
+    const { data, error } = await supabase
       .from("applications")
-      .select(`id, message, status, applied_at, worker_id, gig_id, jobs(title, user_id)`)
-      .order("applied_at", { ascending: false });
+      .select(`*, jobs(*), users:image_id(image_url, full_name, phone)`)
+      .eq("poster_id", user.id)
+      .order("created_at", { ascending: false });
 
-    const myPostedApps = appsData.filter(app => app.jobs?.user_id === user.id);
-    setIsPoster(myPostedApps.length > 0);
+    if (!error) setApplications(data);
+  };
 
-    if (myPostedApps.length > 0) {
-      const enrichedApps = await Promise.all(
-        myPostedApps.map(async (app) => {
-          const { data: workerData } = await supabase
-            .from("users")
-            .select(`full_name, phone, image_url, cell, village, district:districts(name), sector:sectors(name)`)
-            .eq("auth_user_id", app.worker_id)
-            .single();
-          return { ...app, worker: workerData || {} };
-        })
-      );
-      setApplications(enrichedApps);
+  const handleHamburgerClick = () => {
+    if (!mobileNavVisible) {
+      setSlideDirection("slide-down");
+      setMobileNavVisible(true);
     } else {
-      const { data: notes } = await supabase
-        .from("notifications")
-        .select("id, message, application_id, created_at")
-        .eq("recipient_id", user.id)
-        .order("created_at", { ascending: false });
-      setNotifications(notes || []);
+      setSlideDirection("slide-up");
+      setTimeout(() => setMobileNavVisible(false), 300);
     }
   };
 
-  const handleUpdateStatus = async (applicationId, newStatus) => {
-    await supabase.from("applications").update({ status: newStatus }).eq("id", applicationId);
-
-    const { data: appData } = await supabase
-      .from("applications")
-      .select("worker_id, gig_id")
-      .eq("id", applicationId)
-      .single();
-
-    if (newStatus === "accepted") {
-      await supabase.from("jobs").update({ status: "closed" }).eq("id", appData.gig_id);
-    }
-
-    const { data: jobData } = await supabase
-      .from("jobs")
-      .select("title")
-      .eq("id", appData.gig_id)
-      .single();
-
-    const jobTitle = jobData?.title || "a job";
-
-    await supabase.from("notifications").insert([
-      {
-        recipient_id: appData.worker_id,
-        application_id: applicationId,
-        message:
-          newStatus === "accepted"
-            ? `🎉 Your application for ${jobTitle} has been accepted!`
-            : `❌ Your application for ${jobTitle} has been rejected.`,
-      },
-    ]);
-
-    fetchInbox();
+  const handleNavClick = (path) => {
+    setSlideDirection("slide-up");
+    setTimeout(() => {
+      setMobileNavVisible(false);
+      navigate(path);
+    }, 300);
   };
 
   return (
-    <div className="inbox-page">
+    <div className="inbox-container">
+      {/* MOBILE NAV BAR */}
+      <div className="mobile-top-bar">
+        <div className="mobile-left-group">
+          <img src={userProfile?.image_url || defaultAvatar} alt="avatar" className="mobile-profile-pic" />
+          <FaBars className="mobile-hamburger" onClick={handleHamburgerClick} />
+        </div>
+        <h2 className="mobile-title">Inbox</h2>
+        <NotificationBell />
+      </div>
+
+      {mobileNavVisible && (
+        <div ref={mobileNavRef} className={`mobile-nav-overlay ${slideDirection}`}>
+          <ul>
+            <li onClick={() => handleNavClick("/")}>Home</li>
+            <li onClick={() => handleNavClick("/gigs")}>Gigs</li>
+            <li onClick={() => handleNavClick("/post-job")}>Post a Job</li>
+            <li onClick={() => handleNavClick("/my-jobs")}>My Jobs</li>
+            <li onClick={() => handleNavClick("/profile")}>Profile</li>
+            <li onClick={() => handleNavClick("/inbox")}>Inbox</li>
+            <li onClick={() => handleNavClick("/carpools")}>Car Pooling</li>
+            <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Logout</li>
+          </ul>
+        </div>
+      )}
+
+      {/* DESKTOP NAV */}
+      <div className="inbox-desktop-nav">
+        <div className="inbox-nav-left-logo" onClick={() => navigate("/")}>AkaziNow</div>
+        <ul>
+          <li onClick={() => navigate("/")}>Home</li>
+          <li onClick={() => navigate("/gigs")}>Gigs</li>
+          <li onClick={() => navigate("/post-job")}>Post a Job</li>
+          <li onClick={() => navigate("/my-jobs")}>My Jobs</li>
+          <li onClick={() => navigate("/profile")}>Profile</li>
+          <li onClick={() => navigate("/inbox")}>Inbox</li>
+          <li onClick={() => navigate("/carpools")}>Car Pooling</li>
+          <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Logout</li>
+        </ul>
+      </div>
+
+      {/* HERO */}
       <div className="inbox-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
-        <div className="inbox-hero-overlay">
-          <h1>Inbox</h1>
-          <p>Manage applications and messages here</p>
+        <div className="inbox-hero-content">
+          <h1 className="inbox-heading">Application Inbox</h1>
+          <p className="inbox-subheading">Review incoming applications to your gigs and offers</p>
         </div>
       </div>
 
-      <div className="inbox-content">
-        <div className="inbox-left-panel">
-          {isPoster ? (
-            applications.length === 0 ? (
-              <p>No one has applied yet.</p>
-            ) : (
-              applications.map((app) => {
-                const user = app.worker || {};
-                return (
-                  <div key={app.id} className="inbox-card">
-                    <img src={user.image_url || defaultAvatar} alt="Profile" className="inbox-avatar" />
-                    <div className="inbox-card-details">
-                      <h3>{user.full_name}</h3>
-                      <p><strong>Phone:</strong> {user.phone}</p>
-                      <p><strong>District:</strong> {user.district?.name}</p>
-                      <p><strong>Sector:</strong> {user.sector?.name}</p>
-                      <p><strong>Cell:</strong> {user.cell}</p>
-                      <p><strong>Village:</strong> {user.village}</p>
-                      <p><strong>Message:</strong> {app.message}</p>
-                      <p><strong>Status:</strong> {app.status}</p>
-                      <p className="timestamp">Submitted: {new Date(app.applied_at).toLocaleString()}</p>
-                      <div className="inbox-actions">
-                        <button onClick={() => handleUpdateStatus(app.id, "accepted")}>Accept</button>
-                        <button onClick={() => handleUpdateStatus(app.id, "rejected")}>Reject</button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
-            )
-          ) : notifications.length > 0 ? (
-            notifications.map((note) => {
-              const color = note.message.includes("accepted") ? "green" : note.message.includes("rejected") ? "red" : "#333";
-              return (
-                <div key={note.id} className="inbox-card" style={{ borderLeft: `6px solid ${color}`, flexDirection: "column" }}>
-                  <p style={{ fontWeight: "bold", color }}>{note.message}</p>
-                  <p className="timestamp">Received: {new Date(note.created_at).toLocaleString()}</p>
-                </div>
-              );
-            })
-          ) : (
-            <p>You have no notifications yet.</p>
-          )}
-        </div>
-
-        <div className="inbox-right-panel">
-          <div className="inbox-sticker-card">
-            <img src={inboxSticker} alt="Inbox Visual" />
-          </div>
-        </div>
-      </div>
+      {/* APPLICATION CARDS */}
+      <section className="inbox-cards-section">
+        {applications.length > 0 ? (
+          applications.map((app) => (
+            <div className="inbox-card" key={app.id}>
+              <div className="inbox-card-text">
+                <h2>{app.users?.full_name || "Anonymous"}</h2>
+                <p><strong>Phone:</strong> {app.users?.phone || "N/A"}</p>
+                <p><strong>Message:</strong> {app.message}</p>
+                <p><strong>Job:</strong> {app.jobs?.title || "N/A"}</p>
+              </div>
+              {app.users?.image_url && (
+                <img src={app.users.image_url} alt="applicant" />
+              )}
+            </div>
+          ))
+        ) : (
+          <p className="inbox-empty">No applications received yet.</p>
+        )}
+      </section>
     </div>
   );
 }

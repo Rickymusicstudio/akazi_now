@@ -1,4 +1,4 @@
-/* RESET */
+/* RESET */
 * {
   margin: 0;
   padding: 0;
@@ -7,8 +7,7 @@
 
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: #f4f6f8;
-  overflow-x: hidden;
+  background-color: #f4f6f8;
 }
 
 .inbox-container {
@@ -17,137 +16,186 @@ body {
   min-height: 100vh;
 }
 
-/* HERO SECTION */
-.inbox-hero {
+/* ========== MOBILE TOP BAR ========== */
+.mobile-top-bar {
   width: 100%;
-  height: 50vh;
-  background-image: url("../assets/kcc_bg_clean.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  color: white;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  text-align: center;
-  padding: 2rem;
-}
-
-.inbox-hero h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-}
-
-.inbox-hero p {
-  font-size: 1.2rem;
-  max-width: 600px;
-}
-
-/* MAIN CONTENT */
-.inbox-content {
-  background: white;
-  margin-top: -4rem;
-  margin-inline: auto;
-  padding: 2rem;
-  border-radius: 16px;
-  width: 90%;
-  max-width: 1000px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-/* INBOX CARD */
-.inbox-card {
-  display: flex;
-  flex-direction: column;
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-}
-
-.inbox-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 1rem;
-  align-self: center;
-}
-
-.inbox-card-details {
-  text-align: left;
-}
-
-.inbox-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.inbox-actions button {
+  justify-content: space-between;
+  padding: 1rem;
   background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
   color: white;
-  border: none;
-  border-radius: 999px;
-  padding: 0.5rem 1.2rem;
-  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.mobile-left-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mobile-profile-pic {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+
+.mobile-hamburger {
+  font-size: 1.5rem;
   cursor: pointer;
-  transition: background 0.3s ease;
 }
 
-.inbox-actions button:hover {
-  background: linear-gradient(to right, #12283b, #2c3e50, #2c5364);
+.mobile-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
 }
 
-.timestamp {
-  font-size: 12px;
-  color: #777;
+/* ========== MOBILE NAV DROPDOWN ========== */
+.mobile-nav-overlay {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  background: #0f2027;
+  color: white;
+  z-index: 20;
+  padding: 1.5rem;
+  animation: slideDown 0.3s ease;
 }
 
-/* NOTIFICATION CARD COLORING */
-.notification-accepted {
-  border-left: 5px solid green;
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
-.notification-rejected {
-  border-left: 5px solid red;
+/* ========== DESKTOP NAV ========== */
+.inbox-desktop-nav {
+  position: relative;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-/* RESPONSIVE */
+.inbox-nav-left-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #FFD700;
+  cursor: pointer;
+}
+
+.inbox-desktop-nav ul {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+}
+
+.inbox-desktop-nav ul li {
+  cursor: pointer;
+  font-weight: bold;
+  color: white;
+}
+
+.inbox-desktop-nav ul li:hover {
+  text-decoration: underline;
+}
+
+/* ========== HERO SECTION ========== */
+.inbox-hero {
+  background-size: cover;
+  background-position: center;
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: white;
+}
+
+.inbox-hero-content {
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 2rem;
+  border-radius: 1rem;
+}
+
+.inbox-heading {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.inbox-subheading {
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
+}
+
+/* ========== CARDS SECTION ========== */
+.inbox-cards-section {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.inbox-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+  max-width: 700px;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  gap: 1.5rem;
+  flex-direction: column;
+}
+
+.inbox-card h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.inbox-card p {
+  margin: 0.2rem 0;
+}
+
+.inbox-empty {
+  font-size: 1rem;
+  color: #888;
+  margin-top: 2rem;
+}
+
+/* ========== RESPONSIVE RULES ========== */
 @media (max-width: 768px) {
-  .inbox-hero {
-    height: 40vh;
-    padding: 1.5rem;
+  .inbox-desktop-nav {
+    display: none;
   }
 
-  .inbox-hero h1 {
+  .inbox-heading {
     font-size: 2rem;
   }
 
-  .inbox-hero p {
+  .inbox-subheading {
     font-size: 1rem;
   }
 
-  .inbox-content {
-    width: 95%;
-    padding: 1.2rem;
-    margin-top: -3rem;
-  }
-
   .inbox-card {
-    padding: 1rem;
-  }
-
-  .inbox-avatar {
-    width: 60px;
-    height: 60px;
-  }
-
-  .inbox-actions {
-    flex-direction: column;
+    text-align: center;
   }
 }
