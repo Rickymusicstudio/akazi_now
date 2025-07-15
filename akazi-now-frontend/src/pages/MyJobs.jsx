@@ -34,25 +34,14 @@ function MyJobs() {
       }
     };
 
-    const handleScroll = () => {
-      if (!mobileNavVisible) return;
-      setSlideDirection("slide-up");
-      setTimeout(() => {
-        setMobileNavVisible(false);
-        setSlideDirection("");
-      }, 300);
-    };
-
     if (mobileNavVisible) {
       window.addEventListener("touchstart", handleTouchStart);
       window.addEventListener("touchmove", handleTouchMove);
-      window.addEventListener("scroll", handleScroll);
     }
 
     return () => {
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
-      window.removeEventListener("scroll", handleScroll);
     };
   }, [mobileNavVisible]);
 
@@ -131,7 +120,7 @@ function MyJobs() {
             <li onClick={() => handleNavClick("/profile")}>Profile</li>
             <li onClick={() => handleNavClick("/inbox")}>Inbox</li>
             <li onClick={() => handleNavClick("/carpools")}>Car Pooling</li>
-            <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Logout</li>
+            <li onClick={async () => { await supabase.auth.signOut(); navigate("/index"); }}>Logout</li>
           </ul>
         </div>
       )}
@@ -147,7 +136,7 @@ function MyJobs() {
           <li onClick={() => navigate("/profile")}>Profile</li>
           <li onClick={() => navigate("/inbox")}>Inbox</li>
           <li onClick={() => navigate("/carpools")}>Car Pooling</li>
-          <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Logout</li>
+          <li onClick={async () => { await supabase.auth.signOut(); navigate("/index"); }}>Logout</li>
         </ul>
       </div>
 
