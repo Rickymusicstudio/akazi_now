@@ -20,6 +20,47 @@ function Gigs() {
     fetchUserProfile();
   }, []);
 
+  useEffect(() => {
+    let touchStartY = 0;
+
+    const handleTouchStart = (e) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e) => {
+      if (!mobileNavVisible) return;
+      const touchEndY = e.touches[0].clientY;
+      const swipeDistance = touchStartY - touchEndY;
+
+      if (swipeDistance > 50) {
+        setSlideDirection("slide-up");
+        setTimeout(() => {
+          setMobileNavVisible(false);
+          setSlideDirection("");
+        }, 300);
+      }
+    };
+
+    const handleScroll = () => {
+      if (!mobileNavVisible) return;
+      setSlideDirection("slide-up");
+      setTimeout(() => {
+        setMobileNavVisible(false);
+        setSlideDirection("");
+      }, 300);
+    };
+
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchmove", handleTouchMove);
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [mobileNavVisible]);
+
   const fetchJobs = async () => {
     const { data, error } = await supabase.from("jobs").select("*");
     if (!error) setJobs(data);
