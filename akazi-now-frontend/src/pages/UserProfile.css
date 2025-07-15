@@ -7,211 +7,143 @@
 
 html, body, #root {
   height: 100%;
-  margin: 0;
-  padding: 0;
   font-family: 'Segoe UI', sans-serif;
+  background-color: #f9f9f9;
+  overflow-x: hidden;
 }
 
-/* Autofill fix */
-.profile-form input,
-.profile-form select {
-  background-color: #fff !important;
-  color: #000 !important;
-  -webkit-text-fill-color: #000 !important;
-  caret-color: auto;
-  transition: background-color 9999s ease-in-out 0s;
-}
-
-input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
-  -webkit-text-fill-color: #000 !important;
-}
-
-/* === Main Container === */
-.profile-container {
+/* === HERO SECTION === */
+.userprofile-hero {
+  width: 100%;
+  height: 60vh;
+  background-image: url('../assets/kcc_bg_clean.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: flex;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-  flex-direction: row;
-}
-
-/* === Left Panel (Desktop) === */
-.profile-left {
-  flex: 1;
-  background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
-  display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  position: relative;
-  color: white;
-}
-
-.nav-buttons {
-  position: absolute;
-  top: 1rem;
-  left: 1.5rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.nav-buttons button {
-  background: none;
-  border: none;
-  color: white;
-  font-weight: bold;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-/* Profile Card */
-.profile-card {
-  background-color: white;
-  border-radius: 16px;
-  padding: 2rem;
-  width: 80%;
-  max-width: 320px;
   text-align: center;
-  margin-top: 1rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  color: white;
 }
 
-.profile-card img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
+.userprofile-hero h1 {
+  font-size: 2.7rem;
+  font-weight: bold;
 }
 
-/* === Right Panel === */
-.profile-right {
+.userprofile-hero p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+/* === MAIN SECTION BELOW HERO === */
+.userprofile-main {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 4rem 2rem;
+  background-color: white;
+  flex-wrap: wrap;
+  gap: 3rem;
+}
+
+/* === LEFT FORM COLUMN === */
+.userprofile-form-container {
   flex: 1;
-  background-color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 2rem;
-  overflow-y: auto;
+  max-width: 500px;
+  min-width: 280px;
 }
 
-/* Settings and Form */
-.profile-menu {
-  width: 100%;
-  max-width: 420px;
+.userprofile-form-container h2 {
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.userprofile-form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-}
-
-.profile-menu .btn {
-  background: #f0f0f0;
-  color: #333;
-  border: 1px solid #ccc;
-  text-align: left;
-  padding: 1rem;
-  font-size: 1rem;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.profile-menu .btn:hover {
-  background-color: #e4e4e4;
-}
-
-.profile-form {
-  width: 100%;
-  max-width: 420px;
+  background: #ffffff;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
-  border-radius: 20px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  max-height: 90vh;
-  overflow-y: auto;
+  border-radius: 12px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
 }
 
-.profile-form label {
+.userprofile-form label {
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.95rem;
 }
 
-.profile-form input,
-.profile-form select {
-  width: 100%;
+.userprofile-form input,
+.userprofile-form select {
   padding: 0.75rem;
   border-radius: 10px;
   border: 1px solid #ccc;
   font-size: 1rem;
+  background-color: white;
 }
 
-/* Buttons */
-.btn {
+.userprofile-form button {
   background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-  color: #fff;
-  padding: 12px;
-  font-size: 16px;
-  width: 100%;
+  color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
+  padding: 0.75rem;
+  font-size: 1rem;
   cursor: pointer;
-  margin-top: 0.5rem;
+  margin-top: 1rem;
 }
 
-.btn:hover {
+.userprofile-form button:hover {
   opacity: 0.9;
 }
 
-/* === Mobile Top Bar === */
+/* === RIGHT STICKER IMAGE === */
+.userprofile-sticker {
+  flex: 1;
+  max-width: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.userprofile-sticker img {
+  width: 100%;
+  max-width: 350px;
+  object-fit: contain;
+}
+
+/* === MOBILE TOP BAR === */
 .mobile-top-bar {
   display: none;
 }
 
-/* === Responsive Mobile Layout === */
 @media screen and (max-width: 768px) {
-  .profile-container {
-    flex-direction: column;
-    background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
-    height: auto;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  .profile-left {
-    display: none;
-  }
-
-  .profile-right {
-    width: 100%;
+  .userprofile-hero {
+    height: 45vh;
     padding: 1.5rem;
-    padding-top: 6rem;
-    background: white;
-    min-height: 100vh;
-    box-sizing: border-box;
   }
 
-  .profile-form,
-  .profile-menu {
-    max-width: 380px;
+  .userprofile-hero h1 {
+    font-size: 2rem;
+  }
+
+  .userprofile-main {
+    flex-direction: column;
+    padding: 2rem 1rem;
+    gap: 2rem;
+  }
+
+  .userprofile-form-container,
+  .userprofile-sticker {
+    width: 100%;
+  }
+
+  .userprofile-sticker img {
+    max-width: 280px;
     margin: 0 auto;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
-    padding-bottom: 120px;
-  }
-
-  .profile-form input,
-  .profile-form select {
-    font-size: 1rem;
-    padding: 0.75rem;
   }
 
   .mobile-top-bar {
@@ -225,6 +157,7 @@ input:-webkit-autofill {
     width: 100%;
     z-index: 999;
     gap: 0.75rem;
+    color: white;
   }
 
   .mobile-left-group {
@@ -243,7 +176,6 @@ input:-webkit-autofill {
 
   .mobile-hamburger {
     font-size: 1.8rem;
-    font-weight: bold;
     color: white;
     cursor: pointer;
   }
@@ -253,10 +185,9 @@ input:-webkit-autofill {
     text-align: center;
     font-size: 1.2rem;
     font-weight: bold;
-    color: white;
   }
 
-  /* === Slide Mobile Nav Overlay === */
+  /* === SLIDE NAV === */
   .mobile-nav-overlay {
     position: fixed;
     top: 60px;
@@ -285,7 +216,6 @@ input:-webkit-autofill {
     cursor: pointer;
   }
 
-  /* === Slide Animations === */
   .mobile-nav-overlay.slide-up {
     animation: slideUp 0.3s ease forwards;
   }
