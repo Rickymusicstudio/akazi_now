@@ -1,167 +1,279 @@
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
-import NotificationBell from "../components/NotificationBell.jsx";
-import { FaBars, FaCalendarCheck } from "react-icons/fa";
 import defaultAvatar from "../assets/avatar.png";
-import inboxSticker from "../assets/inbox.png";
+import NotificationBell from "../components/NotificationBell";
 import backgroundImage from "../assets/kcc_bg_clean.png";
-import "./Inbox.css";
+import { FaBars, FaCalendarCheck } from "react-icons/fa";
+import "./BrowseRides.css";
 
-function ApplicationsInbox() {
-  const [applications, setApplications] = useState([]);
-  const [userProfile, setUserProfile] = useState(null);
-  const [mobileNavVisible, setMobileNavVisible] = useState(false);
+function BrowseRides() {
+  const [rides, setRides] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [reservationCounts, setReservationCounts] = useState({});
+  const [userId, setUserId] = useState(null);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [slideDirection, setSlideDirection] = useState("");
-  const mobileNavRef = useRef(null);
-  const touchStartY = useRef(0);
+  const [userProfile, setUserProfile] = useState(null);
+  const lastScrollY = useRef(0);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchApplications();
-    fetchUserProfile();
+    getCurrentUser();
+    fetchRides();
   }, []);
 
   useEffect(() => {
-    const handleTouchStart = (e) => {
-      touchStartY.current = e.touches[0].clientY;
+    let touchStartY = 0;
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      if (currentY < lastScrollY.current - 10 && mobileNavOpen) {
+        setSlideDirection("slide-up");
+        setTimeout(() => setMobileNavOpen(false), 300);
+      }
+      lastScrollY.current = currentY;
     };
-
+    const handleTouchStart = (e) => {
+      touchStartY = e.touches[0].clientY;
+    };
     const handleTouchMove = (e) => {
       const touchEndY = e.touches[0].clientY;
-      if (touchStartY.current - touchEndY > 50) {
+      if (touchStartY - touchEndY > 50 && mobileNavOpen) {
         setSlideDirection("slide-up");
-        setTimeout(() => setMobileNavVisible(false), 300);
+        setTimeout(() => setMobileNavOpen(false), 300);
       }
     };
-
-    if (mobileNavVisible) {
-      window.addEventListener("touchstart", handleTouchStart);
-      window.addEventListener("touchmove", handleTouchMove);
-    }
-
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchmove", handleTouchMove);
     return () => {
+      window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
     };
-  }, [mobileNavVisible]);
+  }, [mobileNavOpen]);
 
-  const fetchUserProfile = async () => {
+  const getCurrentUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { data } = await supabase
-      .from("users")
-      .select("image_url")
-      .eq("auth_user_id", user.id)
-      .single();
-
-    setUserProfile(data);
-  };
-
-  const fetchApplications = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return navigate("/login");
-
-    const { data, error } = await supabase
-      .from("applications")
-      .select(`*, jobs(*), users:image_id(image_url, full_name, phone)`)
-      .eq("poster_id", user.id)
-      .order("created_at", { ascending: false });
-
-    if (!error) setApplications(data);
-  };
-
-  const handleHamburgerClick = () => {
-    if (!mobileNavVisible) {
-      setSlideDirection("slide-down");
-      setMobileNavVisible(true);
-    } else {
-      setSlideDirection("slide-up");
-      setTimeout(() => setMobileNavVisible(false), 300);
+    setUserId(user?.id || null);
+    if (user?.id) {
+      const { data: profile } = await supabase
+        .from("users")
+        .select("image_url")
+        .eq("auth_user_id", user.id)
+        .single();
+      setUserProfile(profile);
     }
   };
 
-  const handleNavClick = (path) => {
-    setSlideDirection("slide-up");
-    setTimeout(() => {
-      setMobileNavVisible(false);
-      navigate(path);
-    }, 300);
+  const fetchRides = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("carpools")
+      .select(`
+        *,
+        driver:user_id(full_name, phone, image_url),
+        reservations:carpool_reservations(user_id, seats_reserved)
+      `)
+      .order("datetime", { ascending: false });
+
+    if (!error) {
+      setRides(data || []);
+    } else {
+      console.error("Error fetching rides:", error.message);
+    }
+    setLoading(false);
+  };
+
+  const handleSeatChange = (carpoolId, value) => {
+    const numericValue = parseInt(value);
+    setReservationCounts(prev => ({
+      ...prev,
+      [carpoolId]: isNaN(numericValue) || numericValue <= 0 ? "" : numericValue
+    }));
+  };
+
+  const reserveSeat = async (ride, seatsRequested) => {
+    const carpoolId = ride.id;
+    const reservedCount = Array.isArray(ride.reservations)
+      ? ride.reservations.reduce((sum, r) => sum + (r.seats_reserved ?? 0), 0)
+      : 0;
+    const seatsLeft = (ride.available_seats ?? 0) - reservedCount;
+    const numericSeats = parseInt(seatsRequested);
+    if (!userId) {
+      alert("Please login to reserve a seat.");
+      navigate("/login");
+      return;
+    }
+    if (isNaN(numericSeats) || numericSeats <= 0) {
+      alert("⚠️ Please enter a valid number of seats.");
+      return;
+    }
+    if (ride.reservations?.some(r => r.user_id === userId)) {
+      alert("⚠️ You already reserved a seat.");
+      return;
+    }
+    if (numericSeats > seatsLeft) {
+      alert("❌ Not enough seats left.");
+      return;
+    }
+    const { error } = await supabase.from("carpool_reservations").insert([{
+      carpool_id: carpoolId,
+      user_id: userId,
+      seats_reserved: numericSeats,
+    }]);
+    if (error) {
+      alert("❌ Reservation failed: " + error.message);
+    } else {
+      alert("✅ Reservation successful!");
+      fetchRides();
+    }
+  };
+
+  const cancelReservation = async (carpoolId) => {
+    if (!userId) return;
+    const { error } = await supabase
+      .from("carpool_reservations")
+      .delete()
+      .match({ carpool_id: carpoolId, user_id: userId });
+
+    if (!error) {
+      alert("🗑️ Reservation cancelled.");
+      fetchRides();
+    } else {
+      alert("❌ Failed to cancel: " + error.message);
+    }
   };
 
   return (
-    <div className="inbox-container">
-      {/* MOBILE NAV BAR */}
+    <>
+      {/* Desktop Nav */}
+      <div className="browse-desktop-nav">
+        <div className="browse-nav-left-logo" onClick={() => navigate("/gigs")}>AkaziNow</div>
+        <ul>
+          <li onClick={() => navigate("/gigs")}>Home</li>
+          <li onClick={() => navigate("/browse-rides")}>Browse Rides</li>
+          <li onClick={() => navigate("/post-ride")}>Post Ride</li>
+          <li onClick={() => navigate("/carpool-inbox")}>Carpool Inbox</li>
+          <li onClick={() => navigate("/abasare")}>Abasare</li>
+          <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+        </ul>
+      </div>
+
+      {/* Mobile Nav */}
       <div className="mobile-top-bar">
         <div className="mobile-left-group">
           <img src={userProfile?.image_url || defaultAvatar} alt="avatar" className="mobile-profile-pic" />
-          <FaBars className="mobile-hamburger" onClick={handleHamburgerClick} />
+          <FaBars className="mobile-hamburger" onClick={() => {
+            setSlideDirection("slide-down");
+            setMobileNavOpen(true);
+          }} />
         </div>
-        <h2 className="mobile-title">Inbox</h2>
+        <h2 className="mobile-title">Browse Rides</h2>
         <NotificationBell />
       </div>
 
-      {mobileNavVisible && (
-        <div ref={mobileNavRef} className={`mobile-nav-overlay ${slideDirection}`}>
+      {mobileNavOpen && (
+        <div className={`mobile-nav-overlay ${slideDirection}`}>
           <ul>
-            <li onClick={() => handleNavClick("/")}>Home</li>
-            <li onClick={() => handleNavClick("/gigs")}>Gigs</li>
-            <li onClick={() => handleNavClick("/post-job")}>Post a Job</li>
-            <li onClick={() => handleNavClick("/my-jobs")}>My Jobs</li>
-            <li onClick={() => handleNavClick("/profile")}>Profile</li>
-            <li onClick={() => handleNavClick("/inbox")}>Inbox</li>
-            <li onClick={() => handleNavClick("/carpools")}>Car Pooling</li>
-            <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Logout</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/gigs"); }}>Home</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/browse-rides"); }}>Browse Rides</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/post-ride"); }}>Post Ride</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox"); }}>Carpool Inbox</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/abasare"); }}>Abasare</li>
+            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
           </ul>
         </div>
       )}
 
-      {/* DESKTOP NAV */}
-      <div className="inbox-desktop-nav">
-        <div className="inbox-nav-left-logo" onClick={() => navigate("/")}>AkaziNow</div>
-        <ul>
-          <li onClick={() => navigate("/")}>Home</li>
-          <li onClick={() => navigate("/gigs")}>Gigs</li>
-          <li onClick={() => navigate("/post-job")}>Post a Job</li>
-          <li onClick={() => navigate("/my-jobs")}>My Jobs</li>
-          <li onClick={() => navigate("/profile")}>Profile</li>
-          <li onClick={() => navigate("/inbox")}>Inbox</li>
-          <li onClick={() => navigate("/carpools")}>Car Pooling</li>
-          <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Logout</li>
-        </ul>
-      </div>
-
-      {/* HERO */}
-      <div className="inbox-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
-        <div className="inbox-hero-content">
-          <h1 className="inbox-heading">Application Inbox</h1>
-          <p className="inbox-subheading">Review incoming applications to your gigs and offers</p>
+      {/* Hero */}
+      <div className="browse-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
+        <div className="browse-hero-content">
+          <h1 className="browse-heading">Available Rides</h1>
+          <p className="browse-subheading">Find a safe and affordable ride near you</p>
         </div>
       </div>
 
-      {/* APPLICATION CARDS */}
-      <section className="inbox-cards-section">
-        {applications.length > 0 ? (
-          applications.map((app) => (
-            <div className="inbox-card" key={app.id}>
-              <div className="inbox-card-text">
-                <h2>{app.users?.full_name || "Anonymous"}</h2>
-                <p><strong>Phone:</strong> {app.users?.phone || "N/A"}</p>
-                <p><strong>Message:</strong> {app.message}</p>
-                <p><strong>Job:</strong> {app.jobs?.title || "N/A"}</p>
-              </div>
-              {app.users?.image_url && (
-                <img src={app.users.image_url} alt="applicant" />
-              )}
-            </div>
-          ))
-        ) : (
-          <p className="inbox-empty">No applications received yet.</p>
-        )}
+      {/* Count */}
+      <section className="browse-count-section">
+        <h2 className="browse-count-title">🛻 Available Rides</h2>
+        <div className="browse-count">
+          <FaCalendarCheck /> {rides.length} Total Rides
+        </div>
       </section>
-    </div>
+
+      {/* Ride Cards */}
+      <div className="browse-cards-section">
+        {loading ? (
+          <p className="browse-empty">Loading rides...</p>
+        ) : rides.length === 0 ? (
+          <p className="browse-empty">No rides available right now.</p>
+        ) : (
+          rides.map((ride) => {
+            const reservedCount = Array.isArray(ride.reservations)
+              ? ride.reservations.reduce((sum, r) => sum + (r.seats_reserved ?? 0), 0)
+              : 0;
+            const seatsLeft = Math.max(0, (ride.available_seats ?? 0) - reservedCount);
+            const selectedSeats = reservationCounts[ride.id] ?? "";
+            const hasReserved = ride.reservations?.some(r => r.user_id === userId);
+            const rideIsPast = new Date(ride.datetime) < new Date();
+
+            return (
+              <div className="browse-card" key={ride.id}>
+                <div className="browse-card-text">
+                  <h2>{ride.origin} → {ride.destination}</h2>
+                  <p><strong>Seats:</strong> {ride.available_seats} | <strong>Left:</strong> {seatsLeft}</p>
+                  <p><strong>Date:</strong> {new Date(ride.datetime).toLocaleString()}</p>
+                  {ride.price && <p><strong>Price:</strong> {ride.price} RWF</p>}
+                  {ride.notes && <p><strong>Note:</strong> {ride.notes}</p>}
+                  <p><strong>Driver:</strong> {ride.driver?.full_name || "Unknown"}</p>
+                  <p><strong>Contact:</strong> {ride.driver?.phone || "N/A"}</p>
+
+                  {rideIsPast ? (
+                    <p className="no-seats-text">🕒 This ride has already occurred.</p>
+                  ) : hasReserved ? (
+                    <button className="cancel-btn" onClick={() => cancelReservation(ride.id)}>
+                      Cancel Reservation
+                    </button>
+                  ) : seatsLeft > 0 ? (
+                    <div className="reserve-row">
+                      <input
+                        type="number"
+                        min="1"
+                        value={selectedSeats}
+                        onChange={(e) => handleSeatChange(ride.id, e.target.value)}
+                        placeholder="Seats"
+                      />
+                      <button className="reserve-btn" onClick={() => reserveSeat(ride, selectedSeats)}>
+                        Reserve
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="no-seats-text">No seats left</p>
+                  )}
+                </div>
+                {ride.car_image && (
+                  <img src={ride.car_image} alt="Car" className="ride-car-image" />
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Footer */}
+      <footer className="browse-footer">
+        <div className="browse-footer-inner">
+          <p>© 2025 AkaziNow. All rights reserved.</p>
+          <div className="browse-footer-links">
+            <button onClick={() => navigate("/about")}>About</button>
+            <button onClick={() => navigate("/help")}>Help</button>
+            <button onClick={() => navigate("/contact")}>Contact</button>
+          </div>
+        </div>
+      </footer>
+    </>
   );
 }
 
-export default ApplicationsInbox;
+export default BrowseRides;

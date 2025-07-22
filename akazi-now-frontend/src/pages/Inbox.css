@@ -23,7 +23,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 1rem;
-  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
   color: white;
   position: sticky;
   top: 0;
@@ -40,11 +40,14 @@ body {
   width: 35px;
   height: 35px;
   border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
 }
 
 .mobile-hamburger {
   font-size: 1.5rem;
   cursor: pointer;
+  color: white;
 }
 
 .mobile-title {
@@ -59,11 +62,19 @@ body {
   top: 60px;
   left: 0;
   width: 100%;
-  background: #0f2027;
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
   color: white;
   z-index: 20;
   padding: 1.5rem;
   animation: slideDown 0.3s ease;
+}
+
+.slide-down {
+  animation-name: slideDown;
+}
+
+.slide-up {
+  animation-name: slideUp;
 }
 
 @keyframes slideDown {
@@ -75,9 +86,37 @@ body {
   }
 }
 
+@keyframes slideUp {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+.mobile-nav-overlay ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.mobile-nav-overlay li {
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  font-size: 1.1rem;
+  width: 100%;
+}
+
+.mobile-nav-overlay li:last-child {
+  border-bottom: none;
+}
+
 /* ========== DESKTOP NAV ========== */
 .inbox-desktop-nav {
-  position: relative;
   background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
   color: white;
   padding: 1rem 2rem;
@@ -144,7 +183,34 @@ body {
   margin-top: 0.5rem;
 }
 
-/* ========== CARDS SECTION ========== */
+/* ========== COUNT SECTION ========== */
+.inbox-count-section {
+  text-align: center;
+  padding: 2rem 1rem;
+  background-color: white;
+  border-radius: 12px;
+  margin: -3rem auto 2rem;
+  max-width: 600px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  z-index: 1;
+  position: relative;
+}
+
+.inbox-count-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.inbox-count {
+  margin-top: 0.5rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ========== APPLICATION CARDS ========== */
 .inbox-cards-section {
   padding: 2rem;
   display: flex;
@@ -153,7 +219,7 @@ body {
 }
 
 .inbox-card {
-  background: white;
+  background: #fff9db;
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
@@ -161,23 +227,37 @@ body {
   max-width: 700px;
   width: 100%;
   text-align: left;
-  display: flex;
-  gap: 1.5rem;
-  flex-direction: column;
 }
 
 .inbox-card h2 {
-  font-size: 1.2rem;
   margin-bottom: 0.5rem;
+  color: #2c3e50;
+  font-size: 1.3rem;
 }
 
 .inbox-card p {
-  margin: 0.2rem 0;
+  margin: 0.3rem 0;
+}
+
+.inbox-card button {
+  background: #d4a017;
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  margin-top: 1rem;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.inbox-card button:hover {
+  background: #bb8c0e;
 }
 
 .inbox-empty {
   font-size: 1rem;
   color: #888;
+  text-align: center;
   margin-top: 2rem;
 }
 
@@ -196,6 +276,13 @@ body {
   }
 
   .inbox-card {
-    text-align: center;
+    padding: 1rem;
   }
+}
+
+/* ========== DARK BLUE ENFORCER ========== */
+.mobile-top-bar,
+.mobile-nav-overlay {
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364) !important;
+  color: white !important;
 }

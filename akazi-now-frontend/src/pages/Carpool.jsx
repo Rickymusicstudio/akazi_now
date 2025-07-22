@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell";
 import defaultAvatar from "../assets/avatar.png";
+import backgroundImage from "../assets/kcc_bg_clean.png";
 import { FaBars } from "react-icons/fa";
 import "./Carpool.css";
 
@@ -18,54 +19,33 @@ function Carpool() {
 
   const [carImageFile, setCarImageFile] = useState(null);
   const [message, setMessage] = useState("");
-  const [userProfile, setUserProfile] = useState({ full_name: "", contact_info: "" });
+  const [userProfile, setUserProfile] = useState(null);
   const [profilePic, setProfilePic] = useState(defaultAvatar);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [slideDirection, setSlideDirection] = useState("");
   const navigate = useNavigate();
+  const touchStartYRef = useRef(0);
 
   useEffect(() => {
     fetchProfile();
   }, []);
 
   useEffect(() => {
-    let lastScrollY = window.scrollY;
-    let touchStartY = 0;
-
-    const handleScroll = () => {
-      if (!mobileNavOpen) return;
-      const currentScrollY = window.scrollY;
-      if (currentScrollY < lastScrollY) {
-        setSlideDirection("slide-up");
-        setTimeout(() => {
-          setMobileNavOpen(false);
-          setSlideDirection("");
-        }, 300);
-      }
-      lastScrollY = currentScrollY;
-    };
-
     const handleTouchStart = (e) => {
-      touchStartY = e.touches[0].clientY;
+      touchStartYRef.current = e.touches[0].clientY;
     };
-
     const handleTouchMove = (e) => {
       const touchEndY = e.touches[0].clientY;
-      if (touchStartY - touchEndY > 50 && mobileNavOpen) {
+      if (touchStartYRef.current - touchEndY > 50) {
         setSlideDirection("slide-up");
-        setTimeout(() => {
-          setMobileNavOpen(false);
-          setSlideDirection("");
-        }, 300);
+        setTimeout(() => setMobileNavOpen(false), 300);
       }
     };
-
-    window.addEventListener("scroll", handleScroll);
-    window.addEventListener("touchstart", handleTouchStart);
-    window.addEventListener("touchmove", handleTouchMove);
-
+    if (mobileNavOpen) {
+      window.addEventListener("touchstart", handleTouchStart);
+      window.addEventListener("touchmove", handleTouchMove);
+    }
     return () => {
-      window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
     };
@@ -95,7 +75,6 @@ function Carpool() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
-
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return setMessage("❌ Please login first.");
 
@@ -104,134 +83,96 @@ function Carpool() {
       const ext = carImageFile.name.split(".").pop();
       const fileName = `${Date.now()}.${ext}`;
       const filePath = `carpool-images/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("carpool-images")
-        .upload(filePath, carImageFile);
-
-      if (uploadError) {
-        return setMessage("❌ Failed to upload car image.");
-      }
-
+      const { error: uploadError } = await supabase.storage.from("carpool-images").upload(filePath, carImageFile);
+      if (uploadError) return setMessage("❌ Failed to upload car image.");
       const { data } = supabase.storage.from("carpool-images").getPublicUrl(filePath);
       carImageUrl = data.publicUrl;
     }
 
     const { error } = await supabase.from("carpools").insert([{
       user_id: user.id,
+      driver_id: user.id,
       ...form,
       car_image: carImageUrl,
-      contact_info: userProfile.contact_info,
-      driver_name: userProfile.full_name,
+      contact_info: userProfile?.contact_info || null,
+      driver_name: userProfile?.full_name || null,
     }]);
 
     if (error) {
       setMessage("❌ Failed to post carpool: " + error.message);
     } else {
       setMessage("✅ Carpool offer posted!");
-      setForm({
-        origin: "",
-        destination: "",
-        available_seats: "",
-        datetime: "",
-        price: "",
-        notes: "",
-      });
+      setForm({ origin: "", destination: "", available_seats: "", datetime: "", price: "", notes: "" });
       setCarImageFile(null);
     }
   };
 
-  const handleMenuClick = () => {
-    if (!mobileNavOpen) {
-      setSlideDirection("slide-down");
-      setMobileNavOpen(true);
-    } else {
-      setSlideDirection("slide-up");
-      setTimeout(() => {
-        setMobileNavOpen(false);
-        setSlideDirection("");
-      }, 300);
-    }
-  };
-
-  const closeAndNavigate = async (path, logout = false) => {
-    setSlideDirection("slide-up");
-    setTimeout(async () => {
-      setMobileNavOpen(false);
-      setSlideDirection("");
-      if (logout) await supabase.auth.signOut();
-      navigate(path);
-    }, 300);
-  };
-
   return (
     <div className="carpool-container">
-      <div className="mobile-top-bar carpool-top-bar">
+      {/* Top Nav */}
+      <div className="mobile-top-bar">
         <div className="mobile-left-group">
-          <div className="mobile-profile-pic-wrapper">
-            <img src={profilePic} alt="Profile" className="mobile-profile-pic" />
-          </div>
-          <FaBars className="mobile-hamburger" onClick={handleMenuClick} />
+          <img src={profilePic} alt="Profile" className="mobile-profile-pic" />
+          <FaBars className="mobile-hamburger" onClick={() => {
+            setSlideDirection("slide-down");
+            setMobileNavOpen(true);
+          }} />
         </div>
-        <h2 className="mobile-title">Post Carpool</h2>
-        <div className="mobile-bell-wrapper">
-          <NotificationBell />
-        </div>
+        <h2 className="mobile-title">Post Ride</h2>
+        <NotificationBell />
       </div>
 
       {mobileNavOpen && (
         <div className={`mobile-nav-overlay ${slideDirection}`}>
           <ul>
-            <li onClick={() => closeAndNavigate("/")}>Home</li>
-            <li onClick={() => closeAndNavigate("/carpools")}>Browse Rides</li>
-            <li onClick={() => closeAndNavigate("/carpool")}>Post Ride</li>
-            <li onClick={() => closeAndNavigate("/carpool-inbox")}>Carpool Inbox</li>
-            <li onClick={() => closeAndNavigate("/abasare")}>Abasare</li>
-            <li onClick={() => closeAndNavigate("/login", true)}>Logout</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/"); }}>Home</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools"); }}>Browse Rides</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool"); }}>Post Ride</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox"); }}>Carpool Inbox</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/abasare"); }}>Abasare</li>
+            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
           </ul>
         </div>
       )}
 
-      <div className="carpool-left">
-        <div className="nav-buttons">
-          <button onClick={() => navigate("/")}>Home</button>
-          <button onClick={() => navigate("/carpools")}>Browse Rides</button>
-          <button onClick={() => navigate("/carpool")}>Post Ride</button>
-          <button onClick={() => navigate("/carpool-inbox")}>Carpool Inbox</button>
-          <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>Logout</button>
+      {/* Hero Section */}
+      <div className="carpool-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
+        <div className="carpool-hero-content">
+          <h1 className="carpool-heading">Post Carpool Ride</h1>
+          <p className="carpool-subheading">Share your available seats and earn money while helping others.</p>
         </div>
-        <h2 style={{ fontSize: "28px", fontWeight: "bold", marginTop: "3rem" }}>Post Carpool Offer</h2>
-        <NotificationBell />
       </div>
 
-      <div className="carpool-right">
-        <form onSubmit={handleSubmit} className="carpool-form">
+      {/* Center Card Form Section */}
+      <section className="carpool-cards-section">
+        <div className="carpool-card">
           {message && <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>{message}</p>}
+          <form onSubmit={handleSubmit}>
+            <label>Origin</label>
+            <input type="text" name="origin" value={form.origin} onChange={handleChange} required />
 
-          <label>Origin</label>
-          <input type="text" name="origin" className="carpool-input" placeholder="Origin (e.g. Kigali)" value={form.origin} onChange={handleChange} required />
+            <label>Destination</label>
+            <input type="text" name="destination" value={form.destination} onChange={handleChange} required />
 
-          <label>Destination</label>
-          <input type="text" name="destination" className="carpool-input" placeholder="Destination (e.g. Huye)" value={form.destination} onChange={handleChange} required />
+            <label>Available Seats</label>
+            <input type="number" name="available_seats" value={form.available_seats} onChange={handleChange} required />
 
-          <label>Available Seats</label>
-          <input type="number" name="available_seats" className="carpool-input" placeholder="Available Seats" value={form.available_seats} onChange={handleChange} required />
+            <label>Date and Time</label>
+            <input type="datetime-local" name="datetime" value={form.datetime} onChange={handleChange} required />
 
-          <label>Date and Time</label>
-          <input type="datetime-local" name="datetime" className="carpool-input" value={form.datetime} onChange={(e) => { handleChange(e); e.target.blur(); }} required />
+            <label>Price (Frw)</label>
+            <input type="number" name="price" value={form.price} onChange={handleChange} />
 
-          <label>Price (Frw)</label>
-          <input type="number" name="price" className="carpool-input" placeholder="Price (Frw)" value={form.price} onChange={handleChange} />
+            <label>Note (Optional)</label>
+            <textarea name="notes" rows="3" value={form.notes} onChange={handleChange} />
 
-          <label>Extra Message</label>
-          <textarea name="notes" className="carpool-textarea" placeholder="Extra Message (Optional)" value={form.notes} onChange={handleChange} rows={4} />
+            <label>Car Image (optional)</label>
+            <input type="file" accept="image/*" onChange={(e) => setCarImageFile(e.target.files[0])} />
 
-          <label>Upload Car Picture</label>
-          <input type="file" accept="image/*" onChange={(e) => setCarImageFile(e.target.files[0])} />
-
-          <button type="submit" className="submit-btn">Post Ride</button>
-        </form>
-      </div>
+            <button type="submit">Post Ride</button>
+          </form>
+        </div>
+      </section>
     </div>
   );
 }

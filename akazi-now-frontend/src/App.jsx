@@ -12,8 +12,9 @@ import Gigs from "./pages/Gigs";
 import MyApplications from "./pages/MyApplications";
 import ApplicationsInbox from "./pages/ApplicationsInbox";
 import MyJobs from "./pages/MyJobs";
-import Carpool from "./pages/Carpool";
-import BrowseRides from "./pages/BrowseRides";
+import Carpool from "./pages/Carpool"; // Post Ride (older version)
+import PostRide from "./pages/PostRide"; // ✅ New PostRide component
+import BrowseRides from "./pages/BrowseRides"; // Browse Carpools
 import CarpoolInbox from "./pages/CarpoolInbox";
 import NotificationsDetail from "./pages/NotificationsDetail";
 import JobDetails from "./pages/JobDetails";
@@ -21,9 +22,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Abasare from "./pages/Abasare";
 import AbasareDetail from "./pages/AbasareDetail";
 import Settings from "./pages/Settings";
-
-// ✅ Landing Page
-import Index from "./pages/index";
+import Index from "./pages/index"; // Public landing
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
@@ -45,21 +44,21 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* 🔐 Auth Routes */}
+        {/* Auth */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* ✅ Public Landing Page */}
+        {/* Public Landing */}
         <Route path="/" element={<Index />} />
 
-        {/* ✅ Public Browsing */}
+        {/* Public Gigs & Browse */}
         <Route path="/gigs" element={<Gigs />} />
         <Route path="/carpools" element={<BrowseRides />} />
         <Route path="/abasare" element={<Abasare />} />
 
-        {/* 🔐 Actions That Require Login */}
+        {/* Protected Actions */}
         <Route
           path="/post-job"
           element={
@@ -73,6 +72,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Carpool />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/post-ride"
+          element={
+            <ProtectedRoute>
+              <PostRide />
             </ProtectedRoute>
           }
         />
@@ -132,8 +139,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
-        {/* 🔐 Detailed Views */}
         <Route
           path="/abasare/:id"
           element={

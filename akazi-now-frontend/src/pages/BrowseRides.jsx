@@ -3,7 +3,8 @@ import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../assets/avatar.png";
 import NotificationBell from "../components/NotificationBell";
-import { FaBars } from "react-icons/fa";
+import backgroundImage from "../assets/kcc_bg_clean.png";
+import { FaBars, FaCalendarCheck } from "react-icons/fa";
 import "./BrowseRides.css";
 
 function BrowseRides() {
@@ -14,8 +15,8 @@ function BrowseRides() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [slideDirection, setSlideDirection] = useState("");
   const [userProfile, setUserProfile] = useState(null);
-  const navigate = useNavigate();
   const lastScrollY = useRef(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getCurrentUser();
@@ -24,7 +25,6 @@ function BrowseRides() {
 
   useEffect(() => {
     let touchStartY = 0;
-
     const handleScroll = () => {
       const currentY = window.scrollY;
       if (currentY < lastScrollY.current - 10 && mobileNavOpen) {
@@ -33,11 +33,9 @@ function BrowseRides() {
       }
       lastScrollY.current = currentY;
     };
-
     const handleTouchStart = (e) => {
       touchStartY = e.touches[0].clientY;
     };
-
     const handleTouchMove = (e) => {
       const touchEndY = e.touches[0].clientY;
       if (touchStartY - touchEndY > 50 && mobileNavOpen) {
@@ -45,11 +43,9 @@ function BrowseRides() {
         setTimeout(() => setMobileNavOpen(false), 300);
       }
     };
-
     window.addEventListener("scroll", handleScroll);
     window.addEventListener("touchstart", handleTouchStart);
     window.addEventListener("touchmove", handleTouchMove);
-
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("touchstart", handleTouchStart);
@@ -58,7 +54,9 @@ function BrowseRides() {
   }, [mobileNavOpen]);
 
   const getCurrentUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     setUserId(user?.id || null);
     if (user?.id) {
       const { data: profile } = await supabase
@@ -79,19 +77,21 @@ function BrowseRides() {
         driver:user_id(full_name, phone, image_url),
         reservations:carpool_reservations(user_id, seats_reserved)
       `)
-      .order("datetime", { ascending: true });
+      .order("datetime", { ascending: false });
 
     if (!error) {
       setRides(data || []);
+    } else {
+      console.error("Error fetching rides:", error.message);
     }
     setLoading(false);
   };
 
   const handleSeatChange = (carpoolId, value) => {
     const numericValue = parseInt(value);
-    setReservationCounts(prev => ({
+    setReservationCounts((prev) => ({
       ...prev,
-      [carpoolId]: isNaN(numericValue) || numericValue <= 0 ? "" : numericValue
+      [carpoolId]: isNaN(numericValue) || numericValue <= 0 ? "" : numericValue,
     }));
   };
 
@@ -100,36 +100,32 @@ function BrowseRides() {
     const reservedCount = Array.isArray(ride.reservations)
       ? ride.reservations.reduce((sum, r) => sum + (r.seats_reserved ?? 0), 0)
       : 0;
-    const seatsLeft = ride.available_seats - reservedCount;
+    const seatsLeft = (ride.available_seats ?? 0) - reservedCount;
     const numericSeats = parseInt(seatsRequested);
-
     if (!userId) {
       alert("Please login to reserve a seat.");
       navigate("/login");
       return;
     }
-
     if (isNaN(numericSeats) || numericSeats <= 0) {
       alert("⚠️ Please enter a valid number of seats.");
       return;
     }
-
-    if (ride.reservations?.some(r => r.user_id === userId)) {
+    if (ride.reservations?.some((r) => r.user_id === userId)) {
       alert("⚠️ You already reserved a seat.");
       return;
     }
-
     if (numericSeats > seatsLeft) {
       alert("❌ Not enough seats left.");
       return;
     }
-
-    const { error } = await supabase.from("carpool_reservations").insert([{
-      carpool_id: carpoolId,
-      user_id: userId,
-      seats_reserved: numericSeats,
-    }]);
-
+    const { error } = await supabase.from("carpool_reservations").insert([
+      {
+        carpool_id: carpoolId,
+        user_id: userId,
+        seats_reserved: numericSeats,
+      },
+    ]);
     if (error) {
       alert("❌ Reservation failed: " + error.message);
     } else {
@@ -153,24 +149,23 @@ function BrowseRides() {
     }
   };
 
-  const navButtonStyle = {
-    background: "none",
-    color: "white",
-    border: "none",
-    fontWeight: "bold",
-    fontSize: "14px",
-    cursor: "pointer"
-  };
-
   return (
     <>
+      <div className="browse-desktop-nav">
+        <div className="browse-nav-left-logo" onClick={() => navigate("/gigs")}>AkaziNow</div>
+        <ul>
+          <li onClick={() => navigate("/gigs")}>Home</li>
+          <li onClick={() => navigate("/browse-rides")}>Browse Rides</li>
+          <li onClick={() => navigate("/post-ride")}>Post Ride</li>
+          <li onClick={() => navigate("/carpool-inbox")}>Carpool Inbox</li>
+          <li onClick={() => navigate("/abasare")}>Abasare</li>
+          <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+        </ul>
+      </div>
+
       <div className="mobile-top-bar">
         <div className="mobile-left-group">
-          <img
-            src={userProfile?.image_url || defaultAvatar}
-            alt="avatar"
-            className="mobile-profile-pic"
-          />
+          <img src={userProfile?.image_url || defaultAvatar} alt="avatar" className="mobile-profile-pic" />
           <FaBars className="mobile-hamburger" onClick={() => {
             setSlideDirection("slide-down");
             setMobileNavOpen(true);
@@ -181,125 +176,102 @@ function BrowseRides() {
       </div>
 
       {mobileNavOpen && (
-        <div className={`mobile-nav-overlay ${slideDirection ? `browse-${slideDirection}` : ""}`}>
+        <div className={`mobile-nav-overlay ${slideDirection}`}>
           <ul>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/gigs") }}>Home</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpools") }}>Browse Rides</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/post-ride") }}>Post Ride</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox") }}>Carpool Inbox</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/abasare") }}>Abasare</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/gigs"); }}>Home</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/browse-rides"); }}>Browse Rides</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/post-ride"); }}>Post Ride</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox"); }}>Carpool Inbox</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/abasare"); }}>Abasare</li>
             <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
           </ul>
         </div>
       )}
 
-      <div className="browse-container">
-        <div className="browse-left">
-          <div className="nav-buttons">
-            <button onClick={() => navigate("/gigs")} style={navButtonStyle}>Home</button>
-            <button onClick={() => navigate("/carpools")} style={navButtonStyle}>Browse Rides</button>
-            <button onClick={() => navigate("/post-ride")} style={navButtonStyle}>Post Ride</button>
-            <button onClick={() => navigate("/carpool-inbox")} style={navButtonStyle}>Carpool Inbox</button>
-            <button onClick={() => navigate("/abasare")} style={navButtonStyle}>Abasare</button>
-            <button
-              onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}
-              style={navButtonStyle}
-            >
-              Logout
-            </button>
-          </div>
-          <h2 style={{ fontSize: "28px", fontWeight: "bold", marginTop: "3rem" }}>Available Rides</h2>
-          <NotificationBell />
-        </div>
-
-        <div className="browse-right">
-          {loading ? (
-            <p>Loading rides...</p>
-          ) : rides.length === 0 ? (
-            <p>No rides available right now.</p>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              {rides.map((ride) => {
-                const reservedCount = Array.isArray(ride.reservations)
-                  ? ride.reservations.reduce((sum, r) => sum + (r.seats_reserved ?? 0), 0)
-                  : 0;
-                const seatsLeft = Math.max(0, ride.available_seats - reservedCount);
-                const selectedSeats = reservationCounts[ride.id] !== undefined ? reservationCounts[ride.id] : "";
-                const hasReserved = ride.reservations?.some(r => r.user_id === userId);
-
-                return (
-                  <div key={ride.id} className="ride-card">
-                    <img
-                      src={ride.driver?.image_url || defaultAvatar}
-                      alt="Driver"
-                      style={{ width: "70px", height: "70px", borderRadius: "50%", objectFit: "cover" }}
-                    />
-
-                    <div style={{ flex: 1 }}>
-                      <h3>{ride.origin} → {ride.destination}</h3>
-                      <p><strong>Seats:</strong> {ride.available_seats} | <strong>Left:</strong> {seatsLeft}</p>
-                      <p><strong>Date/Time:</strong> {new Date(ride.datetime).toLocaleString()}</p>
-                      {ride.price && <p><strong>Price:</strong> {ride.price} RWF</p>}
-                      {ride.notes && <p><strong>Note:</strong> {ride.notes}</p>}
-                      <p><strong>Driver:</strong> {ride.driver?.full_name || "Unknown"}</p>
-                      <p><strong>Contact:</strong> {ride.driver?.phone || "N/A"}</p>
-
-                      {hasReserved ? (
-                        <button
-                          onClick={() => cancelReservation(ride.id)}
-                          style={{
-                            ...reserveBtnStyle,
-                            background: "#2c5364",
-                            color: "white"
-                          }}
-                        >
-                          Cancel Reservation
-                        </button>
-                      ) : seatsLeft > 0 ? (
-                        <div style={{ marginTop: "0.5rem" }}>
-                          <input
-                            type="number"
-                            min="1"
-                            value={selectedSeats}
-                            placeholder="Seats"
-                            onChange={(e) => handleSeatChange(ride.id, e.target.value)}
-                            style={{ width: "60px", marginRight: "10px" }}
-                          />
-                          <button onClick={() => reserveSeat(ride, selectedSeats)} style={reserveBtnStyle}>
-                            Reserve
-                          </button>
-                        </div>
-                      ) : (
-                        <p style={{ color: "red", fontWeight: "bold" }}>No seats left</p>
-                      )}
-                    </div>
-
-                    {ride.car_image && (
-                      <img
-                        src={ride.car_image}
-                        alt="Car"
-                        style={{ width: "140px", height: "90px", objectFit: "cover", borderRadius: "10px" }}
-                      />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
+      <div className="browse-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
+        <div className="browse-hero-content">
+          <h1 className="browse-heading">Available Rides</h1>
+          <p className="browse-subheading">Find a safe and affordable ride near you</p>
         </div>
       </div>
+
+      <section className="browse-count-section">
+        <h2 className="browse-count-title">🚛 Available Rides</h2>
+        <div className="browse-count">
+          <FaCalendarCheck /> {rides.length} Total Rides
+        </div>
+      </section>
+
+      <div className="browse-cards-section">
+        {loading ? (
+          <p className="browse-empty">Loading rides...</p>
+        ) : rides.length === 0 ? (
+          <p className="browse-empty">No rides available right now.</p>
+        ) : (
+          rides.map((ride) => {
+            const reservedCount = Array.isArray(ride.reservations)
+              ? ride.reservations.reduce((sum, r) => sum + (r.seats_reserved ?? 0), 0)
+              : 0;
+            const seatsLeft = Math.max(0, (ride.available_seats ?? 0) - reservedCount);
+            const selectedSeats = reservationCounts[ride.id] ?? "";
+            const hasReserved = ride.reservations?.some(r => r.user_id === userId);
+            const rideDate = new Date(ride.datetime);
+            const now = new Date();
+            const timeDiff = now - rideDate;
+            const isExpired = timeDiff > 24 * 60 * 60 * 1000;
+            const isFullyReserved = seatsLeft === 0;
+
+            return (
+              <div className="browse-card" key={ride.id}>
+                <div className="browse-card-text">
+                  <h2>{ride.origin} → {ride.destination}</h2>
+                  <p><strong>Seats:</strong> {ride.available_seats} | <strong>Left:</strong> {seatsLeft}</p>
+                  <p><strong>Date:</strong> {rideDate.toLocaleString()}</p>
+                  {ride.price && <p><strong>Price:</strong> {ride.price} RWF</p>}
+                  {ride.notes && <p><strong>Note:</strong> {ride.notes}</p>}
+                  <p><strong>Driver:</strong> {ride.driver?.full_name || "Unknown"}</p>
+                  <p><strong>Contact:</strong> {ride.driver?.phone || "N/A"}</p>
+
+                  {isExpired ? (
+                    <p className="no-seats-text">⏰ This ride has expired. Please repost.</p>
+                  ) : isFullyReserved ? (
+                    <p className="no-seats-text">✅ Ride is fully reserved.</p>
+                  ) : hasReserved ? (
+                    <button className="cancel-btn" onClick={() => cancelReservation(ride.id)}>Cancel Reservation</button>
+                  ) : (
+                    <div className="reserve-row">
+                      <input
+                        type="number"
+                        min="1"
+                        value={selectedSeats}
+                        onChange={(e) => handleSeatChange(ride.id, e.target.value)}
+                        placeholder="Seats"
+                      />
+                      <button className="reserve-btn" onClick={() => reserveSeat(ride, selectedSeats)}>
+                        Reserve
+                      </button>
+                    </div>
+                  )}
+                </div>
+                {ride.car_image && (
+                  <img src={ride.car_image} alt="Car" className="ride-car-image" />
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      <footer className="public-footer">
+        <p>&copy; {new Date().getFullYear()} AkaziNow. All rights reserved.</p>
+        <div className="footer-links">
+          <button onClick={() => navigate("/about")}>About</button>
+          <button onClick={() => navigate("/help")}>Help</button>
+          <button onClick={() => navigate("/contact")}>Contact</button>
+        </div>
+      </footer>
     </>
   );
 }
-
-const reserveBtnStyle = {
-  padding: "8px 16px",
-  borderRadius: "8px",
-  background: "linear-gradient(to right, #0f2027, #203a43, #2c5364)",
-  color: "white",
-  border: "none",
-  cursor: "pointer",
-  fontWeight: "bold",
-};
 
 export default BrowseRides;

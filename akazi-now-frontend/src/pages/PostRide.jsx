@@ -2,19 +2,20 @@ import { useState, useRef, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
-import { FaBars } from "react-icons/fa";
 import defaultAvatar from "../assets/avatar.png";
-import stickerOffice from "../assets/office.png";
+import stickerRide from "../assets/ride.png";
 import backgroundImage from "../assets/kcc_bg_clean.png";
-import "./PostGig.css";
+import { FaBars } from "react-icons/fa";
+import "./PostRide.css";
 
-function PostGig() {
+function PostRide() {
   const [form, setForm] = useState({
-    title: "",
-    address: "",
-    job_description: "",
-    requirement: "",
+    origin: "",
+    destination: "",
+    available_seats: "",
+    datetime: "",
     price: "",
+    notes: "",
   });
   const [imageFile, setImageFile] = useState(null);
   const [message, setMessage] = useState("");
@@ -29,14 +30,12 @@ function PostGig() {
   }, []);
 
   const fetchUserProfile = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
     const { data } = await supabase
       .from("users")
-      .select("image_url, full_name, phone")
+      .select("image_url")
       .eq("auth_user_id", user.id)
       .single();
 
@@ -54,7 +53,6 @@ function PostGig() {
       if (!mobileNavOpen) return;
       const touchEndY = e.touches[0].clientY;
       const swipeDistance = touchStartY - touchEndY;
-
       if (swipeDistance > 50) {
         setSlideDirection("slide-up");
         setTimeout(() => {
@@ -76,7 +74,6 @@ function PostGig() {
     window.addEventListener("touchstart", handleTouchStart);
     window.addEventListener("touchmove", handleTouchMove);
     window.addEventListener("scroll", handleScroll);
-
     return () => {
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
@@ -97,9 +94,7 @@ function PostGig() {
     e.preventDefault();
     setMessage("");
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       setMessage("❌ Not authenticated");
       return;
@@ -107,61 +102,37 @@ function PostGig() {
 
     let imageUrl = null;
     if (imageFile) {
-      const fileExt = imageFile.name.split(".").pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `${fileName}`;
-
+      const fileName = `${Date.now()}-${imageFile.name}`;
       const { error: uploadError } = await supabase.storage
-        .from("job-images")
-        .upload(filePath, imageFile, {
-          cacheControl: "3600",
-          upsert: true,
-        });
+        .from("car-images")
+        .upload(fileName, imageFile, { cacheControl: "3600", upsert: true });
 
       if (uploadError) {
-        setMessage("❌ Failed to upload image: " + uploadError.message);
+        setMessage("❌ Image upload failed: " + uploadError.message);
         return;
       }
 
-      const { data } = supabase.storage
-        .from("job-images")
-        .getPublicUrl(filePath);
-
+      const { data } = supabase.storage.from("car-images").getPublicUrl(fileName);
       imageUrl = data.publicUrl;
     }
 
-    const { data: userProfile } = await supabase
-      .from("users")
-      .select("image_url, full_name, phone")
-      .eq("auth_user_id", user.id)
-      .single();
-
-    const posterImage = userProfile?.image_url || null;
-    const employerName = userProfile?.full_name || "Unknown";
-    const contactInfo = userProfile?.phone || "N/A";
-
-    const { error } = await supabase.from("jobs").insert([
-      {
-        user_id: user.id,
-        ...form,
-        status: "open",
-        image_url: imageUrl,
-        poster_image: posterImage,
-        employer_name: employerName,
-        contact_info: contactInfo,
-      },
-    ]);
+    const { error } = await supabase.from("carpools").insert([{
+      ...form,
+      user_id: user.id,
+      car_image: imageUrl
+    }]);
 
     if (error) {
-      setMessage("❌ Failed to post job: " + error.message);
+      setMessage("❌ Failed to post ride: " + error.message);
     } else {
-      setMessage("✅ Job posted successfully!");
+      setMessage("✅ Ride posted!");
       setForm({
-        title: "",
-        address: "",
-        job_description: "",
-        requirement: "",
+        origin: "",
+        destination: "",
+        available_seats: "",
+        datetime: "",
         price: "",
+        notes: "",
       });
       setImageFile(null);
     }
@@ -199,24 +170,20 @@ function PostGig() {
         </div>
         <ul>
           <li onClick={() => navigate("/")}>Home</li>
-          <li onClick={() => navigate("/gigs")}>Gigs</li>
-          <li onClick={() => navigate("/post-job")}>Post a Job</li>
-          <li onClick={() => navigate("/my-jobs")}>My Jobs</li>
+          <li onClick={() => navigate("/carpools")}>Browse Rides</li>
+          <li onClick={() => navigate("/post-ride")}>Post Ride</li>
+          <li onClick={() => navigate("/carpool-inbox")}>Carpool Inbox</li>
           <li onClick={() => navigate("/profile")}>Profile</li>
-          <li onClick={() => navigate("/inbox")}>Inbox</li>
-          <li onClick={() => navigate("/carpools")}>Car Pooling</li>
+          <li onClick={() => navigate("/abasare")}>Abasare</li>
           <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>
             Logout
           </li>
         </ul>
       </div>
 
-      {/* Hero */}
+      {/* Hero Section */}
       <div className="public-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
-        <div
-          className="mobile-top-bar"
-          style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
-        >
+        <div className="mobile-top-bar">
           <div className="mobile-left-group">
             <img
               src={userProfile?.image_url || defaultAvatar}
@@ -225,75 +192,64 @@ function PostGig() {
             />
             <FaBars className="mobile-hamburger" onClick={handleMenuToggle} />
           </div>
-          <h2 className="mobile-title">Post a Job</h2>
+          <h2 className="mobile-title">Post Ride</h2>
           <NotificationBell />
         </div>
 
         <div className="hero-content">
-          <h1 className="hero-title">Post your Gig</h1>
-          <p className="hero-subtitle">
-            Share your gig and let workers come to you. It's quick and free.
-          </p>
+          <h1 className="hero-title">Share Your Ride</h1>
+          <p className="hero-subtitle">Post a carpool and help others reach their destination</p>
         </div>
 
         {mobileNavOpen && (
           <div
             ref={mobileNavRef}
             className={`mobile-nav-overlay ${slideDirection}`}
-            style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
           >
             <ul>
               <li onClick={() => closeAndNavigate("/")}>Home</li>
-              <li onClick={() => closeAndNavigate("/gigs")}>Gigs</li>
-              <li onClick={() => closeAndNavigate("/post-job")}>Post a Job</li>
-              <li onClick={() => closeAndNavigate("/my-jobs")}>My Jobs</li>
+              <li onClick={() => closeAndNavigate("/carpools")}>Browse Rides</li>
+              <li onClick={() => closeAndNavigate("/post-ride")}>Post Ride</li>
+              <li onClick={() => closeAndNavigate("/carpool-inbox")}>Carpool Inbox</li>
               <li onClick={() => closeAndNavigate("/profile")}>Profile</li>
-              <li onClick={() => closeAndNavigate("/inbox")}>Inbox</li>
-              <li onClick={() => closeAndNavigate("/carpools")}>Car Pooling</li>
+              <li onClick={() => closeAndNavigate("/abasare")}>Abasare</li>
               <li onClick={() => closeAndNavigate("/", true)}>Logout</li>
             </ul>
           </div>
         )}
       </div>
 
-      {/* Main Form Section */}
+      {/* Main Section */}
       <section className="services-section">
         <div className="service-card" style={{ background: "#fff8d4" }}>
           <form className="postgig-form" onSubmit={handleSubmit}>
-            <h2>Post a Job</h2>
+            <h2>Post a Ride</h2>
             {message && (
-              <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>
-                {message}
-              </p>
+              <p style={{ color: message.startsWith("✅") ? "green" : "red" }}>{message}</p>
             )}
-            <label>Job Title</label>
-            <input type="text" name="title" value={form.title} onChange={handleChange} required />
-            <label>Address</label>
-            <input type="text" name="address" value={form.address} onChange={handleChange} required />
-            <label>Job Description</label>
-            <textarea name="job_description" value={form.job_description} onChange={handleChange} required />
-            <label>Requirement</label>
-            <textarea name="requirement" value={form.requirement} onChange={handleChange} />
+            <label>Origin</label>
+            <input type="text" name="origin" value={form.origin} onChange={handleChange} required />
+            <label>Destination</label>
+            <input type="text" name="destination" value={form.destination} onChange={handleChange} required />
+            <label>Available Seats</label>
+            <input type="number" name="available_seats" value={form.available_seats} onChange={handleChange} required />
+            <label>Date & Time</label>
+            <input type="datetime-local" name="datetime" value={form.datetime} onChange={handleChange} required />
             <label>Price (Frw)</label>
             <input type="number" name="price" value={form.price} onChange={handleChange} />
-            <label>Upload Job Image</label>
+            <label>Extra Notes</label>
+            <textarea name="notes" value={form.notes} onChange={handleChange} />
+            <label>Upload Car Picture</label>
             <input type="file" accept="image/*" onChange={handleImageChange} />
-            <button type="submit">Post Job</button>
+            <button type="submit">Post Ride</button>
           </form>
         </div>
 
-        <div className="service-card postgig-right-sticker" style={{ background: "#fff3e6" }}>
+        <div className="service-card postgig-right-sticker" style={{ background: "#e6f7ff" }}>
           <div className="info-card-content">
-            <h3>Post a Job Easily</h3>
-            <p>
-              Reach thousands of Rwandan workers in seconds. AkaziNow helps you
-              connect fast!
-            </p>
-            <img
-              src={stickerOffice}
-              alt="Post Job Illustration"
-              className="info-card-image enlarged-sticker"
-            />
+            <h3>Share Your Ride</h3>
+            <p>Help others reach their destination while reducing travel cost. It's easy!</p>
+            <img src={stickerRide} alt="Ride Illustration" className="info-card-image enlarged-sticker" />
           </div>
         </div>
       </section>
@@ -311,4 +267,4 @@ function PostGig() {
   );
 }
 
-export default PostGig;
+export default PostRide;

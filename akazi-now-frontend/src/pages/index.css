@@ -151,25 +151,27 @@ body {
   width: 100%;
   padding: 3rem 1rem;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: row; /* horizontal layout */
   justify-content: center;
+  align-items: flex-start;
   gap: 2rem;
   background: #f7f7f7;
+  flex-wrap: nowrap; /* prevent wrap on large screen */
+  overflow-x: auto;  /* fallback scroll if screen is small */
 }
 
 .service-card {
-  width: 280px;
-  max-width: 90vw;
+  flex: 0 0 300px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  text-align: left;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 1.5rem;
   transition: transform 0.2s ease;
+  text-align: left;
 }
 
 .service-card:hover {
@@ -244,8 +246,14 @@ body {
     flex-direction: column;
   }
 
+  .services-section {
+    flex-direction: column;
+    align-items: center;
+  }
+
   .service-card {
     width: 90%;
+    max-width: 95%;
   }
 
   .public-topbar {

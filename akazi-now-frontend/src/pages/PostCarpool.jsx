@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
 import defaultAvatar from "../assets/avatar.png";
 import { FaBars } from "react-icons/fa";
-import "./PostCarpool.css";
+import "./PostRide.css";
 
 function PostCarpool() {
   const [form, setForm] = useState({

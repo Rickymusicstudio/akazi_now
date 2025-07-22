@@ -7,205 +7,212 @@
 
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: #f0f2f5;
+  background-color: #f4f6f8;
 }
 
-/* MAIN CONTAINER */
+/* ========== CONTAINER ========== */
 .carpool-container {
   display: flex;
-  height: 100vh;
-  overflow: hidden;
-  flex-direction: row;
-}
-
-/* DESKTOP LEFT PANEL */
-.carpool-left {
-  width: 50%;
-  background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
-  color: white;
-  padding: 2rem;
-  display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  text-align: center;
+  min-height: 100vh;
 }
 
-.nav-buttons {
-  position: absolute;
-  top: 1.5rem;
-  left: 2rem;
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.nav-buttons button {
-  background: none;
-  border: none;
-  color: white;
-  font-weight: bold;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-/* RIGHT PANEL */
-.carpool-right {
-  width: 50%;
-  overflow-y: auto;
-  padding: 2rem;
-  background: #f9f9f9;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.carpool-form {
-  background: white;
-  padding: 2rem;
-  border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
-  width: 100%;
-  max-width: 600px;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.carpool-form label {
-  font-weight: bold;
-}
-
-.carpool-form input,
-.carpool-form textarea {
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  font-size: 15px;
-  width: 100%;
-  resize: vertical;
-}
-
-/* BUTTON */
-.submit-btn {
-  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-  color: white;
-  padding: 12px;
-  border: none;
-  border-radius: 999px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: 1rem;
-}
-
-/* MOBILE TOP BAR */
+/* ========== MOBILE TOP BAR ========== */
 .mobile-top-bar {
-  display: none;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
   color: white;
-  padding: 1rem;
-  justify-content: space-between;
-  align-items: center;
-  position: fixed;
+  position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 999;
 }
 
-.mobile-title {
-  font-size: 18px;
-  font-weight: bold;
+.mobile-left-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mobile-profile-pic {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
 }
 
 .mobile-hamburger {
-  font-size: 22px;
+  font-size: 1.5rem;
   cursor: pointer;
+  color: white;
 }
 
-/* FULLSCREEN NAV */
+.mobile-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+}
+
+/* ========== MOBILE NAV ========== */
 .mobile-nav-overlay {
-  display: none;
   position: fixed;
   top: 60px;
   left: 0;
-  right: 0;
+  width: 100%;
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
   color: white;
-  z-index: 999;
-  padding-top: 1rem;
+  z-index: 20;
+  padding: 1.5rem;
+  animation: slideDown 0.3s ease;
+}
+
+.slide-down {
+  animation-name: slideDown;
+}
+
+.slide-up {
+  animation-name: slideUp;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
 }
 
 .mobile-nav-overlay ul {
   list-style: none;
   padding: 0;
   margin: 0;
+  text-align: center;
 }
 
 .mobile-nav-overlay li {
-  padding: 1rem;
+  padding: 1rem 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  font-size: 16px;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.mobile-nav-overlay li:last-child {
+  border-bottom: none;
+}
+
+/* ========== HERO SECTION ========== */
+.carpool-hero {
+  background-size: cover;
+  background-position: center;
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: white;
+}
+
+.carpool-hero-content {
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 2rem;
+  border-radius: 1rem;
+}
+
+.carpool-heading {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.carpool-subheading {
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
+}
+
+/* ========== FORM SECTION ========== */
+.carpool-cards-section {
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.carpool-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  max-width: 700px;
+  width: 100%;
+}
+
+.carpool-card form {
+  display: flex;
+  flex-direction: column;
+}
+
+.carpool-card label {
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+.carpool-card input,
+.carpool-card textarea {
+  margin-top: 0.3rem;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.carpool-card button {
+  margin-top: 1.5rem;
+  background: #2c5364;
+  color: white;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
 }
 
-/* 🔒 SCOPED STYLES */
-.carpool-top-bar .mobile-left-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.carpool-card button:hover {
+  background: #1e3c4a;
 }
 
-.carpool-top-bar .mobile-profile-pic-wrapper {
-  width: 32px;
-  height: 32px;
-}
-
-.carpool-top-bar .mobile-profile-pic {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.mobile-bell-wrapper {
-  margin-left: auto;
-}
-
-/* RESPONSIVE */
+/* ========== RESPONSIVE RULES ========== */
 @media (max-width: 768px) {
-  .carpool-container {
-    flex-direction: column;
+  .carpool-heading {
+    font-size: 2rem;
   }
 
-  .carpool-left {
-    display: none;
+  .carpool-subheading {
+    font-size: 1rem;
   }
 
-  .carpool-right {
-    width: 100%;
-    padding: 6rem 1rem 2rem;
-    overflow-y: auto;
-  }
-
-  .mobile-top-bar {
-    display: flex;
-  }
-
-  .mobile-nav-overlay {
-    display: block;
+  .carpool-card {
+    padding: 1rem;
   }
 }
 
-/* FIX INPUT DARK BACKGROUND ON ANDROID & AUTOFILL */
-.carpool-form input,
-.carpool-form textarea {
-  background-color: white !important;
-  color: black !important;
-  -webkit-text-fill-color: black !important;
-  caret-color: black;
+/* ========== DARK BLUE ENFORCER ========== */
+.mobile-top-bar,
+.mobile-nav-overlay {
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364) !important;
+  color: white !important;
 }
