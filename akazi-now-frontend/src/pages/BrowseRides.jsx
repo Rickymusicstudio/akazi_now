@@ -10,12 +10,11 @@ import "./BrowseRides.css";
 function BrowseRides() {
   const [rides, setRides] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [reservationCounts, setReservationCounts] = useState({});
   const [userId, setUserId] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [slideDirection, setSlideDirection] = useState("");
-  const [userProfile, setUserProfile] = useState(null);
-  const lastScrollY = useRef(0);
+  const mobileNavRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,43 +24,37 @@ function BrowseRides() {
 
   useEffect(() => {
     let touchStartY = 0;
-    const handleScroll = () => {
-      const currentY = window.scrollY;
-      if (currentY < lastScrollY.current - 10 && mobileNavOpen) {
-        setSlideDirection("slide-up");
-        setTimeout(() => setMobileNavOpen(false), 300);
-      }
-      lastScrollY.current = currentY;
-    };
     const handleTouchStart = (e) => {
       touchStartY = e.touches[0].clientY;
     };
     const handleTouchMove = (e) => {
       const touchEndY = e.touches[0].clientY;
-      if (touchStartY - touchEndY > 50 && mobileNavOpen) {
-        setSlideDirection("slide-up");
+      const deltaY = touchEndY - touchStartY;
+      if (deltaY < -50) {
+        setSlideDirection("up");
         setTimeout(() => setMobileNavOpen(false), 300);
       }
     };
-    window.addEventListener("scroll", handleScroll);
-    window.addEventListener("touchstart", handleTouchStart);
-    window.addEventListener("touchmove", handleTouchMove);
+    const navRef = mobileNavRef.current;
+    if (navRef) {
+      navRef.addEventListener("touchstart", handleTouchStart);
+      navRef.addEventListener("touchmove", handleTouchMove);
+    }
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchmove", handleTouchMove);
+      if (navRef) {
+        navRef.removeEventListener("touchstart", handleTouchStart);
+        navRef.removeEventListener("touchmove", handleTouchMove);
+      }
     };
   }, [mobileNavOpen]);
 
   const getCurrentUser = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    setUserId(user?.id || null);
-    if (user?.id) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      setUserId(user.id);
       const { data: profile } = await supabase
         .from("users")
-        .select("image_url")
+        .select("*")
         .eq("auth_user_id", user.id)
         .single();
       setUserProfile(profile);
@@ -72,81 +65,70 @@ function BrowseRides() {
     setLoading(true);
     const { data, error } = await supabase
       .from("carpools")
-      .select(`
-        *,
-        driver:user_id(full_name, phone, image_url),
-        reservations:carpool_reservations(user_id, seats_reserved)
-      `)
+      .select(`*, users:user_id(full_name, phone)`)
       .order("datetime", { ascending: false });
 
-    if (!error) {
-      setRides(data || []);
-    } else {
-      console.error("Error fetching rides:", error.message);
+    if (!error && data) {
+      const enriched = await Promise.all(
+        data.map(async (ride) => {
+          const { data: reservations } = await supabase
+            .from("carpool_reservations")
+            .select("*")
+            .eq("carpool_id", ride.id);
+
+          return {
+            ...ride,
+            driver_name: ride.users?.full_name || "Unknown",
+            contact_info: ride.users?.phone || "N/A",
+            total_reserved: reservations?.length || 0,
+            seatsRequested: ""
+          };
+        })
+      );
+      setRides(enriched);
     }
+
     setLoading(false);
   };
 
-  const handleSeatChange = (carpoolId, value) => {
-    const numericValue = parseInt(value);
-    setReservationCounts((prev) => ({
-      ...prev,
-      [carpoolId]: isNaN(numericValue) || numericValue <= 0 ? "" : numericValue,
-    }));
-  };
-
-  const reserveSeat = async (ride, seatsRequested) => {
-    const carpoolId = ride.id;
-    const reservedCount = Array.isArray(ride.reservations)
-      ? ride.reservations.reduce((sum, r) => sum + (r.seats_reserved ?? 0), 0)
-      : 0;
-    const seatsLeft = (ride.available_seats ?? 0) - reservedCount;
-    const numericSeats = parseInt(seatsRequested);
+  const handleReserve = async (carpoolId, seatsRequested) => {
     if (!userId) {
-      alert("Please login to reserve a seat.");
+      alert("Please log in to reserve a ride.");
       navigate("/login");
       return;
     }
-    if (isNaN(numericSeats) || numericSeats <= 0) {
-      alert("⚠️ Please enter a valid number of seats.");
+
+    const seats = parseInt(seatsRequested, 10);
+    if (!seats || seats < 1) {
+      alert("Please enter a valid seat count.");
       return;
     }
-    if (ride.reservations?.some((r) => r.user_id === userId)) {
-      alert("⚠️ You already reserved a seat.");
-      return;
-    }
-    if (numericSeats > seatsLeft) {
-      alert("❌ Not enough seats left.");
-      return;
-    }
+
     const { error } = await supabase.from("carpool_reservations").insert([
       {
         carpool_id: carpoolId,
         user_id: userId,
-        seats_reserved: numericSeats,
+        seats_reserved: seats,
+        reserved_at: new Date().toISOString(),
       },
     ]);
+
     if (error) {
-      alert("❌ Reservation failed: " + error.message);
+      alert("Reservation failed.");
     } else {
-      alert("✅ Reservation successful!");
+      alert("Reservation successful.");
       fetchRides();
     }
   };
 
-  const cancelReservation = async (carpoolId) => {
-    if (!userId) return;
-    const { error } = await supabase
-      .from("carpool_reservations")
-      .delete()
-      .match({ carpool_id: carpoolId, user_id: userId });
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/login");
+  };
 
-    if (!error) {
-      alert("🗑️ Reservation cancelled.");
-      fetchRides();
-    } else {
-      alert("❌ Failed to cancel: " + error.message);
-    }
+  const toggleMobileNav = () => {
+    setSlideDirection("down");
+    setMobileNavOpen(!mobileNavOpen);
   };
 
   return (
@@ -159,31 +141,35 @@ function BrowseRides() {
           <li onClick={() => navigate("/post-ride")}>Post Ride</li>
           <li onClick={() => navigate("/carpool-inbox")}>Carpool Inbox</li>
           <li onClick={() => navigate("/abasare")}>Abasare</li>
-          <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+          <li onClick={handleLogout}>Logout</li>
         </ul>
       </div>
 
-      <div className="mobile-top-bar">
-        <div className="mobile-left-group">
-          <img src={userProfile?.image_url || defaultAvatar} alt="avatar" className="mobile-profile-pic" />
-          <FaBars className="mobile-hamburger" onClick={() => {
-            setSlideDirection("slide-down");
-            setMobileNavOpen(true);
-          }} />
+      <div className="browse-mobile-top-bar">
+        <div className="browse-mobile-left-group">
+          <img
+            src={userProfile?.image_url || defaultAvatar}
+            alt="Profile"
+            className="browse-mobile-profile-pic"
+          />
+          <FaBars className="browse-mobile-hamburger" onClick={toggleMobileNav} />
         </div>
-        <h2 className="mobile-title">Browse Rides</h2>
+        <div className="browse-mobile-title">Browse Rides</div>
         <NotificationBell />
       </div>
 
       {mobileNavOpen && (
-        <div className={`mobile-nav-overlay ${slideDirection}`}>
+        <div
+          className={`browse-mobile-nav-overlay ${slideDirection === "down" ? "browse-slide-down" : "browse-slide-up"}`}
+          ref={mobileNavRef}
+        >
           <ul>
             <li onClick={() => { setMobileNavOpen(false); navigate("/gigs"); }}>Home</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/browse-rides"); }}>Browse Rides</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/post-ride"); }}>Post Ride</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox"); }}>Carpool Inbox</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/abasare"); }}>Abasare</li>
-            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+            <li onClick={async () => { setMobileNavOpen(false); await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
           </ul>
         </div>
       )}
@@ -195,81 +181,88 @@ function BrowseRides() {
         </div>
       </div>
 
-      <section className="browse-count-section">
-        <h2 className="browse-count-title">🚛 Available Rides</h2>
+      <div className="browse-count-section">
+        <h2 className="browse-count-title">🚚 Available Rides</h2>
         <div className="browse-count">
-          <FaCalendarCheck /> {rides.length} Total Rides
+          <FaCalendarCheck />
+          {loading ? "Loading..." : `${rides.length} Total Rides`}
         </div>
-      </section>
-
-      <div className="browse-cards-section">
-        {loading ? (
-          <p className="browse-empty">Loading rides...</p>
-        ) : rides.length === 0 ? (
-          <p className="browse-empty">No rides available right now.</p>
-        ) : (
-          rides.map((ride) => {
-            const reservedCount = Array.isArray(ride.reservations)
-              ? ride.reservations.reduce((sum, r) => sum + (r.seats_reserved ?? 0), 0)
-              : 0;
-            const seatsLeft = Math.max(0, (ride.available_seats ?? 0) - reservedCount);
-            const selectedSeats = reservationCounts[ride.id] ?? "";
-            const hasReserved = ride.reservations?.some(r => r.user_id === userId);
-            const rideDate = new Date(ride.datetime);
-            const now = new Date();
-            const timeDiff = now - rideDate;
-            const isExpired = timeDiff > 24 * 60 * 60 * 1000;
-            const isFullyReserved = seatsLeft === 0;
-
-            return (
-              <div className="browse-card" key={ride.id}>
-                <div className="browse-card-text">
-                  <h2>{ride.origin} → {ride.destination}</h2>
-                  <p><strong>Seats:</strong> {ride.available_seats} | <strong>Left:</strong> {seatsLeft}</p>
-                  <p><strong>Date:</strong> {rideDate.toLocaleString()}</p>
-                  {ride.price && <p><strong>Price:</strong> {ride.price} RWF</p>}
-                  {ride.notes && <p><strong>Note:</strong> {ride.notes}</p>}
-                  <p><strong>Driver:</strong> {ride.driver?.full_name || "Unknown"}</p>
-                  <p><strong>Contact:</strong> {ride.driver?.phone || "N/A"}</p>
-
-                  {isExpired ? (
-                    <p className="no-seats-text">⏰ This ride has expired. Please repost.</p>
-                  ) : isFullyReserved ? (
-                    <p className="no-seats-text">✅ Ride is fully reserved.</p>
-                  ) : hasReserved ? (
-                    <button className="cancel-btn" onClick={() => cancelReservation(ride.id)}>Cancel Reservation</button>
-                  ) : (
-                    <div className="reserve-row">
-                      <input
-                        type="number"
-                        min="1"
-                        value={selectedSeats}
-                        onChange={(e) => handleSeatChange(ride.id, e.target.value)}
-                        placeholder="Seats"
-                      />
-                      <button className="reserve-btn" onClick={() => reserveSeat(ride, selectedSeats)}>
-                        Reserve
-                      </button>
-                    </div>
-                  )}
-                </div>
-                {ride.car_image && (
-                  <img src={ride.car_image} alt="Car" className="ride-car-image" />
-                )}
-              </div>
-            );
-          })
-        )}
       </div>
 
-      <footer className="public-footer">
-        <p>&copy; {new Date().getFullYear()} AkaziNow. All rights reserved.</p>
+      <div className="browse-cards-section">
+        {rides.length === 0 && !loading && (
+          <div className="browse-empty">No available rides at the moment</div>
+        )}
+
+        {rides.map((ride) => {
+          const totalReserved = ride.total_reserved ?? 0;
+          const seats = Number(ride.available_seats || 0);
+          const seatsLeft = seats - totalReserved;
+          const rideDate = new Date(ride.datetime);
+          const now = new Date();
+          const isExpired = now - rideDate > 24 * 60 * 60 * 1000;
+          const isFull = seatsLeft <= 0;
+          const shouldHideDriverInfo = isExpired || isFull;
+
+          return (
+            <div key={ride.id} className="browse-card">
+              <div className="browse-card-text">
+                <h2>{ride.origin} → {ride.destination}</h2>
+                <p><strong>Seats:</strong> {seats} | <strong>Left:</strong> {Math.max(seatsLeft, 0)}</p>
+                <p><strong>Date:</strong> {rideDate.toLocaleString()}</p>
+                <p><strong>Price:</strong> {ride.price} RWF</p>
+
+                {!shouldHideDriverInfo && (
+                  <>
+                    <p><strong>Driver:</strong> {ride.driver_name}</p>
+                    <p><strong>Phone:</strong> {ride.contact_info}</p>
+                  </>
+                )}
+
+                <p><strong>Note:</strong> {ride.notes || "No notes provided."}</p>
+
+                {isExpired && <p className="no-seats-text">This ride has expired</p>}
+                {!isExpired && isFull && <p className="no-seats-text">This ride is fully reserved</p>}
+
+                {!isExpired && !isFull && (
+                  <div className="reservation-section">
+                    <input
+                      type="number"
+                      min="1"
+                      max={seatsLeft}
+                      placeholder="Seats"
+                      className="reserve-input"
+                      value={ride.seatsRequested || ""}
+                      onChange={(e) => {
+                        const updatedRides = rides.map((r) =>
+                          r.id === ride.id ? { ...r, seatsRequested: e.target.value } : r
+                        );
+                        setRides(updatedRides);
+                      }}
+                    />
+                    <button
+                      className="reserve-button"
+                      onClick={() => handleReserve(ride.id, ride.seatsRequested)}
+                    >
+                      Reserve
+                    </button>
+                  </div>
+                )}
+              </div>
+              {ride.image_url && <img src={ride.image_url} alt="Car" className="ride-car-image" />}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="public-footer">
+        <p>© 2025 AkaziNow. All rights reserved.</p>
         <div className="footer-links">
           <button onClick={() => navigate("/about")}>About</button>
           <button onClick={() => navigate("/help")}>Help</button>
           <button onClick={() => navigate("/contact")}>Contact</button>
         </div>
-      </footer>
+      </div>
     </>
   );
 }

@@ -5,7 +5,7 @@ import NotificationBell from "../components/NotificationBell.jsx";
 import { FaBars, FaCalendarCheck } from "react-icons/fa";
 import defaultAvatar from "../assets/avatar.png";
 import backgroundImage from "../assets/kcc_bg_clean.png";
-import "./MyJobs.css";
+import "./Gigs.css";
 
 function MyJobs() {
   const [jobs, setJobs] = useState([]);
@@ -90,44 +90,35 @@ function MyJobs() {
     }
   };
 
-  const handleNavClick = (path) => {
-    setSlideDirection("slide-up");
-    setTimeout(() => {
-      setMobileNavVisible(false);
-      navigate(path);
-    }, 300);
-  };
-
   return (
-    <div className="myjobs-container">
+    <div className="gigs-container">
       {/* MOBILE NAV BAR */}
-      <div className="mobile-top-bar">
-        <div className="mobile-left-group">
-          <img src={userProfile?.image_url || defaultAvatar} alt="avatar" className="mobile-profile-pic" />
-          <FaBars className="mobile-hamburger" onClick={handleHamburgerClick} />
+      <div className="gigs-mobile-topbar">
+        <div className="gigs-mobile-left">
+          <img src={userProfile?.image_url || defaultAvatar} alt="avatar" className="gigs-mobile-avatar" />
+          <FaBars className="gigs-mobile-hamburger" onClick={handleHamburgerClick} />
         </div>
-        <h2 className="mobile-title">My Jobs</h2>
+        <h2 className="gigs-mobile-title">My Jobs</h2>
         <NotificationBell />
       </div>
 
       {mobileNavVisible && (
-        <div ref={mobileNavRef} className={`mobile-nav-overlay ${slideDirection}`}>
+        <div ref={mobileNavRef} className={`gigs-mobile-nav-overlay ${slideDirection}`}>
           <ul>
-            <li onClick={() => handleNavClick("/")}>Home</li>
-            <li onClick={() => handleNavClick("/gigs")}>Gigs</li>
-            <li onClick={() => handleNavClick("/post-job")}>Post a Job</li>
-            <li onClick={() => handleNavClick("/my-jobs")}>My Jobs</li>
-            <li onClick={() => handleNavClick("/profile")}>Profile</li>
-            <li onClick={() => handleNavClick("/inbox")}>Inbox</li>
-            <li onClick={() => handleNavClick("/carpools")}>Car Pooling</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/"); }}>Home</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/gigs"); }}>Gigs</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/post-job"); }}>Post a Job</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/my-jobs"); }}>My Jobs</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/profile"); }}>Profile</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/inbox"); }}>Inbox</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/carpools"); }}>Car Pooling</li>
             <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Logout</li>
           </ul>
         </div>
       )}
 
       {/* DESKTOP NAV */}
-      <div className="myjobs-desktop-nav">
-        <div className="myjobs-nav-left-logo" onClick={() => navigate("/")}>AkaziNow</div>
+      <div className="gigs-desktop-nav">
         <ul>
           <li onClick={() => navigate("/")}>Home</li>
           <li onClick={() => navigate("/gigs")}>Gigs</li>
@@ -141,27 +132,26 @@ function MyJobs() {
       </div>
 
       {/* HERO */}
-      <div className="myjobs-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
-        <div className="myjobs-hero-content">
-          <h1 className="myjobs-heading">Your Posted Gigs</h1>
-          <p className="myjobs-subheading">Manage the jobs you've shared with the community.</p>
+      <div className="gigs-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
+        <div className="gigs-hero-content">
+          <h1 className="gigs-heading">Your Posted Gigs</h1>
+          <p className="gigs-subheading">Manage and review your shared job opportunities.</p>
+        </div>
+
+        <div className="gigs-floating-count-box">
+          <h2 className="gigs-count-title">📋 My Jobs</h2>
+          <div className="gigs-count-display">
+            <FaCalendarCheck /> {jobs.length} Jobs Posted
+          </div>
         </div>
       </div>
 
-      {/* JOB COUNT SECTION */}
-      <section className="myjobs-count-section">
-        <h2 className="myjobs-count-title">📋 My Jobs</h2>
-        <div className="myjobs-count">
-          <FaCalendarCheck /> {jobs.length} Jobs Posted
-        </div>
-      </section>
-
       {/* JOB CARDS */}
-      <section className="myjobs-cards-section">
+      <section className="gigs-cards-section">
         {jobs.length > 0 ? (
           jobs.map((job) => (
-            <div className="myjobs-card" key={job.id}>
-              <div className="myjobs-card-text">
+            <div className="gigs-card" key={job.id} style={{ background: "#fff8d4" }}>
+              <div className="gigs-card-text">
                 <h2>{job.title}</h2>
                 <p>{job.job_description}</p>
                 <p><strong>Price:</strong> {job.price} RWF</p>
@@ -174,9 +164,21 @@ function MyJobs() {
             </div>
           ))
         ) : (
-          <p className="myjobs-empty">You haven’t posted any jobs yet.</p>
+          <p style={{ marginTop: "2rem", fontWeight: "bold" }}>
+            You haven’t posted any jobs yet.
+          </p>
         )}
       </section>
+
+      {/* FOOTER */}
+      <footer className="gigs-footer">
+        <p>&copy; {new Date().getFullYear()} AkaziNow. All rights reserved.</p>
+        <div className="gigs-footer-links">
+          <button onClick={() => navigate("/about")}>About</button>
+          <button onClick={() => navigate("/help")}>Help</button>
+          <button onClick={() => navigate("/contact")}>Contact</button>
+        </div>
+      </footer>
     </div>
   );
 }

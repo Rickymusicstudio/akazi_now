@@ -29,9 +29,7 @@ function PostGig() {
   }, []);
 
   const fetchUserProfile = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
     const { data } = await supabase
@@ -97,9 +95,7 @@ function PostGig() {
     e.preventDefault();
     setMessage("");
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       setMessage("❌ Not authenticated");
       return;
@@ -140,29 +136,21 @@ function PostGig() {
     const employerName = userProfile?.full_name || "Unknown";
     const contactInfo = userProfile?.phone || "N/A";
 
-    const { error } = await supabase.from("jobs").insert([
-      {
-        user_id: user.id,
-        ...form,
-        status: "open",
-        image_url: imageUrl,
-        poster_image: posterImage,
-        employer_name: employerName,
-        contact_info: contactInfo,
-      },
-    ]);
+    const { error } = await supabase.from("jobs").insert([{
+      user_id: user.id,
+      ...form,
+      status: "open",
+      image_url: imageUrl,
+      poster_image: posterImage,
+      employer_name: employerName,
+      contact_info: contactInfo,
+    }]);
 
     if (error) {
       setMessage("❌ Failed to post job: " + error.message);
     } else {
       setMessage("✅ Job posted successfully!");
-      setForm({
-        title: "",
-        address: "",
-        job_description: "",
-        requirement: "",
-        price: "",
-      });
+      setForm({ title: "", address: "", job_description: "", requirement: "", price: "" });
       setImageFile(null);
     }
   };
@@ -191,7 +179,7 @@ function PostGig() {
   };
 
   return (
-    <div className="public-container">
+    <div className="postgig-container">
       {/* Desktop Nav */}
       <div className="postgig-desktop-nav">
         <div className="postgig-nav-left-logo" onClick={() => navigate("/")}>
@@ -212,26 +200,23 @@ function PostGig() {
       </div>
 
       {/* Hero */}
-      <div className="public-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
-        <div
-          className="mobile-top-bar"
-          style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
-        >
-          <div className="mobile-left-group">
-            <img
-              src={userProfile?.image_url || defaultAvatar}
-              alt="avatar"
-              className="mobile-profile-pic"
-            />
-            <FaBars className="mobile-hamburger" onClick={handleMenuToggle} />
-          </div>
-          <h2 className="mobile-title">Post a Job</h2>
-          <NotificationBell />
-        </div>
+      <div className="postgig-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
+        <div className="postgig-mobile-topbar">
+  <div className="postgig-mobile-left">
+    <img
+      src={userProfile?.image_url || defaultAvatar}
+      alt="avatar"
+      className="postgig-mobile-avatar"
+    />
+    <FaBars className="postgig-mobile-hamburger" onClick={handleMenuToggle} />
+  </div>
+  <div className="postgig-mobile-title">Post a Job</div>
+  <NotificationBell />
+</div>
 
-        <div className="hero-content">
-          <h1 className="hero-title">Post your Gig</h1>
-          <p className="hero-subtitle">
+        <div className="postgig-hero-content">
+          <h1 className="postgig-hero-title">Post your Gig</h1>
+          <p className="postgig-hero-subtitle">
             Share your gig and let workers come to you. It's quick and free.
           </p>
         </div>
@@ -239,8 +224,7 @@ function PostGig() {
         {mobileNavOpen && (
           <div
             ref={mobileNavRef}
-            className={`mobile-nav-overlay ${slideDirection}`}
-            style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
+            className={`postgig-mobile-nav-overlay ${slideDirection}`}
           >
             <ul>
               <li onClick={() => closeAndNavigate("/")}>Home</li>
@@ -256,9 +240,9 @@ function PostGig() {
         )}
       </div>
 
-      {/* Main Form Section */}
-      <section className="services-section">
-        <div className="service-card" style={{ background: "#fff8d4" }}>
+      {/* Form and Sticker Section */}
+      <section className="postgig-services-section">
+        <div className="postgig-form-card">
           <form className="postgig-form" onSubmit={handleSubmit}>
             <h2>Post a Job</h2>
             {message && (
@@ -282,26 +266,18 @@ function PostGig() {
           </form>
         </div>
 
-        <div className="service-card postgig-right-sticker" style={{ background: "#fff3e6" }}>
-          <div className="info-card-content">
+        <div className="postgig-sticker-card">
+          <div className="postgig-info-card-content">
             <h3>Post a Job Easily</h3>
-            <p>
-              Reach thousands of Rwandan workers in seconds. AkaziNow helps you
-              connect fast!
-            </p>
-            <img
-              src={stickerOffice}
-              alt="Post Job Illustration"
-              className="info-card-image enlarged-sticker"
-            />
+            <p>Reach thousands of Rwandan workers in seconds. AkaziNow helps you connect fast!</p>
+            <img src={stickerOffice} alt="sticker" className="postgig-info-card-image" />
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="public-footer">
+      <footer className="postgig-footer">
         <p>&copy; {new Date().getFullYear()} AkaziNow. All rights reserved.</p>
-        <div className="footer-links">
+        <div className="postgig-footer-links">
           <button onClick={() => navigate("/about")}>About</button>
           <button onClick={() => navigate("/help")}>Help</button>
           <button onClick={() => navigate("/contact")}>Contact</button>

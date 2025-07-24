@@ -5,12 +5,11 @@
   box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
   height: 100%;
-  overflow-y: auto;
   font-family: "Segoe UI", sans-serif;
   background: #f0f2f5;
+  overflow-x: hidden;
 }
 
 /* MAIN CONTAINER */
@@ -20,6 +19,7 @@ body {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  padding: 0 1rem;
 }
 
 /* HERO SECTION */
@@ -35,16 +35,20 @@ body {
   justify-content: center;
   align-items: center;
   padding: 2rem;
+  min-height: 300px;
+  overflow: hidden;
 }
 
+/* TOPBAR */
 .public-topbar {
   position: absolute;
   top: 1rem;
-  left: 2rem;
-  right: 2rem;
+  left: 1rem;
+  right: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: nowrap;
 }
 
 .public-logo {
@@ -55,17 +59,25 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
+.public-auth-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .public-auth-buttons button {
   background: white;
   color: #2c5364;
-  padding: 8px 16px;
-  margin-left: 0.5rem;
+  padding: 8px 14px;
   border: none;
   border-radius: 5px;
   font-weight: bold;
   cursor: pointer;
+  font-size: 0.95rem;
+  transition: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
+/* HERO TEXT */
 .public-hero-content {
   text-align: center;
   margin-top: 2rem;
@@ -86,7 +98,7 @@ body {
   margin-top: -3rem;
   background: white;
   padding: 2rem;
-  width: 90%;
+  width: 100%;
   max-width: 900px;
   border-radius: 10px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
@@ -149,27 +161,24 @@ body {
 /* SERVICES SECTION */
 .services-section {
   width: 100%;
-  padding: 3rem 1rem;
+  padding: 3rem 0;
   display: flex;
-  flex-direction: row; /* horizontal layout */
+  flex-wrap: wrap;
   justify-content: center;
-  align-items: flex-start;
   gap: 2rem;
   background: #f7f7f7;
-  flex-wrap: nowrap; /* prevent wrap on large screen */
-  overflow-x: auto;  /* fallback scroll if screen is small */
 }
 
 .service-card {
-  flex: 0 0 300px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 1.5rem;
+  width: 100%;
+  max-width: 320px;
   transition: transform 0.2s ease;
   text-align: left;
 }
@@ -221,6 +230,7 @@ body {
   display: flex;
   justify-content: center;
   gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .footer-links button {
@@ -233,9 +243,14 @@ body {
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
+  .public-container {
+    padding: 0 0.5rem;
+  }
+
   .public-hero {
-    height: 50vh;
+    height: auto;
     padding-top: 3rem;
+    min-height: 320px;
   }
 
   .public-heading {
@@ -249,16 +264,27 @@ body {
   .services-section {
     flex-direction: column;
     align-items: center;
+    padding: 2rem 0;
   }
 
   .service-card {
-    width: 90%;
+    width: 100%;
     max-width: 95%;
   }
 
   .public-topbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .public-logo {
+    font-size: 1.4rem;
+  }
+
+  .public-auth-buttons button {
+    padding: 6px 12px;
+    font-size: 0.85rem;
   }
 }

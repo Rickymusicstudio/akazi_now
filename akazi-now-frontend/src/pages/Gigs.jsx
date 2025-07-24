@@ -90,30 +90,25 @@ function Gigs() {
   };
 
   return (
-    <div className="public-container">
-      {/* TOP NAV (mobile) */}
-      <div
-        className="mobile-top-bar"
-        style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
-      >
-        <div className="mobile-left-group">
+    <div className="gigs-container">
+      {/* MOBILE NAV */}
+      <div className="gigs-mobile-topbar">
+        <div className="gigs-mobile-left">
           <img
             src={userProfile?.image_url || defaultAvatar}
             alt="avatar"
-            className="mobile-profile-pic"
+            className="gigs-mobile-avatar"
           />
-          <FaBars className="mobile-hamburger" onClick={handleHamburgerClick} />
+          <FaBars className="gigs-mobile-hamburger" onClick={handleHamburgerClick} />
         </div>
-        <h2 className="mobile-title">Gigs</h2>
+        <h2 className="gigs-mobile-title">Gigs</h2>
         <NotificationBell />
       </div>
 
-      {/* NAV OVERLAY (mobile) */}
       {mobileNavVisible && (
         <div
           ref={mobileNavRef}
-          className={`mobile-nav-overlay ${slideDirection}`}
-          style={{ background: "linear-gradient(to bottom, #0f2027, #203a43, #2c5364)" }}
+          className={`gigs-mobile-nav-overlay ${slideDirection}`}
         >
           <ul>
             <li onClick={() => { setMobileNavVisible(false); navigate("/"); }}>Home</li>
@@ -128,8 +123,8 @@ function Gigs() {
         </div>
       )}
 
-      {/* DESKTOP NAVIGATION */}
-      <div className="desktop-nav">
+      {/* DESKTOP NAV */}
+      <div className="gigs-desktop-nav">
         <ul>
           <li onClick={() => navigate("/")}>Home</li>
           <li onClick={() => navigate("/gigs")}>Gigs</li>
@@ -143,40 +138,36 @@ function Gigs() {
       </div>
 
       {/* HERO */}
-      <div
-        className="public-hero"
-        style={{ backgroundImage: `url(${backgroundImage})` }}
-      >
-        <div className="public-topbar">
-          <div className="public-logo">AkaziNow</div>
-          <div className="public-auth-buttons">
+      <div className="gigs-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
+        <div className="gigs-topbar">
+          <div className="gigs-logo">AkaziNow</div>
+          <div className="gigs-auth-buttons">
             <button onClick={() => navigate("/login")}>Sign In</button>
             <button onClick={() => navigate("/signup")}>Sign Up</button>
           </div>
         </div>
 
-        <div className="public-hero-content">
-          <h1 className="public-heading">Explore Gigs. Earn Fast. Start Today.</h1>
-          <p className="public-subheading">
+        <div className="gigs-hero-content">
+          <h1 className="gigs-heading">Explore Gigs. Earn Fast. Start Today.</h1>
+          <p className="gigs-subheading">
             Discover flexible jobs available in your area now.
           </p>
         </div>
+
+        <div className="gigs-floating-count-box">
+          <h2 className="gigs-count-title">💼 Available Gigs</h2>
+          <div className="gigs-count-display">
+            <FaCalendarCheck /> {jobs.length} Gigs Posted
+          </div>
+        </div>
       </div>
 
-      {/* GIG COUNT */}
-      <section className="public-search-section">
-        <h2 className="public-search-title">💼 Gigs Available</h2>
-        <div className="public-count">
-          <FaCalendarCheck /> {jobs.length} Gigs Posted
-        </div>
-      </section>
-
       {/* JOB CARDS */}
-      <section className="services-section">
+      <section className="gigs-cards-section">
         {jobs.length > 0 ? (
           jobs.map((job) => (
-            <div className="service-card" key={job.id} style={{ background: "#fff8d4" }}>
-              <div className="service-text">
+            <div className="gigs-card" key={job.id} style={{ background: "#fff8d4" }}>
+              <div className="gigs-card-text">
                 <h2>{job.title}</h2>
                 <p>{job.job_description}</p>
                 <p><strong>Price:</strong> {job.price} RWF</p>
@@ -197,9 +188,9 @@ function Gigs() {
       </section>
 
       {/* FOOTER */}
-      <footer className="public-footer">
+      <footer className="gigs-footer">
         <p>&copy; {new Date().getFullYear()} AkaziNow. All rights reserved.</p>
-        <div className="footer-links">
+        <div className="gigs-footer-links">
           <button onClick={() => navigate("/about")}>About</button>
           <button onClick={() => navigate("/help")}>Help</button>
           <button onClick={() => navigate("/contact")}>Contact</button>

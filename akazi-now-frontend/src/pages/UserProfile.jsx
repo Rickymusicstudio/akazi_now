@@ -4,17 +4,12 @@ import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
 import { FaBars } from "react-icons/fa";
 import defaultAvatar from "../assets/avatar.png";
-import stickerOffice from "../assets/profile.png";
+import stickerProfile from "../assets/profile.png";
 import backgroundImage from "../assets/kcc_bg_clean.png";
-import "./UserProfile.css";
+import "./PostGig.css";
 
 function UserProfile() {
   const [userProfile, setUserProfile] = useState(null);
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [slideDirection, setSlideDirection] = useState("");
-  const mobileNavRef = useRef(null);
-  const navigate = useNavigate();
-
   const [editForm, setEditForm] = useState({
     full_name: "",
     phone: "",
@@ -23,15 +18,17 @@ function UserProfile() {
     cell: "",
     village: "",
   });
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [slideDirection, setSlideDirection] = useState("");
+  const mobileNavRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchUserProfile();
   }, []);
 
   const fetchUserProfile = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
     const { data } = await supabase
@@ -50,9 +47,7 @@ function UserProfile() {
   };
 
   const handleSave = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
     await supabase
@@ -86,7 +81,8 @@ function UserProfile() {
   };
 
   return (
-    <div className="public-container">
+    <div className="postgig-container">
+      {/* Desktop Nav */}
       <div className="postgig-desktop-nav">
         <div className="postgig-nav-left-logo" onClick={() => navigate("/")}>AkaziNow</div>
         <ul>
@@ -101,30 +97,24 @@ function UserProfile() {
         </ul>
       </div>
 
-      <div className="public-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
-        <div className="mobile-top-bar">
-          <div className="mobile-left-group">
-            <img
-              src={userProfile?.image_url || defaultAvatar}
-              alt="avatar"
-              className="mobile-profile-pic"
-            />
-            <FaBars className="mobile-hamburger" onClick={handleMenuToggle} />
+      {/* Hero */}
+      <div className="postgig-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
+        <div className="postgig-mobile-topbar">
+          <div className="postgig-mobile-left">
+            <img src={userProfile?.image_url || defaultAvatar} alt="avatar" className="postgig-mobile-avatar" />
+            <FaBars className="postgig-mobile-hamburger" onClick={handleMenuToggle} />
           </div>
-          <h2 className="mobile-title">My Profile</h2>
+          <div className="postgig-mobile-title">My Profile</div>
           <NotificationBell />
         </div>
 
-        <div className="hero-content">
-          <h1 className="hero-title">Manage Your Profile</h1>
-          <p className="hero-subtitle">Update your personal and location info</p>
+        <div className="postgig-hero-content">
+          <h1 className="postgig-hero-title">Manage Your Profile</h1>
+          <p className="postgig-hero-subtitle">Update your personal and location info</p>
         </div>
 
         {mobileNavOpen && (
-          <div
-            ref={mobileNavRef}
-            className={`mobile-nav-overlay ${slideDirection}`}
-          >
+          <div ref={mobileNavRef} className={`postgig-mobile-nav-overlay ${slideDirection}`}>
             <ul>
               <li onClick={() => closeAndNavigate("/")}>Home</li>
               <li onClick={() => closeAndNavigate("/gigs")}>Gigs</li>
@@ -139,8 +129,9 @@ function UserProfile() {
         )}
       </div>
 
-      <section className="services-section">
-        <div className="service-card" style={{ background: "#fff8d4" }}>
+      {/* Profile Form Section */}
+      <section className="postgig-services-section">
+        <div className="postgig-form-card">
           <form className="postgig-form">
             <h2>Edit Profile</h2>
             <label>Full Name</label>
@@ -159,18 +150,18 @@ function UserProfile() {
           </form>
         </div>
 
-        <div className="service-card postgig-right-sticker" style={{ background: "#fff3e6" }}>
-          <div className="info-card-content">
+        <div className="postgig-sticker-card">
+          <div className="postgig-info-card-content">
             <h3>Keep Your Info Updated</h3>
             <p>Your profile helps job posters and seekers trust and connect with you.</p>
-            <img src={stickerOffice} alt="Profile Sticker" className="info-card-image enlarged-sticker" />
+            <img src={stickerProfile} alt="Profile Sticker" className="postgig-info-card-image" />
           </div>
         </div>
       </section>
 
-      <footer className="public-footer">
+      <footer className="postgig-footer">
         <p>&copy; {new Date().getFullYear()} AkaziNow. All rights reserved.</p>
-        <div className="footer-links">
+        <div className="postgig-footer-links">
           <button onClick={() => navigate("/about")}>About</button>
           <button onClick={() => navigate("/help")}>Help</button>
           <button onClick={() => navigate("/contact")}>Contact</button>

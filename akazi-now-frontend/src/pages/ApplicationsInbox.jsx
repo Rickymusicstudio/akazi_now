@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell.jsx";
-import { FaBars, FaCalendarCheck } from "react-icons/fa";
+import { FaBars } from "react-icons/fa";
 import defaultAvatar from "../assets/avatar.png";
 import inboxSticker from "../assets/inbox.png";
 import backgroundImage from "../assets/kcc_bg_clean.png";
@@ -82,44 +82,21 @@ function ApplicationsInbox() {
     }
   };
 
-  const handleNavClick = (path) => {
+  const closeAndNavigate = async (path, logout = false) => {
     setSlideDirection("slide-up");
-    setTimeout(() => {
+    setTimeout(async () => {
       setMobileNavVisible(false);
+      setSlideDirection("");
+      if (logout) await supabase.auth.signOut();
       navigate(path);
     }, 300);
   };
 
   return (
-    <div className="inbox-container">
-      {/* MOBILE NAV BAR */}
-      <div className="mobile-top-bar">
-        <div className="mobile-left-group">
-          <img src={userProfile?.image_url || defaultAvatar} alt="avatar" className="mobile-profile-pic" />
-          <FaBars className="mobile-hamburger" onClick={handleHamburgerClick} />
-        </div>
-        <h2 className="mobile-title">Inbox</h2>
-        <NotificationBell />
-      </div>
-
-      {mobileNavVisible && (
-        <div ref={mobileNavRef} className={`mobile-nav-overlay ${slideDirection}`}>
-          <ul>
-            <li onClick={() => handleNavClick("/")}>Home</li>
-            <li onClick={() => handleNavClick("/gigs")}>Gigs</li>
-            <li onClick={() => handleNavClick("/post-job")}>Post a Job</li>
-            <li onClick={() => handleNavClick("/my-jobs")}>My Jobs</li>
-            <li onClick={() => handleNavClick("/profile")}>Profile</li>
-            <li onClick={() => handleNavClick("/inbox")}>Inbox</li>
-            <li onClick={() => handleNavClick("/carpools")}>Car Pooling</li>
-            <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Logout</li>
-          </ul>
-        </div>
-      )}
-
-      {/* DESKTOP NAV */}
-      <div className="inbox-desktop-nav">
-        <div className="inbox-nav-left-logo" onClick={() => navigate("/")}>AkaziNow</div>
+    <div className="postgig-container">
+      {/* Desktop Nav */}
+      <div className="postgig-desktop-nav">
+        <div className="postgig-nav-left-logo" onClick={() => navigate("/")}>AkaziNow</div>
         <ul>
           <li onClick={() => navigate("/")}>Home</li>
           <li onClick={() => navigate("/gigs")}>Gigs</li>
@@ -128,38 +105,95 @@ function ApplicationsInbox() {
           <li onClick={() => navigate("/profile")}>Profile</li>
           <li onClick={() => navigate("/inbox")}>Inbox</li>
           <li onClick={() => navigate("/carpools")}>Car Pooling</li>
-          <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Logout</li>
+          <li onClick={() => closeAndNavigate("/", true)}>Logout</li>
         </ul>
       </div>
 
-      {/* HERO */}
-      <div className="inbox-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
-        <div className="inbox-hero-content">
-          <h1 className="inbox-heading">Application Inbox</h1>
-          <p className="inbox-subheading">Review incoming applications to your gigs and offers</p>
+      {/* Hero Section */}
+      <div className="postgig-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
+        <div className="postgig-mobile-topbar">
+          <div className="postgig-mobile-left">
+            <img src={userProfile?.image_url || defaultAvatar} alt="avatar" className="postgig-mobile-avatar" />
+            <FaBars className="postgig-mobile-hamburger" onClick={handleHamburgerClick} />
+          </div>
+          <div className="postgig-mobile-title">Inbox</div>
+          <NotificationBell />
         </div>
+
+        <div className="postgig-hero-content">
+          <h1 className="postgig-hero-title">Application Inbox</h1>
+          <p className="postgig-hero-subtitle">Review applications submitted to your job posts</p>
+        </div>
+
+        {mobileNavVisible && (
+          <div ref={mobileNavRef} className={`postgig-mobile-nav-overlay ${slideDirection}`}>
+            <ul>
+              <li onClick={() => closeAndNavigate("/")}>Home</li>
+              <li onClick={() => closeAndNavigate("/gigs")}>Gigs</li>
+              <li onClick={() => closeAndNavigate("/post-job")}>Post a Job</li>
+              <li onClick={() => closeAndNavigate("/my-jobs")}>My Jobs</li>
+              <li onClick={() => closeAndNavigate("/profile")}>Profile</li>
+              <li onClick={() => closeAndNavigate("/inbox")}>Inbox</li>
+              <li onClick={() => closeAndNavigate("/carpools")}>Car Pooling</li>
+              <li onClick={() => closeAndNavigate("/", true)}>Logout</li>
+            </ul>
+          </div>
+        )}
       </div>
 
-      {/* APPLICATION CARDS */}
-      <section className="inbox-cards-section">
-        {applications.length > 0 ? (
-          applications.map((app) => (
-            <div className="inbox-card" key={app.id}>
-              <div className="inbox-card-text">
-                <h2>{app.users?.full_name || "Anonymous"}</h2>
+      {/* Two-Panel Section */}
+      <section className="postgig-services-section">
+        <div className="postgig-form-card">
+          <h2 style={{ textAlign: "center", marginBottom: "1rem" }}>Applications Received</h2>
+          {applications.length > 0 ? (
+            applications.map((app) => (
+              <div key={app.id} style={{
+                background: "white",
+                borderRadius: "12px",
+                padding: "1rem",
+                marginBottom: "1.5rem",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+              }}>
+                <h3>{app.users?.full_name || "Anonymous"}</h3>
                 <p><strong>Phone:</strong> {app.users?.phone || "N/A"}</p>
                 <p><strong>Message:</strong> {app.message}</p>
                 <p><strong>Job:</strong> {app.jobs?.title || "N/A"}</p>
+                {app.users?.image_url && (
+                  <img src={app.users.image_url} alt="applicant" style={{
+                    width: "100px",
+                    height: "100px",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                    marginTop: "0.5rem"
+                  }} />
+                )}
               </div>
-              {app.users?.image_url && (
-                <img src={app.users.image_url} alt="applicant" />
-              )}
-            </div>
-          ))
-        ) : (
-          <p className="inbox-empty">No applications received yet.</p>
-        )}
+            ))
+          ) : (
+            <p style={{ textAlign: "center", fontWeight: "bold" }}>
+              No applications received yet.
+            </p>
+          )}
+        </div>
+
+        <div className="postgig-sticker-card">
+          <div className="postgig-info-card-content">
+            <h3>Stay Organized</h3>
+            <p>Manage all gig applications in one place. Respond to your best candidates quickly.</p>
+            <img src={inboxSticker} alt="Inbox Sticker" className="postgig-info-card-image" />
+          </div>
+        </div>
       </section>
+
+      {/* Footer */}
+      <footer className="postgig-footer">
+        <p>&copy; {new Date().getFullYear()} AkaziNow. All rights reserved.</p>
+        <div className="postgig-footer-links">
+          <button onClick={() => navigate("/about")}>About</button>
+          <button onClick={() => navigate("/help")}>Help</button>
+          <button onClick={() => navigate("/contact")}>Contact</button>
+        </div>
+      </footer>
     </div>
   );
 }

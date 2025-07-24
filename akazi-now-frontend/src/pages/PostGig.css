@@ -5,23 +5,46 @@
   box-sizing: border-box;
 }
 
-body {
+html, body {
+  height: 100%;
   font-family: 'Segoe UI', sans-serif;
-  background-color: #f4f6f8;
+  background: #f9f9f9;
+  overflow-x: hidden;
+}
+
+/* MAIN CONTAINER */
+.postgig-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* ========== DESKTOP NAV ========== */
 .postgig-desktop-nav {
-  width: 100%;
-  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-  color: white;
+  display: none;
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
   padding: 1rem 2rem;
+  width: 100%;
+}
+
+.postgig-desktop-nav ul {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  justify-content: center;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.postgig-desktop-nav li {
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.postgig-desktop-nav li:hover {
+  text-decoration: underline;
 }
 
 .postgig-nav-left-logo {
@@ -30,33 +53,14 @@ body {
   color: #FFD700;
   cursor: pointer;
   user-select: none;
-  margin-right: auto;
-}
-
-.postgig-desktop-nav ul {
-  display: flex;
-  gap: 1.5rem;
-  list-style: none;
-  margin: 0 auto;
-  padding: 0;
-  flex-grow: 1;
-  justify-content: center;
-}
-
-.postgig-desktop-nav ul li {
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.postgig-desktop-nav ul li:hover {
-  text-decoration: underline;
+  position: absolute;
+  left: 2rem;
 }
 
 /* ========== HERO SECTION ========== */
-.public-hero {
+.postgig-hero {
   width: 100%;
-  height: 65vh;
+  height: 75vh;
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
@@ -66,61 +70,95 @@ body {
   justify-content: center;
   align-items: center;
   padding: 2rem;
+  flex-direction: column;
 }
 
-/* ========== MOBILE TOP BAR ========== */
-.mobile-top-bar {
-  position: absolute;
-  top: 1rem;
-  left: 2rem;
-  right: 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-  border-radius: 10px;
-  padding: 0.5rem 1rem;
-  color: white;
+/* ========== HERO TEXT ========== */
+.postgig-hero-content {
+  text-align: center;
+  z-index: 10;
+  max-width: 600px;
+}
+
+.postgig-hero-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.postgig-hero-subtitle {
+  font-size: 1.1rem;
+}
+
+/* ========== MOBILE TOPBAR (Gigs-style) ========== */
+.postgig-mobile-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
   z-index: 1000;
-}
-
-.mobile-left-group {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+  color: white;
 }
 
-.mobile-profile-pic {
-  width: 36px;
-  height: 36px;
+.postgig-mobile-left {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+  z-index: 2;
+  margin-left: 0.3rem;
+}
+
+.postgig-mobile-avatar {
+  height: 30px;
+  width: 30px;
   border-radius: 50%;
   object-fit: cover;
+  border: 2px solid white;
+  margin: 0;
+  padding: 0;
 }
 
-.mobile-hamburger {
-  font-size: 1.4rem;
-  cursor: pointer;
+.postgig-mobile-hamburger {
+  font-size: 20px;
   color: white;
+  cursor: pointer;
 }
 
-.mobile-title {
-  font-size: 1.4rem;
+.postgig-mobile-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.1rem;
   font-weight: bold;
-  text-align: center;
+  color: white;
+  z-index: 1;
+  pointer-events: none;
 }
 
 /* ========== MOBILE NAV OVERLAY ========== */
-.mobile-nav-overlay {
-  position: absolute;
-  top: 70px;
+.postgig-mobile-nav-overlay {
+  position: fixed;
+  top: 0;
   left: 0;
-  right: 0;
+  width: 100%;
+  height: 100vh;
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+  color: white;
   z-index: 999;
+  padding-top: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
   animation-duration: 0.3s;
   animation-fill-mode: both;
-  border-radius: 0 0 10px 10px;
-  color: white;
 }
 
 .slide-down {
@@ -133,71 +171,61 @@ body {
 
 @keyframes slideDown {
   from {
-    transform: translateY(-100%);
+    opacity: 0;
+    transform: translateY(-20%);
   }
   to {
+    opacity: 1;
     transform: translateY(0);
   }
 }
 
 @keyframes slideUp {
   from {
+    opacity: 1;
     transform: translateY(0);
   }
   to {
-    transform: translateY(-100%);
+    opacity: 0;
+    transform: translateY(-20%);
   }
 }
 
-.mobile-nav-overlay ul {
+.postgig-mobile-nav-overlay ul {
   list-style: none;
-  padding: 1rem;
+  padding: 0;
   margin: 0;
-}
-
-.mobile-nav-overlay ul li {
-  padding: 1rem 0;
-  cursor: pointer;
-  font-size: 1.1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* ========== HERO TEXT ========== */
-.hero-content {
+  width: 100%;
   text-align: center;
-  z-index: 10;
 }
 
-.hero-title {
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
-
-.hero-subtitle {
+.postgig-mobile-nav-overlay li {
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
   font-size: 1.1rem;
 }
 
 /* ========== MAIN SECTION ========== */
-.services-section {
+.postgig-services-section {
   display: flex;
   justify-content: center;
   gap: 2rem;
-  padding: 3rem 2rem;
+  padding: 5rem 2rem 2rem;
   flex-wrap: wrap;
   background: #f9f9f9;
 }
 
-.service-card {
+.postgig-form-card {
   flex: 1;
   min-width: 300px;
   max-width: 500px;
   padding: 2rem;
   border-radius: 20px;
+  background: #fff8d4;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
 }
 
-/* ========== FORM ========== */
 .postgig-form {
   background: white;
   padding: 2rem;
@@ -259,15 +287,20 @@ textarea:-webkit-autofill {
   opacity: 0.9;
 }
 
-/* ========== INFO CARD (Right) ========== */
-.postgig-right-sticker {
+/* ========== INFO CARD ========== */
+.postgig-sticker-card {
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px;
+  padding: 2rem;
+  border-radius: 20px;
+  background: #fff3e6;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff3e6;
 }
 
-.info-card-content {
+.postgig-info-card-content {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -275,63 +308,61 @@ textarea:-webkit-autofill {
   text-align: center;
 }
 
-.info-card-content h3 {
+.postgig-info-card-content h3 {
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 0.8rem;
   color: #2c3e50;
 }
 
-.info-card-content p {
+.postgig-info-card-content p {
   font-size: 1rem;
   line-height: 1.6;
   color: #333;
   margin-bottom: 1.2rem;
 }
 
-.info-card-image {
-  max-width: 220px;
+.postgig-info-card-image {
+  max-width: 320px;
+  width: 100%;
   margin: 0 auto;
   object-fit: contain;
 }
 
-.enlarged-sticker {
-  max-width: 320px;
-  width: 100%;
-}
-
 /* ========== FOOTER ========== */
-.public-footer {
+.postgig-footer {
+  width: 100%;
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+  color: white;
+  padding: 2rem 1rem;
+  margin-top: 3rem;
   text-align: center;
-  padding: 2rem;
-  background: #f0f0f0;
-  color: #666;
 }
 
-.footer-links {
+.postgig-footer-links {
   margin-top: 1rem;
 }
 
-.footer-links button {
+.postgig-footer-links button {
   background: none;
   border: none;
-  color: #333;
-  font-weight: 500;
+  color: white;
   margin: 0 0.5rem;
   cursor: pointer;
+  font-weight: 500;
 }
 
-.footer-links button:hover {
+.postgig-footer-links button:hover {
   text-decoration: underline;
 }
 
-/* ========== RESPONSIVE ========== */
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .postgig-desktop-nav {
     display: none;
   }
 
-  .services-section {
+  .postgig-services-section {
     flex-direction: column;
     align-items: center;
     padding: 2rem 1rem;
@@ -341,17 +372,29 @@ textarea:-webkit-autofill {
     padding: 1.5rem;
   }
 
-  .info-card-content {
+  .postgig-info-card-content {
     padding: 1.5rem 1rem;
   }
 
-  .mobile-top-bar {
+  .postgig-mobile-topbar {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
   }
 
-  .mobile-nav-overlay {
-    top: 4.5rem;
+  .postgig-mobile-nav-overlay {
+    top: 0;
+  }
+}
+
+@media (min-width: 769px) {
+  .postgig-desktop-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .postgig-mobile-topbar {
+    display: none;
   }
 }
