@@ -1,5 +1,4 @@
 import './Signup.css';
-import signupImage from '../assets/signup.jpg';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
@@ -11,7 +10,7 @@ function Signup() {
     email: '',
     password: '',
     confirmPassword: '',
-    phone: '',              // ✅ NEW FIELD
+    phone: '',
     district_id: '',
     sector_id: '',
     cell: '',
@@ -79,7 +78,7 @@ function Signup() {
       const { error: insertError } = await supabase.from('users').insert([{
         full_name: formData.name,
         email: formData.email,
-        phone: formData.phone, // ✅ STORE PHONE
+        phone: formData.phone,
         auth_user_id: authData.user.id,
         district_id: formData.district_id,
         sector_id: formData.sector_id,
@@ -115,10 +114,7 @@ function Signup() {
 
   return (
     <div className="signup-container">
-      <div className="signup-left" style={{ backgroundImage: `url(${signupImage})` }}>
-        <div className="overlay" />
-      </div>
-
+      <div className="signup-left" />
       <div className="signup-right">
         <form className="signup-form" onSubmit={handleSubmit}>
           <h2>Sign Up</h2>
@@ -132,7 +128,7 @@ function Signup() {
           <label>Email</label>
           <input type="email" name="email" value={formData.email} onChange={handleChange} required />
 
-          <label>Phone Number</label> {/* ✅ NEW INPUT */}
+          <label>Phone Number</label>
           <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required />
 
           <label>Password</label>

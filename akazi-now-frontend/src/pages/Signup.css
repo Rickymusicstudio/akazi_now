@@ -38,7 +38,7 @@ input:-webkit-autofill {
 
 .signup-left {
   flex: 1;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+  background-image: url('../assets/kcc_bg_clean.png'); /* ✅ KCC */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -84,6 +84,17 @@ input:-webkit-autofill {
   margin-bottom: 4px;
 }
 
+.signup-form input,
+.signup-form select {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 0.5rem;
+  background: #fff;
+}
+
 .terms {
   display: flex;
   align-items: center;
@@ -109,13 +120,12 @@ input:-webkit-autofill {
   border-radius: 12px;
   cursor: pointer;
   transition: background 0.3s ease;
-  margin-top: 0.5rem;
   font-weight: bold;
+  margin-top: 0.5rem;
 }
 
 .btn:hover {
   background: linear-gradient(to right, #12283b, #2c3e50, #2c5364) !important;
-  opacity: 1;
 }
 
 .signin-link {
@@ -129,7 +139,6 @@ input:-webkit-autofill {
   font-weight: 500;
 }
 
-/* ✨ Animation */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -141,11 +150,10 @@ input:-webkit-autofill {
   }
 }
 
-/* ✅ Mobile Styles */
 @media screen and (max-width: 768px) {
   .signup-container {
     flex-direction: column;
-    background-image: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+    background-image: url('../assets/kcc_bg_clean.png'); /* ✅ KCC mobile */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -180,48 +188,5 @@ input:-webkit-autofill {
     border-radius: 20px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
     padding-bottom: 120px;
-  }
-
-  .signup-form h2 {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    font-size: 1.75rem;
-  }
-
-  .signup-form input,
-  .signup-form select {
-    width: 100%;
-    padding: 0.75rem;
-    font-size: 1rem;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    margin-bottom: 1rem;
-    background: #fff;
-  }
-
-  .terms {
-    margin-bottom: 1rem;
-    font-size: 14px;
-  }
-
-  .btn {
-    background: linear-gradient(to right, #0f2027, #203a43, #2c5364) !important;
-    color: #fff;
-    border-radius: 12px;
-    padding: 0.75rem;
-    font-size: 1rem;
-    font-weight: bold;
-    border: none;
-    width: 100%;
-  }
-  
-  .btn:hover {
-    background: linear-gradient(to right, #12283b, #2c3e50, #2c5364) !important;
-  }
-
-  .signin-link {
-    text-align: center;
-    font-size: 14px;
-    margin-top: 1rem;
   }
 }

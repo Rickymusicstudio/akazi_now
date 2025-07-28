@@ -1,5 +1,3 @@
-/* src/pages/Login.css */
-
 html, body, #root {
   height: 100%;
   margin: 0;
@@ -12,18 +10,20 @@ html, body, #root {
   width: 100vw;
   font-family: 'Segoe UI', sans-serif;
   overflow: hidden;
+  position: relative;
 }
 
-/* ✅ Left image panel for desktop — image only */
+/* ✅ Left image panel (KCC background) */
 .login-left {
   flex: 1;
-  background-image: url('../assets/signup.jpg');
+  background-image: url('../assets/kcc_bg_clean.png'); /* ✅ KCC image */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  position: relative;
 }
 
-/* Right login panel */
+/* ✅ Right panel with form */
 .login-right {
   flex: 1;
   background: #fff;
@@ -34,7 +34,7 @@ html, body, #root {
   min-height: 100vh;
 }
 
-/* Login Card */
+/* ✅ Login Card */
 .login-card {
   width: 100%;
   max-width: 380px;
@@ -60,8 +60,6 @@ html, body, #root {
   border-radius: 12px;
   border: 1px solid #ccc;
   font-size: 1rem;
-
-  /* 👇 Fix for Android dark autofill */
   background-color: #fff !important;
   color: #000 !important;
   -webkit-text-fill-color: #000 !important;
@@ -74,11 +72,10 @@ input:-webkit-autofill {
   -webkit-text-fill-color: #000 !important;
 }
 
-/* ✅ Updated to dark blue */
 .login-card .btn {
   width: 100%;
   padding: 0.75rem;
-  background-color: #0f1c2e; /* ✅ dark blue */
+  background-color: #0f1c2e;
   color: white;
   font-weight: bold;
   border: none;
@@ -90,7 +87,7 @@ input:-webkit-autofill {
 }
 
 .login-card .btn:hover {
-  background-color: #122438; /* ✅ hover shade */
+  background-color: #122438;
 }
 
 .login-card .signin-link {
@@ -99,7 +96,29 @@ input:-webkit-autofill {
   font-size: 0.95rem;
 }
 
-/* ✨ Animation */
+/* ✅ Desktop welcome message on KCC background */
+.desktop-login-heading {
+  position: absolute;
+  top: 50%;
+  left: 8%;
+  transform: translateY(-50%);
+  color: white;
+  text-align: left;
+  z-index: 2;
+}
+
+.desktop-login-heading h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.desktop-login-heading p {
+  font-size: 1.25rem;
+  margin-top: 0.5rem;
+}
+
+/* ✨ Fade-in animation */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -111,11 +130,11 @@ input:-webkit-autofill {
   }
 }
 
-/* ✅ Mobile Layout - gradient removed */
+/* ✅ Mobile Layout */
 @media (max-width: 768px) {
   .login-container {
     flex-direction: column;
-    background-image: url('../assets/signup.jpg'); /* ✅ Only image now */
+    background-image: url('../assets/kcc_bg_clean.png'); /* Mobile background */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -137,5 +156,9 @@ input:-webkit-autofill {
 
   .login-card {
     background: rgba(255, 255, 255, 0.92);
+  }
+
+  .desktop-login-heading {
+    display: none;
   }
 }

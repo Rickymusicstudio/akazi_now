@@ -32,7 +32,7 @@ function Login() {
 
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        navigate('/gigs'); // ✅ Redirect to gigs after successful login
+        navigate('/gigs');
       } else {
         setError('❌ Login succeeded but user not found.');
       }
@@ -45,7 +45,13 @@ function Login() {
 
   return (
     <div className="login-container">
-      <div className="login-left"></div>
+      <div className="login-left">
+        {/* ✅ Desktop welcome message */}
+        <div className="desktop-login-heading">
+          <h1>Welcome to AkaziNow</h1>
+         
+        </div>
+      </div>
 
       <div className="login-right">
         <form className="login-card" onSubmit={handleSubmit}>
@@ -71,7 +77,6 @@ function Login() {
             required
           />
 
-          {/* ✅ Forgot Password Link */}
           <div style={{ marginTop: '0.5rem', textAlign: 'right' }}>
             <Link to="/forgot-password" style={{ fontSize: '0.9rem', color: '#6a00ff' }}>
               Forgot Password?
