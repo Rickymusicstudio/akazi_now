@@ -306,7 +306,7 @@ function Abasare() {
             </label>
             <button type="submit">Submit</button>
 
-            {abasareList.some((a) => a.user_id === userId) && (
+            {userId && abasareList.find((a) => a.user_id === userId) && (
               <div className="umusare-actions">
                 <button
                   onClick={() => {
