@@ -38,7 +38,7 @@ function UserProfile() {
       .single();
 
     setUserProfile(data);
-    setEditForm(data);
+    setEditForm(data || {});
   };
 
   const handleInputChange = (e) => {
@@ -65,16 +65,14 @@ function UserProfile() {
     if (!confirmDelete) return;
 
     try {
-      // Call your backend route to delete from users and auth
-      const response = await fetch("https://vpdyhtbuvtdtrwunnmjx.supabase.co/api/auth/delete-user", {
+      const response = await fetch("https://akazi-now.onrender.com/api/auth/delete-user", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user_id: user.id }),
       });
 
       const result = await response.json();
+
       if (!response.ok) {
         alert("Failed to delete profile: " + result.error);
         return;
@@ -83,8 +81,7 @@ function UserProfile() {
       await supabase.auth.signOut();
       navigate("/");
     } catch (err) {
-      console.error("❌ Error:", err.message);
-      alert("Unexpected error: " + err.message);
+      alert("Failed to delete profile: " + err.message);
     }
   };
 
@@ -166,17 +163,17 @@ function UserProfile() {
           <form className="postgig-form">
             <h2>Edit Profile</h2>
             <label>Full Name</label>
-            <input name="full_name" value={editForm.full_name} onChange={handleInputChange} />
+            <input name="full_name" value={editForm.full_name || ""} onChange={handleInputChange} />
             <label>Phone</label>
-            <input name="phone" value={editForm.phone} onChange={handleInputChange} />
+            <input name="phone" value={editForm.phone || ""} onChange={handleInputChange} />
             <label>District</label>
-            <input name="district" value={editForm.district} onChange={handleInputChange} />
+            <input name="district" value={editForm.district || ""} onChange={handleInputChange} />
             <label>Sector</label>
-            <input name="sector" value={editForm.sector} onChange={handleInputChange} />
+            <input name="sector" value={editForm.sector || ""} onChange={handleInputChange} />
             <label>Cell</label>
-            <input name="cell" value={editForm.cell} onChange={handleInputChange} />
+            <input name="cell" value={editForm.cell || ""} onChange={handleInputChange} />
             <label>Village</label>
-            <input name="village" value={editForm.village} onChange={handleInputChange} />
+            <input name="village" value={editForm.village || ""} onChange={handleInputChange} />
             <button type="button" onClick={handleSave}>Save Changes</button>
             <button
               type="button"
