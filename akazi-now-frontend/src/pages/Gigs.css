@@ -251,26 +251,25 @@ html, body {
   .gigs-mobile-left {
     display: flex;
     align-items: center;
-    gap: 0.3rem;
-    flex-shrink: 0;
-    z-index: 2;
+    gap: 0.4rem;
     margin-left: 0.3rem;
   }
 
   .gigs-mobile-avatar {
-    height: 30px;
-    width: 30px;
+    height: 42px;
+    width: 42px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid white;
-    margin: 0;
-    padding: 0;
   }
 
   .gigs-mobile-hamburger {
-    font-size: 20px;
+    font-size: 52px;
+    padding: 0.6rem;
+    margin-left: 0.2rem;
     color: white;
     cursor: pointer;
+    line-height: 1;
   }
 
   .gigs-mobile-title {
