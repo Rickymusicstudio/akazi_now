@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { FaBell } from "react-icons/fa";
+import "./NotificationBell.css"; // ✅ Make sure this CSS file exists
 
 function NotificationBell() {
   const [notifications, setNotifications] = useState([]);
@@ -13,10 +14,7 @@ function NotificationBell() {
   }, []);
 
   const loadNotifications = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
     const { data, error } = await supabase
@@ -28,10 +26,19 @@ function NotificationBell() {
     if (!error) setNotifications(data);
   };
 
-  const goToDetail = (note) => {
-    navigate(`/notifications/${note.id}`);
+  const handleNotificationClick = async (note) => {
+    // ✅ Optionally mark as read
+    await supabase
+      .from("notifications")
+      .update({ read: true })
+      .eq("id", note.id);
+
+    // ✅ Redirect to inbox
+    navigate("/inbox");
     setShowDropdown(false);
   };
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
     <div className="notification-bell-container">
@@ -40,6 +47,9 @@ function NotificationBell() {
         onClick={() => setShowDropdown(!showDropdown)}
       >
         <FaBell color="#b8860b" size={20} />
+        {unreadCount > 0 && (
+          <span className="notification-count">{unreadCount}</span>
+        )}
       </button>
 
       {showDropdown && (
@@ -51,7 +61,7 @@ function NotificationBell() {
               <div
                 key={note.id}
                 className="notification-item"
-                onClick={() => goToDetail(note)}
+                onClick={() => handleNotificationClick(note)}
               >
                 <p className="notification-message">{note.message}</p>
                 <p className="notification-time">

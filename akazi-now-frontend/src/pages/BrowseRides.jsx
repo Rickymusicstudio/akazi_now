@@ -49,7 +49,9 @@ function BrowseRides() {
   }, [mobileNavOpen]);
 
   const getCurrentUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (user) {
       setUserId(user.id);
       const { data: profile } = await supabase
@@ -81,7 +83,7 @@ function BrowseRides() {
             driver_name: ride.users?.full_name || "Unknown",
             contact_info: ride.users?.phone || "N/A",
             total_reserved: reservations?.length || 0,
-            seatsRequested: ""
+            seatsRequested: "",
           };
         })
       );
@@ -134,9 +136,11 @@ function BrowseRides() {
   return (
     <>
       <div className="browse-desktop-nav">
-        <div className="browse-nav-left-logo" onClick={() => navigate("/gigs")}>AkaziNow</div>
+        <div className="browse-nav-left-logo" onClick={() => navigate("/")}>
+          AkaziNow
+        </div>
         <ul>
-          <li onClick={() => navigate("/gigs")}>Home</li>
+          <li onClick={() => navigate("/")}>Home</li>
           <li onClick={() => navigate("/browse-rides")}>Browse Rides</li>
           <li onClick={() => navigate("/post-ride")}>Post Ride</li>
           <li onClick={() => navigate("/carpool-inbox")}>Carpool Inbox</li>
@@ -160,16 +164,26 @@ function BrowseRides() {
 
       {mobileNavOpen && (
         <div
-          className={`browse-mobile-nav-overlay ${slideDirection === "down" ? "browse-slide-down" : "browse-slide-up"}`}
+          className={`browse-mobile-nav-overlay ${
+            slideDirection === "down" ? "browse-slide-down" : "browse-slide-up"
+          }`}
           ref={mobileNavRef}
         >
           <ul>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/gigs"); }}>Home</li>
+            <li onClick={() => { setMobileNavOpen(false); navigate("/"); }}>Home</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/browse-rides"); }}>Browse Rides</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/post-ride"); }}>Post Ride</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/carpool-inbox"); }}>Carpool Inbox</li>
             <li onClick={() => { setMobileNavOpen(false); navigate("/abasare"); }}>Abasare</li>
-            <li onClick={async () => { setMobileNavOpen(false); await supabase.auth.signOut(); navigate("/login"); }}>Logout</li>
+            <li
+              onClick={async () => {
+                setMobileNavOpen(false);
+                await supabase.auth.signOut();
+                navigate("/login");
+              }}
+            >
+              Logout
+            </li>
           </ul>
         </div>
       )}
@@ -207,19 +221,33 @@ function BrowseRides() {
           return (
             <div key={ride.id} className="browse-card">
               <div className="browse-card-text">
-                <h2>{ride.origin} → {ride.destination}</h2>
-                <p><strong>Seats:</strong> {seats} | <strong>Left:</strong> {Math.max(seatsLeft, 0)}</p>
-                <p><strong>Date:</strong> {rideDate.toLocaleString()}</p>
-                <p><strong>Price:</strong> {ride.price} RWF</p>
+                <h2>
+                  {ride.origin} → {ride.destination}
+                </h2>
+                <p>
+                  <strong>Seats:</strong> {seats} | <strong>Left:</strong> {Math.max(seatsLeft, 0)}
+                </p>
+                <p>
+                  <strong>Date:</strong> {rideDate.toLocaleString()}
+                </p>
+                <p>
+                  <strong>Price:</strong> {ride.price} RWF
+                </p>
 
                 {!shouldHideDriverInfo && (
                   <>
-                    <p><strong>Driver:</strong> {ride.driver_name}</p>
-                    <p><strong>Phone:</strong> {ride.contact_info}</p>
+                    <p>
+                      <strong>Driver:</strong> {ride.driver_name}
+                    </p>
+                    <p>
+                      <strong>Phone:</strong> {ride.contact_info}
+                    </p>
                   </>
                 )}
 
-                <p><strong>Note:</strong> {ride.notes || "No notes provided."}</p>
+                <p>
+                  <strong>Note:</strong> {ride.notes || "No notes provided."}
+                </p>
 
                 {isExpired && <p className="no-seats-text">This ride has expired</p>}
                 {!isExpired && isFull && <p className="no-seats-text">This ride is fully reserved</p>}
@@ -249,7 +277,9 @@ function BrowseRides() {
                   </div>
                 )}
               </div>
-              {ride.image_url && <img src={ride.image_url} alt="Car" className="ride-car-image" />}
+              {ride.image_url && (
+                <img src={ride.image_url} alt="Car" className="ride-car-image" />
+              )}
             </div>
           );
         })}

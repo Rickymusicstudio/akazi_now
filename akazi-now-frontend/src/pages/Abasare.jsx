@@ -1,4 +1,3 @@
-// src/pages/Abasare.jsx
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate, Link } from "react-router-dom";
@@ -17,7 +16,7 @@ function Abasare() {
   const [slideDirection, setSlideDirection] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [showTable, setShowTable] = useState(false);
+  const [showTable, setShowTable] = useState(true);
   const [userProfile, setUserProfile] = useState(null);
   const mobileNavRef = useRef(null);
   const navigate = useNavigate();
@@ -70,10 +69,40 @@ function Abasare() {
   const handleRating = async (umusareId, stars) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user || user.id === umusareId) return;
-    await supabase.from("ratings").insert([{ umusare_id: umusareId, rated_by: user.id, rating: stars }]);
-    const { data: ratings } = await supabase.from("ratings").select("rating").eq("umusare_id", umusareId);
+
+    const { error: insertError } = await supabase
+      .from("ratings")
+      .upsert(
+        [{ umusare_id: umusareId, rated_by: user.id, rating: stars }],
+        { onConflict: ['umusare_id', 'rated_by'] }
+      );
+
+    if (insertError) {
+      console.error("Rating error:", insertError);
+      return;
+    }
+
+    const { data: ratings, error: fetchError } = await supabase
+      .from("ratings")
+      .select("rating")
+      .eq("umusare_id", umusareId);
+
+    if (fetchError || !ratings.length) {
+      console.error("Fetching ratings error:", fetchError);
+      return;
+    }
+
     const avg = ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length;
-    await supabase.from("abasare").update({ average_rating: avg }).eq("user_id", umusareId);
+
+    const { error: updateError } = await supabase
+      .from("abasare")
+      .update({ average_rating: avg })
+      .eq("user_id", umusareId);
+
+    if (updateError) {
+      console.error("Updating average rating failed:", updateError);
+    }
+
     fetchAbasare();
   };
 
@@ -135,7 +164,6 @@ function Abasare() {
 
   return (
     <div className="abasare-container">
-      {/* Desktop Nav */}
       <div className="abasare-desktop-nav">
         <div className="abasare-nav-left-logo" onClick={() => navigate("/")}>AkaziNow</div>
         <ul>
@@ -149,7 +177,6 @@ function Abasare() {
         </ul>
       </div>
 
-      {/* Hero */}
       <div className="abasare-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
         <div className="abasare-mobile-topbar">
           <div className="abasare-mobile-left">
@@ -178,9 +205,87 @@ function Abasare() {
         )}
       </div>
 
-      {/* Main Section */}
+      {showTable && (
+        <section className="abasare-table-section">
+          <div className="abasare-table-container">
+            <div className="search-bar">
+              {!showSearch ? (
+                <FaSearch className="search-icon" onClick={() => setShowSearch(true)} />
+              ) : (
+                <input
+                  type="text"
+                  className="search-input"
+                  placeholder="Search by name or location"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              )}
+            </div>
+            <div className="table-wrapper" style={{ overflowX: "auto", marginTop: "1rem" }}>
+              <table className="abasare-table" style={{ minWidth: "700px" }}>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Rating</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {abasareList
+                    .filter((item) => {
+                      const term = searchTerm.toLowerCase();
+                      return (
+                        item.users?.full_name?.toLowerCase().includes(term) ||
+                        item.users?.phone?.toLowerCase().includes(term) ||
+                        item.current_location?.toLowerCase().includes(term)
+                      );
+                    })
+                    .map((item, index) => (
+                      <tr key={item.id}>
+                        <td>{index + 1}</td>
+                        <td>
+                          <Link to={`/abasare/${item.user_id}`} style={{ fontWeight: "bold", color: "#000" }}>
+                            {item.users?.full_name || "N/A"}
+                          </Link>
+                        </td>
+                        <td>{item.users?.phone || "N/A"}</td>
+                        <td>{item.current_location || "N/A"}</td>
+                        <td style={{ color: item.is_available ? "green" : "red", fontWeight: "bold" }}>
+                          {item.is_available ? "Available" : "Unavailable"}
+                        </td>
+                        <td>
+                          {userId === item.user_id ? (
+                            <span style={{ fontStyle: "italic", color: "gray" }}>(self)</span>
+                          ) : (
+                            Array.from({ length: 5 }, (_, i) => (
+                              <span
+                                key={i}
+                                onClick={() => handleRating(item.user_id, i + 1)}
+                                className={
+                                  item.average_rating && i < Math.round(item.average_rating)
+                                    ? "star-green"
+                                    : "star-yellow"
+                                }
+                                style={{ cursor: "pointer" }}
+                              >
+                                ★
+                              </span>
+                            ))
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      )}
+
       <section className="abasare-services-section">
-        {/* Form */}
         <div className="abasare-form-card">
           <form className="abasare-form" onSubmit={handleSubmit}>
             <h2>Register as Umusare</h2>
@@ -225,102 +330,15 @@ function Abasare() {
           </form>
         </div>
 
-        {/* Sticker Card */}
         <div className="abasare-sticker-card">
           <div className="abasare-info-card-content">
-            <h3>Abasare Table</h3>
             <img src={stickerRide} alt="Umusare" className="abasare-info-card-image" />
-            <p>View and rate available drivers ready to help.</p>
-            <button className="abasare-show-table-btn" onClick={() => setShowTable(!showTable)}>
-              {showTable ? "Hide Abasare Table" : "See Available Abasare"}
-            </button>
+            <p style={{ fontSize: "1rem", lineHeight: "1.6", marginTop: "1rem" }}>
+              Connect with <strong>Umusare drivers</strong> who are ready to help you get home safely.
+            </p>
           </div>
         </div>
       </section>
-
-      {/* Separated Table Section */}
-      {showTable && (
-        <section className="abasare-table-section">
-          <div className="abasare-table-container">
-            <div className="search-bar">
-              {!showSearch ? (
-                <FaSearch className="search-icon" onClick={() => setShowSearch(true)} />
-              ) : (
-                <input
-                  type="text"
-                  className="search-input"
-                  placeholder="Search by name or location"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              )}
-            </div>
-            <div className="table-wrapper" style={{ overflowX: "auto", marginTop: "1rem" }}>
-              <table className="abasare-table" style={{ minWidth: "700px" }}>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Phone</th>
-                    <th>Location</th>
-                    <th>Status</th>
-                    <th>Rating</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {abasareList
-                    .filter((item) => {
-                      const term = searchTerm.toLowerCase();
-                      return (
-                        item.users?.full_name?.toLowerCase().includes(term) ||
-                        item.users?.phone?.toLowerCase().includes(term) ||
-                        item.current_location?.toLowerCase().includes(term)
-                      );
-                    })
-                    .map((item, index) => (
-                      <tr key={item.id}>
-                        <td>{index + 1}</td>
-                        <td>
-                          <Link
-                            to={`/abasare/${item.user_id}`}
-                            style={{ fontWeight: "bold", color: "#000" }}
-                          >
-                            {item.users?.full_name || "N/A"}
-                          </Link>
-                        </td>
-                        <td>{item.users?.phone || "N/A"}</td>
-                        <td>{item.current_location || "N/A"}</td>
-                        <td style={{ color: item.is_available ? "green" : "red", fontWeight: "bold" }}>
-                          {item.is_available ? "Available" : "Unavailable"}
-                        </td>
-                        <td>
-                          {userId === item.user_id ? (
-                            <span style={{ fontStyle: "italic", color: "gray" }}>(self)</span>
-                          ) : (
-                            Array.from({ length: 5 }, (_, i) => (
-                              <span
-                                key={i}
-                                onClick={() => handleRating(item.user_id, i + 1)}
-                                className={
-                                  item.average_rating && i < Math.round(item.average_rating)
-                                    ? "star-green"
-                                    : "star-yellow"
-                                }
-                                style={{ cursor: "pointer" }}
-                              >
-                                ★
-                              </span>
-                            ))
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-      )}
 
       <footer className="abasare-footer">
         <p>&copy; {new Date().getFullYear()} AkaziNow. All rights reserved.</p>

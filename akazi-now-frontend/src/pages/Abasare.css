@@ -199,7 +199,7 @@ html, body {
   padding: 5rem 2rem 2rem;
   flex-wrap: wrap;
   background: #f9f9f9;
-  margin-top: 80px; /* prevent overlap with fixed desktop nav */
+  margin-top: 80px;
 }
 
 .abasare-form-card {
@@ -459,4 +459,24 @@ html, body {
   .abasare-mobile-topbar {
     display: none;
   }
+}
+
+/* STAR RATING */
+.star-green {
+  color: #FFD700; /* gold for selected stars */
+}
+
+.star-yellow {
+  color: #e0e0e0; /* gray for unselected stars */
+}
+
+.star-yellow:hover,
+.star-yellow:hover ~ .star-yellow {
+  color: #FFD700;
+}
+
+.star-green,
+.star-yellow {
+  transition: color 0.2s ease;
+  font-size: 1.2rem;
 }

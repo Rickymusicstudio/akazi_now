@@ -62,14 +62,18 @@ function Gigs() {
   }, [mobileNavVisible]);
 
   const fetchJobs = async () => {
-    const { data, error } = await supabase.from("jobs").select("*");
+    const { data, error } = await supabase
+      .from("jobs")
+      .select(`
+        *,
+        user:users (full_name, image_url)
+      `);
+
     if (!error) setJobs(data);
   };
 
   const fetchUserProfile = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
     const { data } = await supabase
       .from("users")
@@ -87,6 +91,67 @@ function Gigs() {
       setSlideDirection("slide-up");
       setTimeout(() => setMobileNavVisible(false), 300);
     }
+  };
+
+  const handleApply = async (job) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    const { data: existingApp } = await supabase
+      .from("applications")
+      .select("*")
+      .eq("gig_id", job.id)
+      .eq("worker_id", user.id)
+      .single();
+
+    if (existingApp) {
+      alert("You have already applied for this job.");
+      return;
+    }
+
+    const message = prompt("Enter a short message for the employer:");
+    if (!message) return;
+
+    const { error: appError } = await supabase.from("applications").insert([
+      {
+        gig_id: job.id,
+        worker_id: user.id,
+        message,
+        status: "pending",
+      },
+    ]);
+
+    if (appError) {
+      alert("Failed to apply. Please try again.");
+      return;
+    }
+
+    const { data: jobDetails } = await supabase
+      .from("jobs")
+      .select("user_id, title")
+      .eq("id", job.id)
+      .single();
+
+    if (jobDetails && jobDetails.user_id !== user.id) {
+      const { error: notifError } = await supabase.from("notifications").insert([
+        {
+          recipient_id: jobDetails.user_id,
+          message: `New application received for "${jobDetails.title}"`,
+          type: "application",
+          related_gig_id: job.id,
+          read: false,
+        },
+      ]);
+
+      if (notifError) {
+        console.error("❌ Notification insert failed:", notifError.message);
+      }
+    }
+
+    alert("Application submitted successfully!");
   };
 
   return (
@@ -168,12 +233,31 @@ function Gigs() {
           jobs.map((job) => (
             <div className="gigs-card" key={job.id} style={{ background: "#fff8d4" }}>
               <div className="gigs-card-text">
+
+                {/* ✅ Poster info */}
+                <div style={{ display: "flex", alignItems: "center", marginBottom: "0.5rem" }}>
+                  <img
+                    src={job.user?.image_url || defaultAvatar}
+                    alt="poster"
+                    style={{
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                      marginRight: "10px"
+                    }}
+                  />
+                  <span style={{ fontWeight: "600", fontSize: "0.95rem" }}>
+                    {job.user?.full_name || "Anonymous"}
+                  </span>
+                </div>
+
                 <h2>{job.title}</h2>
                 <p>{job.job_description}</p>
                 <p><strong>Price:</strong> {job.price} RWF</p>
                 <p><strong>Location:</strong> {job.address}</p>
-                <p><strong>Contact:</strong> {job.contact_info}</p>
-                <button onClick={() => navigate(`/jobs/${job.id}`)}>View Details</button>
+                <p><strong>Contact:</strong> {userProfile ? job.contact_info : "Login to view"}</p>
+                <button onClick={() => handleApply(job)}>Apply</button>
               </div>
               {job.poster_image && (
                 <img src={job.poster_image} alt="gig" />

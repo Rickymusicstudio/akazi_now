@@ -18,8 +18,8 @@ function ApplicationsInbox() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchApplications();
     fetchUserProfile();
+    fetchApplications();
   }, []);
 
   useEffect(() => {
@@ -60,16 +60,46 @@ function ApplicationsInbox() {
   };
 
   const fetchApplications = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (!user) return navigate("/login");
 
-    const { data, error } = await supabase
-      .from("applications")
-      .select(`*, jobs(*), users:image_id(image_url, full_name, phone)`)
-      .eq("poster_id", user.id)
-      .order("created_at", { ascending: false });
+    console.log("📌 Logged-in user ID:", user.id);
 
-    if (!error) setApplications(data);
+    const { data: jobsData, error: jobsError } = await supabase
+      .from("jobs")
+      .select("id, title, user_id")
+      .eq("user_id", user.id);
+
+    if (jobsError) {
+      console.error("❌ Jobs fetch error:", jobsError);
+      return;
+    }
+
+    if (!jobsData || jobsData.length === 0) {
+      console.warn("⚠️ No jobs found for this user.");
+      return;
+    }
+
+    const jobIds = jobsData.map((j) => j.id);
+    console.log("✅ Job IDs owned by this user:", jobIds);
+
+    const { data: appsData, error: appsError } = await supabase
+      .from("applications")
+      .select(`
+        *,
+        jobs!fk_applications_gig(id, title, contact_info, poster_image, price),
+        applicant:users!fk_applications_worker(image_url, full_name, phone)
+      `)
+      .in("gig_id", jobIds)
+      .order("applied_at", { ascending: false });
+
+    if (appsError) {
+      console.error("❌ Applications fetch error:", appsError);
+      return;
+    }
+
+    console.log("📬 Applications fetched:", appsData);
+    setApplications(appsData);
   };
 
   const handleHamburgerClick = () => {
@@ -154,12 +184,12 @@ function ApplicationsInbox() {
                 marginBottom: "1.5rem",
                 boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
               }}>
-                <h3>{app.users?.full_name || "Anonymous"}</h3>
-                <p><strong>Phone:</strong> {app.users?.phone || "N/A"}</p>
+                <h3>{app.applicant?.full_name || "Anonymous"}</h3>
+                <p><strong>Phone:</strong> {app.applicant?.phone || "N/A"}</p>
                 <p><strong>Message:</strong> {app.message}</p>
                 <p><strong>Job:</strong> {app.jobs?.title || "N/A"}</p>
-                {app.users?.image_url && (
-                  <img src={app.users.image_url} alt="applicant" style={{
+                {app.applicant?.image_url && (
+                  <img src={app.applicant.image_url} alt="applicant" style={{
                     width: "100px",
                     height: "100px",
                     objectFit: "cover",

@@ -1,0 +1,62 @@
+.notification-bell-container {
+  position: relative;
+  display: inline-block;
+}
+
+.notification-bell-button {
+  background: transparent;
+  border: none;
+  position: relative;
+  cursor: pointer;
+  padding: 0;
+}
+
+.notification-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: red;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
+}
+
+.notification-dropdown {
+  position: absolute;
+  top: 2.5rem;
+  right: 0;
+  background: white;
+  width: 260px;
+  max-height: 300px;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  z-index: 1000;
+  padding: 0.5rem;
+}
+
+.notification-item {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.notification-item:hover {
+  background: #f8f8f8;
+}
+
+.notification-message {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.notification-time {
+  font-size: 0.7rem;
+  color: #888;
+  margin-top: 4px;
+}
+ 
