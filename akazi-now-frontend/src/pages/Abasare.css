@@ -112,7 +112,7 @@ html, body {
 .abasare-mobile-left {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.4rem;
   margin-left: 0.3rem;
 }
 
@@ -125,13 +125,14 @@ html, body {
 }
 
 .abasare-mobile-hamburger {
-  font-size: 52px;        /* Final large size */
+  font-size: 52px;
   padding: 0.6rem;
-  margin-left: 0.6rem;
+  margin-left: 0.2rem;
   color: white;
   cursor: pointer;
   line-height: 1;
 }
+
 .abasare-mobile-title {
   position: absolute;
   left: 50%;
