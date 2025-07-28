@@ -59,32 +59,31 @@ function UserProfile() {
 
   const handleDeleteProfile = async () => {
     const { data: { user }, error } = await supabase.auth.getUser();
-    if (error || !user) return;
+    if (!user || error) return;
 
-    const confirmDelete = window.confirm("Are you sure you want to permanently delete your AkaziNow account?");
+    const confirmDelete = window.confirm("Are you sure you want to permanently delete your profile?");
     if (!confirmDelete) return;
 
     try {
+      // Call your backend route to delete from users and auth
       const response = await fetch("https://vpdyhtbuvtdtrwunnmjx.supabase.co/api/auth/delete-user", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user_id: user.id })
+        body: JSON.stringify({ user_id: user.id }),
       });
 
       const result = await response.json();
-
       if (!response.ok) {
-        console.error("❌ Failed to delete user:", result.error);
-        alert("Failed to delete account: " + result.error);
+        alert("Failed to delete profile: " + result.error);
         return;
       }
 
       await supabase.auth.signOut();
       navigate("/");
     } catch (err) {
-      console.error("❌ Delete request error:", err);
+      console.error("❌ Error:", err.message);
       alert("Unexpected error: " + err.message);
     }
   };
@@ -179,7 +178,20 @@ function UserProfile() {
             <label>Village</label>
             <input name="village" value={editForm.village} onChange={handleInputChange} />
             <button type="button" onClick={handleSave}>Save Changes</button>
-            <button type="button" className="profile-delete-btn" onClick={handleDeleteProfile}>
+            <button
+              type="button"
+              onClick={handleDeleteProfile}
+              style={{
+                marginTop: "1rem",
+                backgroundColor: "#b00020",
+                color: "white",
+                border: "none",
+                borderRadius: "10px",
+                padding: "0.75rem",
+                fontWeight: "bold",
+                cursor: "pointer"
+              }}
+            >
               Delete Profile
             </button>
           </form>
