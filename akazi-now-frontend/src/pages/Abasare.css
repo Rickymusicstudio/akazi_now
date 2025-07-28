@@ -12,7 +12,6 @@ html, body {
   overflow-x: hidden;
 }
 
-/* MAIN CONTAINER */
 .abasare-container {
   width: 100%;
   display: flex;
@@ -62,7 +61,7 @@ html, body {
   left: 2rem;
 }
 
-/* HERO SECTION */
+/* HERO */
 .abasare-hero {
   width: 100%;
   height: 75vh;
@@ -113,7 +112,7 @@ html, body {
 .abasare-mobile-left {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 1rem;
   margin-left: 0.3rem;
 }
 
@@ -126,11 +125,12 @@ html, body {
 }
 
 .abasare-mobile-hamburger {
-  font-size: 32px;
-  padding: 0.5rem;
+  font-size: 40px;
+  padding: 0.6rem;
   margin-left: 0.4rem;
   color: white;
   cursor: pointer;
+  line-height: 1;
 }
 
 .abasare-mobile-title {
@@ -143,7 +143,7 @@ html, body {
   z-index: 1;
 }
 
-/* MOBILE NAV OVERLAY */
+/* NAV OVERLAY */
 .abasare-mobile-nav-overlay {
   position: fixed;
   top: 0;
@@ -165,7 +165,6 @@ html, body {
 .slide-down {
   animation-name: slideDown;
 }
-
 .slide-up {
   animation-name: slideUp;
 }
@@ -244,9 +243,6 @@ html, body {
   font-size: 1rem;
   background-color: white;
   color: black;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
 }
 
 .abasare-form textarea {
@@ -265,7 +261,6 @@ html, body {
   font-weight: bold;
 }
 
-/* Buttons under form */
 .umusare-actions {
   display: flex;
   flex-direction: column;
@@ -357,7 +352,7 @@ html, body {
   color: white;
 }
 
-/* SEARCH */
+/* SEARCH BAR */
 .search-bar {
   margin: 1rem 0;
   display: flex;
@@ -405,20 +400,17 @@ html, body {
   text-decoration: underline;
 }
 
-/* STAR RATING */
+/* STARS */
 .star-green {
   color: #FFD700;
 }
-
 .star-yellow {
   color: #e0e0e0;
 }
-
 .star-yellow:hover,
 .star-yellow:hover ~ .star-yellow {
   color: #FFD700;
 }
-
 .star-green,
 .star-yellow {
   transition: color 0.2s ease;
