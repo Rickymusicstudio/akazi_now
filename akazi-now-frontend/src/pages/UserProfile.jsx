@@ -58,25 +58,35 @@ function UserProfile() {
   };
 
   const handleDeleteProfile = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error || !user) return;
 
-    const confirmDelete = window.confirm("Are you sure you want to permanently delete your profile?");
+    const confirmDelete = window.confirm("Are you sure you want to permanently delete your AkaziNow account?");
     if (!confirmDelete) return;
 
-    // Delete from users table
-    await supabase.from("users").delete().eq("auth_user_id", user.id);
+    try {
+      const response = await fetch("https://vpdyhtbuvtdtrwunnmjx.supabase.co/api/auth/delete-user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ user_id: user.id })
+      });
 
-    // Delete user from auth (requires admin privileges or service role key)
-    const { error } = await supabase.auth.admin.deleteUser(user.id); // NOTE: Only works if service role key is used
+      const result = await response.json();
 
-    if (error) {
-      alert("Failed to delete profile. Contact administrator.");
-      return;
+      if (!response.ok) {
+        console.error("❌ Failed to delete user:", result.error);
+        alert("Failed to delete account: " + result.error);
+        return;
+      }
+
+      await supabase.auth.signOut();
+      navigate("/");
+    } catch (err) {
+      console.error("❌ Delete request error:", err);
+      alert("Unexpected error: " + err.message);
     }
-
-    await supabase.auth.signOut();
-    navigate("/");
   };
 
   const handleMenuToggle = () => {
@@ -169,7 +179,7 @@ function UserProfile() {
             <label>Village</label>
             <input name="village" value={editForm.village} onChange={handleInputChange} />
             <button type="button" onClick={handleSave}>Save Changes</button>
-            <button type="button" onClick={handleDeleteProfile} style={{ marginTop: "1rem", backgroundColor: "#b00020", color: "white" }}>
+            <button type="button" className="profile-delete-btn" onClick={handleDeleteProfile}>
               Delete Profile
             </button>
           </form>
