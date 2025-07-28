@@ -56,6 +56,7 @@ function App() {
         {/* Public Gigs & Browse */}
         <Route path="/gigs" element={<Gigs />} />
         <Route path="/carpools" element={<BrowseRides />} />
+        <Route path="/browse-rides" element={<BrowseRides />} /> {/* ✅ Alias Route */}
         <Route path="/abasare" element={<Abasare />} />
 
         {/* Protected Actions */}
