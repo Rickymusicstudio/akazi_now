@@ -57,6 +57,28 @@ function UserProfile() {
     fetchUserProfile();
   };
 
+  const handleDeleteProfile = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const confirmDelete = window.confirm("Are you sure you want to permanently delete your profile?");
+    if (!confirmDelete) return;
+
+    // Delete from users table
+    await supabase.from("users").delete().eq("auth_user_id", user.id);
+
+    // Delete user from auth (requires admin privileges or service role key)
+    const { error } = await supabase.auth.admin.deleteUser(user.id); // NOTE: Only works if service role key is used
+
+    if (error) {
+      alert("Failed to delete profile. Contact administrator.");
+      return;
+    }
+
+    await supabase.auth.signOut();
+    navigate("/");
+  };
+
   const handleMenuToggle = () => {
     if (!mobileNavOpen) {
       setSlideDirection("slide-down");
@@ -147,6 +169,9 @@ function UserProfile() {
             <label>Village</label>
             <input name="village" value={editForm.village} onChange={handleInputChange} />
             <button type="button" onClick={handleSave}>Save Changes</button>
+            <button type="button" onClick={handleDeleteProfile} style={{ marginTop: "1rem", backgroundColor: "#b00020", color: "white" }}>
+              Delete Profile
+            </button>
           </form>
         </div>
 

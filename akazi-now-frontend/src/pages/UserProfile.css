@@ -261,6 +261,22 @@ body {
   background: #203a43;
 }
 
+/* RED DELETE BUTTON */
+.profile-delete-btn {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #b00020;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.profile-delete-btn:hover {
+  background: #a3001c;
+}
+
 /* STICKER PANEL */
 .profile-sticker-card {
   flex: 1;
