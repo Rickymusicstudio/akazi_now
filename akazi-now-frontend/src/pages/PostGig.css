@@ -20,7 +20,7 @@ html, body {
   align-items: center;
 }
 
-/* ========== DESKTOP NAV ========== */
+/* DESKTOP NAV */
 .postgig-desktop-nav {
   display: none;
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
@@ -57,7 +57,7 @@ html, body {
   left: 2rem;
 }
 
-/* ========== HERO SECTION ========== */
+/* HERO */
 .postgig-hero {
   width: 100%;
   height: 75vh;
@@ -73,7 +73,6 @@ html, body {
   flex-direction: column;
 }
 
-/* ========== HERO TEXT ========== */
 .postgig-hero-content {
   text-align: center;
   z-index: 10;
@@ -90,7 +89,7 @@ html, body {
   font-size: 1.1rem;
 }
 
-/* ========== MOBILE TOPBAR (Gigs-style) ========== */
+/* MOBILE TOPBAR */
 .postgig-mobile-topbar {
   position: fixed;
   top: 0;
@@ -109,26 +108,25 @@ html, body {
 .postgig-mobile-left {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-  flex-shrink: 0;
-  z-index: 2;
+  gap: 0.4rem;
   margin-left: 0.3rem;
 }
 
 .postgig-mobile-avatar {
-  height: 30px;
-  width: 30px;
+  height: 42px;
+  width: 42px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid white;
-  margin: 0;
-  padding: 0;
 }
 
 .postgig-mobile-hamburger {
-  font-size: 20px;
+  font-size: 52px;
+  padding: 0.6rem;
+  margin-left: 0.2rem;
   color: white;
   cursor: pointer;
+  line-height: 1;
 }
 
 .postgig-mobile-title {
@@ -142,7 +140,7 @@ html, body {
   pointer-events: none;
 }
 
-/* ========== MOBILE NAV OVERLAY ========== */
+/* NAV OVERLAY */
 .postgig-mobile-nav-overlay {
   position: fixed;
   top: 0;
@@ -206,7 +204,7 @@ html, body {
   font-size: 1.1rem;
 }
 
-/* ========== MAIN SECTION ========== */
+/* MAIN SECTION */
 .postgig-services-section {
   display: flex;
   justify-content: center;
@@ -287,7 +285,7 @@ textarea:-webkit-autofill {
   opacity: 0.9;
 }
 
-/* ========== INFO CARD ========== */
+/* STICKER */
 .postgig-sticker-card {
   flex: 1;
   min-width: 300px;
@@ -329,7 +327,7 @@ textarea:-webkit-autofill {
   object-fit: contain;
 }
 
-/* ========== FOOTER ========== */
+/* FOOTER */
 .postgig-footer {
   width: 100%;
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
