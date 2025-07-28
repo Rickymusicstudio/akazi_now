@@ -68,20 +68,25 @@ html, body {
 .browse-mobile-left-group {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
+  margin-left: 0.3rem;
 }
 
 .browse-mobile-profile-pic {
-  height: 30px;
-  width: 30px;
+  height: 42px;
+  width: 42px;
   border-radius: 50%;
   border: 2px solid white;
   object-fit: cover;
 }
 
 .browse-mobile-hamburger {
-  font-size: 20px;
+  font-size: 52px;
+  padding: 0.6rem;
+  margin-left: 0.2rem;
+  color: white;
   cursor: pointer;
+  line-height: 1;
 }
 
 .browse-mobile-title {
