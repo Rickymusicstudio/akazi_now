@@ -21,7 +21,7 @@ html, body {
   overflow-x: hidden;
 }
 
-/* DESKTOP NAV (fixed) */
+/* DESKTOP NAV */
 .abasare-desktop-nav {
   display: none;
   position: fixed;
@@ -240,6 +240,11 @@ html, body {
   border: 1px solid #ccc;
   margin-bottom: 1rem;
   font-size: 1rem;
+  background-color: white;
+  color: black;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
 }
 
 .abasare-form textarea {
@@ -318,17 +323,6 @@ html, body {
   height: auto;
   object-fit: contain;
   margin: 0 auto;
-}
-
-.abasare-show-table-btn {
-  margin-top: 0.5rem;
-  background: #d4a015;
-  color: white;
-  padding: 0.6rem 1rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
 }
 
 /* TABLE SECTION */
@@ -415,6 +409,26 @@ html, body {
   text-decoration: underline;
 }
 
+/* STAR RATING */
+.star-green {
+  color: #FFD700;
+}
+
+.star-yellow {
+  color: #e0e0e0;
+}
+
+.star-yellow:hover,
+.star-yellow:hover ~ .star-yellow {
+  color: #FFD700;
+}
+
+.star-green,
+.star-yellow {
+  transition: color 0.2s ease;
+  font-size: 1.2rem;
+}
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .abasare-desktop-nav {
@@ -459,24 +473,4 @@ html, body {
   .abasare-mobile-topbar {
     display: none;
   }
-}
-
-/* STAR RATING */
-.star-green {
-  color: #FFD700; /* gold for selected stars */
-}
-
-.star-yellow {
-  color: #e0e0e0; /* gray for unselected stars */
-}
-
-.star-yellow:hover,
-.star-yellow:hover ~ .star-yellow {
-  color: #FFD700;
-}
-
-.star-green,
-.star-yellow {
-  transition: color 0.2s ease;
-  font-size: 1.2rem;
 }
