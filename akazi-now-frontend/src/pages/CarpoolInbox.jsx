@@ -1,4 +1,3 @@
-// CarpoolInbox.jsx — updated to show who reserved MY rides (name, phone, seats)
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import NotificationBell from "../components/NotificationBell.jsx";
@@ -51,7 +50,12 @@ function CarpoolInbox() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    const { data } = await supabase.from("users").select("image_url").eq("auth_user_id", user.id).single();
+    const { data } = await supabase
+      .from("users")
+      .select("image_url")
+      .eq("auth_user_id", user.id)
+      .single();
+
     setUserProfile(data);
   };
 
@@ -97,7 +101,6 @@ function CarpoolInbox() {
           <li onClick={() => navigate("/carpools")}>Browse Rides</li>
           <li onClick={() => navigate("/post-ride")}>Post Ride</li>
           <li onClick={() => navigate("/carpool-inbox")}>Carpool Inbox</li>
-          <li onClick={() => navigate("/profile")}>Profile</li>
           <li onClick={() => navigate("/abasare")}>Abasare</li>
           <li onClick={() => closeAndNavigate("/", true)}>Logout</li>
         </ul>
@@ -125,7 +128,6 @@ function CarpoolInbox() {
               <li onClick={() => closeAndNavigate("/carpools")}>Browse Rides</li>
               <li onClick={() => closeAndNavigate("/post-ride")}>Post Ride</li>
               <li onClick={() => closeAndNavigate("/carpool-inbox")}>Carpool Inbox</li>
-              <li onClick={() => closeAndNavigate("/profile")}>Profile</li>
               <li onClick={() => closeAndNavigate("/abasare")}>Abasare</li>
               <li onClick={() => closeAndNavigate("/", true)}>Logout</li>
             </ul>

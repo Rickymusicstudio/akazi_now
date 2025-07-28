@@ -1,4 +1,3 @@
-// PostRide.jsx (fully updated to match PostGig layout and behavior)
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +25,9 @@ function PostRide() {
   const mobileNavRef = useRef(null);
   const navigate = useNavigate();
 
-  useEffect(() => { fetchUserProfile(); }, []);
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
 
   const fetchUserProfile = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -117,7 +118,6 @@ function PostRide() {
           <li onClick={() => navigate("/carpools")}>Browse Rides</li>
           <li onClick={() => navigate("/post-ride")}>Post Ride</li>
           <li onClick={() => navigate("/carpool-inbox")}>Carpool Inbox</li>
-          <li onClick={() => navigate("/profile")}>Profile</li>
           <li onClick={() => navigate("/abasare")}>Abasare</li>
           <li onClick={() => closeAndNavigate("/", true)}>Logout</li>
         </ul>
@@ -143,7 +143,6 @@ function PostRide() {
               <li onClick={() => closeAndNavigate("/carpools")}>Browse Rides</li>
               <li onClick={() => closeAndNavigate("/post-ride")}>Post Ride</li>
               <li onClick={() => closeAndNavigate("/carpool-inbox")}>Carpool Inbox</li>
-              <li onClick={() => closeAndNavigate("/profile")}>Profile</li>
               <li onClick={() => closeAndNavigate("/abasare")}>Abasare</li>
               <li onClick={() => closeAndNavigate("/", true)}>Logout</li>
             </ul>
