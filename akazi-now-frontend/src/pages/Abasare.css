@@ -125,9 +125,9 @@ html, body {
 }
 
 .abasare-mobile-hamburger {
-  font-size: 40px;
+  font-size: 46px;      /* 🆙 Even larger */
   padding: 0.6rem;
-  margin-left: 0.4rem;
+  margin-left: 0.5rem;
   color: white;
   cursor: pointer;
   line-height: 1;
