@@ -20,7 +20,7 @@ router.post('/signup', async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'apikey': process.env.SUPABASE_ANON_KEY, // 👈 make sure to use ANON KEY here
+        'apikey': process.env.SUPABASE_ANON_KEY,
       },
       body: JSON.stringify({ email, password }),
     });
@@ -54,7 +54,7 @@ router.post('/login', async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'apikey': process.env.SUPABASE_ANON_KEY // 👈 use anon key here too
+        'apikey': process.env.SUPABASE_ANON_KEY
       },
       body: JSON.stringify({ email, password })
     });
@@ -87,7 +87,38 @@ router.post('/delete-user', async (req, res) => {
   }
 
   try {
-    // Step 1: Delete from 'users' table (cascades will clean other tables)
+    console.log("🔍 Checking user in Supabase with ID:", user_id);
+
+    // Step 1: Confirm user exists
+    const { data: foundUser, error: fetchError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('auth_user_id', user_id);
+
+    if (fetchError) {
+      console.error("❌ Fetch error:", fetchError.message);
+    } else if (!foundUser || foundUser.length === 0) {
+      console.warn("⚠️ No user found in users table for ID:", user_id);
+      return res.status(404).json({ error: "User not found" });
+    } else {
+      console.log("✅ Found user in users table:", foundUser);
+    }
+
+    // Step 2: Delete related records
+    const tablesWithUserId = ['carpools', 'applications', 'ratings', 'messages'];
+    for (const table of tablesWithUserId) {
+      const { error } = await supabase
+        .from(table)
+        .delete()
+        .eq('user_id', user_id);
+      if (error) {
+        console.warn(`⚠️ Failed to delete from ${table}:`, error.message);
+      } else {
+        console.log(`✅ Deleted from ${table} where user_id = ${user_id}`);
+      }
+    }
+
+    // Step 3: Delete from users table
     const { error: userTableError } = await supabase
       .from('users')
       .delete()
@@ -95,22 +126,29 @@ router.post('/delete-user', async (req, res) => {
 
     if (userTableError) {
       console.warn('⚠️ Error deleting from users table:', userTableError.message);
+    } else {
+      console.log('✅ Deleted user from users table');
     }
 
-    // Step 2: Delete from Supabase Auth
+    // Step 4: Delete from Supabase Auth (skip if already gone)
     const { error: authError } = await supabase.auth.admin.deleteUser(user_id);
-    if (authError) {
+    if (authError && authError.message !== 'User not found') {
       console.error('❌ Failed to delete from auth.users:', authError.message);
       return res.status(500).json({ error: authError.message });
     }
 
-    console.log(`✅ Deleted user ${user_id}`);
+    console.log(`✅ Fully deleted user ${user_id}`);
     return res.status(200).json({ message: '✅ User deleted successfully' });
 
   } catch (err) {
     console.error('❌ Unhandled delete-user error:', err.message);
     return res.status(500).json({ error: 'Internal server error: ' + err.message });
   }
+});
+
+// ✅ GET /api/auth/ping
+router.get('/ping', (req, res) => {
+  res.json({ message: '✅ Auth route is working' });
 });
 
 module.exports = router;
