@@ -1,4 +1,4 @@
-.signup-container {
+.signup-container {
   display: flex;
   height: 100vh;
   width: 100vw;
@@ -87,14 +87,8 @@
   border: 1px solid #ccc;
   margin-bottom: 0.5rem;
   background: #fff;
-}
 
-/* ✅ Autofill and dark mode fix */
-.signup-form input[type="text"],
-.signup-form input[type="email"],
-.signup-form input[type="password"],
-.signup-form input[type="tel"],
-.signup-form select {
+  /* ✅ Android autofill + dark mode fix */
   background-color: #fff !important;
   color: #000 !important;
   -webkit-text-fill-color: #000 !important;
@@ -102,6 +96,7 @@
   transition: background-color 9999s ease-in-out 0s;
 }
 
+/* ✅ Autofill override for Android/Chrome */
 input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0px 1000px white inset !important;
   -webkit-text-fill-color: #000 !important;
