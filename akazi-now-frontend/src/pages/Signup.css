@@ -1,34 +1,4 @@
-/* Signup.css */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html, body, #root {
-  height: 100%;
-  width: 100%;
-  font-family: 'Segoe UI', sans-serif;
-}
-
-/* Autofill/dark mode fixes */
-.signup-form input[type="text"],
-.signup-form input[type="email"],
-.signup-form input[type="password"],
-.signup-form select {
-  background-color: #fff !important;
-  color: #000 !important;
-  -webkit-text-fill-color: #000 !important;
-  caret-color: auto;
-  transition: background-color 9999s ease-in-out 0s;
-}
-
-input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
-  -webkit-text-fill-color: #000 !important;
-}
-
-.signup-container {
+.signup-container {
   display: flex;
   height: 100vh;
   width: 100vw;
@@ -38,11 +8,35 @@ input:-webkit-autofill {
 
 .signup-left {
   flex: 1;
-  background-image: url('../assets/kcc_bg_clean.png'); /* ✅ KCC */
+  background-image: url('../assets/kcc_bg_clean.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   position: relative;
+}
+
+.signup-heading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-align: center;
+  z-index: 2;
+  padding: 0 2rem;
+}
+
+.signup-heading h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin: 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.signup-heading p {
+  font-size: 1.25rem;
+  margin-top: 0.75rem;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
 }
 
 .signup-right {
@@ -93,6 +87,24 @@ input:-webkit-autofill {
   border: 1px solid #ccc;
   margin-bottom: 0.5rem;
   background: #fff;
+}
+
+/* ✅ Autofill and dark mode fix */
+.signup-form input[type="text"],
+.signup-form input[type="email"],
+.signup-form input[type="password"],
+.signup-form input[type="tel"],
+.signup-form select {
+  background-color: #fff !important;
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  caret-color: auto;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  -webkit-text-fill-color: #000 !important;
 }
 
 .terms {
@@ -153,7 +165,7 @@ input:-webkit-autofill {
 @media screen and (max-width: 768px) {
   .signup-container {
     flex-direction: column;
-    background-image: url('../assets/kcc_bg_clean.png'); /* ✅ KCC mobile */
+    background-image: url('../assets/kcc_bg_clean.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -166,6 +178,10 @@ input:-webkit-autofill {
   }
 
   .signup-left {
+    display: none;
+  }
+
+  .signup-heading {
     display: none;
   }
 

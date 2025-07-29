@@ -114,7 +114,13 @@ function Signup() {
 
   return (
     <div className="signup-container">
-      <div className="signup-left" />
+      <div className="signup-left">
+        <div className="signup-heading">
+          <h1>Become a Member</h1>
+          <p>Sign up to join the AkaziNow community</p>
+        </div>
+      </div>
+
       <div className="signup-right">
         <form className="signup-form" onSubmit={handleSubmit}>
           <h2>Sign Up</h2>
