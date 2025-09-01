@@ -9,7 +9,7 @@ html, body, #root {
   height: 100%;
   width: 100%;
   font-family: 'Segoe UI', sans-serif;
-  overflow-x: hidden;
+  overflow: hidden;   /* ✅ prevent whole page scrolling */
 }
 
 /* AUTOFILL / DARK MODE FIX */
@@ -30,9 +30,9 @@ input:-webkit-autofill {
 /* MAIN CONTAINER */
 .signup-container {
   display: flex;
-  min-height: 100vh;     /* ✅ allow scrolling */
+  height: 100vh;       /* ✅ full height fixed layout */
   width: 100vw;
-  overflow-x: hidden;
+  overflow: hidden;    /* ✅ no page scroll */
 }
 
 /* LEFT HERO IMAGE */
@@ -75,12 +75,10 @@ input:-webkit-autofill {
   flex: 1;
   background-color: #fff;
   display: flex;
-  align-items: flex-start;   /* ✅ form starts at top */
   justify-content: center;
   padding: 2rem;
-  min-height: 100vh;         /* ✅ expands with form */
-  height: auto;              /* ✅ no fixed height */
-  overflow-y: visible;       /* ✅ no trapped scroll */
+  height: 100vh;         /* ✅ lock to full screen height */
+  overflow-y: auto;      /* ✅ form scrolls internally */
 }
 
 /* FORM CARD */
@@ -181,13 +179,15 @@ input:-webkit-autofill {
 @media screen and (max-width: 768px) {
   .signup-container {
     flex-direction: column;
+    height: auto;
     min-height: 100vh;
     background-image: url('../assets/kcc_bg_clean.png');
     background-size: cover;
     background-position: center;
     padding: 2rem 1rem;
     align-items: center;
-    justify-content: flex-start;  /* ✅ form from top */
+    justify-content: flex-start;
+    overflow-y: auto;  /* ✅ on mobile, whole page scrolls */
   }
 
   .signup-left,
@@ -200,6 +200,7 @@ input:-webkit-autofill {
     height: auto;
     padding: 0;
     background: transparent;
+    overflow-y: visible;
   }
 
   .signup-form {
