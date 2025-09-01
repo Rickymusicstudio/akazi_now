@@ -1,4 +1,4 @@
-/* RESET */
+/* RESET */
 * {
   margin: 0;
   padding: 0;
@@ -30,9 +30,9 @@ input:-webkit-autofill {
 /* MAIN CONTAINER */
 .signup-container {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;     /* ✅ allow scrolling */
   width: 100vw;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 /* LEFT HERO IMAGE */
@@ -75,11 +75,12 @@ input:-webkit-autofill {
   flex: 1;
   background-color: #fff;
   display: flex;
-  align-items: center;
+  align-items: flex-start;   /* ✅ form starts at top */
   justify-content: center;
   padding: 2rem;
-  height: 100vh;
-  overflow-y: auto;
+  min-height: 100vh;         /* ✅ expands with form */
+  height: auto;              /* ✅ no fixed height */
+  overflow-y: visible;       /* ✅ no trapped scroll */
 }
 
 /* FORM CARD */
@@ -180,14 +181,13 @@ input:-webkit-autofill {
 @media screen and (max-width: 768px) {
   .signup-container {
     flex-direction: column;
-    height: auto;
     min-height: 100vh;
     background-image: url('../assets/kcc_bg_clean.png');
     background-size: cover;
     background-position: center;
     padding: 2rem 1rem;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;  /* ✅ form from top */
   }
 
   .signup-left,
