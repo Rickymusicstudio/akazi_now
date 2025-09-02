@@ -1,9 +1,5 @@
-/* RESET */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* ============== RESET & BASE ============== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 html, body {
   height: 100%;
@@ -12,7 +8,7 @@ html, body {
   overflow-x: hidden;
 }
 
-/* MAIN CONTAINER */
+/* ============== MAIN CONTAINER ============== */
 .gigs-container {
   width: 100%;
   display: flex;
@@ -21,7 +17,7 @@ html, body {
   text-align: center;
 }
 
-/* HERO SECTION */
+/* ============== HERO SECTION ============== */
 .gigs-hero {
   width: 100%;
   height: 75vh;
@@ -37,7 +33,7 @@ html, body {
   flex-direction: column;
 }
 
-/* TOPBAR INSIDE HERO */
+/* Top bar inside hero (used on mobile; hidden on desktop below) */
 .gigs-topbar {
   position: absolute;
   top: 1rem;
@@ -64,26 +60,14 @@ html, body {
   cursor: pointer;
   font-weight: bold;
 }
+.gigs-auth-buttons button:hover { opacity: 0.9; }
 
-.gigs-auth-buttons button:hover {
-  opacity: 0.9;
-}
+.gigs-hero-content { max-width: 600px; }
 
-.gigs-hero-content {
-  max-width: 600px;
-}
+.gigs-heading { font-size: 2.2rem; font-weight: bold; margin-bottom: 1rem; }
+.gigs-subheading { font-size: 1.1rem; }
 
-.gigs-heading {
-  font-size: 2.2rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-.gigs-subheading {
-  font-size: 1.1rem;
-}
-
-/* FLOATING GIG COUNT BOX */
+/* Floating gig count box */
 .gigs-floating-count-box {
   position: absolute;
   bottom: -2rem;
@@ -99,12 +83,7 @@ html, body {
   text-align: center;
 }
 
-.gigs-count-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 0.4rem;
-}
+.gigs-count-title { font-size: 1.3rem; font-weight: 600; color: #333; margin-bottom: 0.4rem; }
 
 .gigs-count-display {
   font-size: 1.05rem;
@@ -115,7 +94,7 @@ html, body {
   gap: 0.4rem;
 }
 
-/* JOB CARDS */
+/* ============== JOB CARDS ============== */
 .gigs-cards-section {
   display: flex;
   flex-wrap: wrap;
@@ -138,11 +117,7 @@ html, body {
   gap: 1rem;
 }
 
-@media (min-width: 768px) {
-  .gigs-card {
-    width: 45%;
-  }
-}
+@media (min-width: 768px) { .gigs-card { width: 45%; } }
 
 .gigs-card img {
   width: 100%;
@@ -151,16 +126,8 @@ html, body {
   border-radius: 10px;
 }
 
-.gigs-card-text h2 {
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: #222;
-}
-
-.gigs-card-text p {
-  margin: 0.2rem 0;
-  color: #333;
-}
+.gigs-card-text h2 { font-size: 1.3rem; font-weight: bold; color: #222; }
+.gigs-card-text p { margin: 0.2rem 0; color: #333; }
 
 .gigs-card-text button {
   margin-top: 0.5rem;
@@ -172,12 +139,9 @@ html, body {
   cursor: pointer;
   font-weight: bold;
 }
+.gigs-card-text button:hover { opacity: 0.95; }
 
-.gigs-card-text button:hover {
-  opacity: 0.95;
-}
-
-/* ✅ NEW: JOB IMAGE STYLING */
+/* Job image wrapper */
 .gigs-card-image-wrapper img {
   width: 100%;
   max-height: 300px;
@@ -187,7 +151,7 @@ html, body {
   margin-top: 1rem;
 }
 
-/* FOOTER */
+/* ============== FOOTER ============== */
 .gigs-footer {
   width: 100%;
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
@@ -197,10 +161,7 @@ html, body {
   text-align: center;
 }
 
-.gigs-footer-links {
-  margin-top: 1rem;
-}
-
+.gigs-footer-links { margin-top: 1rem; }
 .gigs-footer-links button {
   background: none;
   border: none;
@@ -209,39 +170,86 @@ html, body {
   cursor: pointer;
   font-weight: 500;
 }
+.gigs-footer-links button:hover { text-decoration: underline; }
 
-.gigs-footer-links button:hover {
-  text-decoration: underline;
-}
-
-/* DESKTOP NAVIGATION */
+/* ============== DESKTOP NAV (WITH TEXT HEADER) ============== */
 .gigs-desktop-nav {
   display: none;
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-  padding: 1rem 2rem;
+  padding: 0.8rem 2rem;
   width: 100%;
 }
 
-.gigs-desktop-nav ul {
+.gigs-desktop-nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Left: text header like PostGig */
+.gigs-nav-left-logo {
+  color: #fdd835;
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  line-height: 1;
+}
+.gigs-nav-left-logo:hover { opacity: 0.9; text-decoration: none; }
+
+/* Center: nav links */
+.gigs-nav-center { flex: 1; }
+.gigs-nav-center ul {
   display: flex;
   justify-content: center;
-  gap: 2rem;
+  gap: 1.6rem;
   list-style: none;
   margin: 0;
   padding: 0;
 }
-
-.gigs-desktop-nav li {
+.gigs-nav-center li {
   color: white;
   font-weight: 600;
   cursor: pointer;
 }
+.gigs-nav-center li:hover { text-decoration: underline; }
 
-.gigs-desktop-nav li:hover {
-  text-decoration: underline;
+/* Right: auth/profile */
+.gigs-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 220px;
+  justify-content: flex-end;
 }
 
-/* MOBILE NAVIGATION */
+.gigs-auth-buttons--desktop button,
+.gigs-auth-button {
+  background: white;
+  color: #203a43;
+  padding: 0.5rem 0.9rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.gigs-auth-buttons--desktop button:hover,
+.gigs-auth-button:hover { opacity: 0.9; }
+
+.gigs-nav-avatar {
+  height: 36px;
+  width: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+  cursor: pointer;
+}
+
+/* ============== MOBILE NAV ============== */
 @media (max-width: 768px) {
   .gigs-mobile-topbar {
     position: fixed;
@@ -293,9 +301,7 @@ html, body {
     pointer-events: none;
   }
 
-  .gigs-mobile-topbar .notification-bell {
-    z-index: 2;
-  }
+  .gigs-mobile-topbar .notification-bell { z-index: 2; }
 
   .gigs-mobile-nav-overlay {
     position: fixed;
@@ -315,34 +321,17 @@ html, body {
     animation-fill-mode: both;
   }
 
-  .slide-down {
-    animation-name: slideDown;
-  }
-
-  .slide-up {
-    animation-name: slideUp;
-  }
+  .slide-down { animation-name: slideDown; }
+  .slide-up { animation-name: slideUp; }
 
   @keyframes slideDown {
-    from {
-      opacity: 0;
-      transform: translateY(-20%);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-20%); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
   @keyframes slideUp {
-    from {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    to {
-      opacity: 0;
-      transform: translateY(-20%);
-    }
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(-20%); }
   }
 
   .gigs-mobile-nav-overlay ul {
@@ -360,18 +349,13 @@ html, body {
     font-size: 1.1rem;
   }
 
-  .gigs-mobile-nav-overlay li:last-child {
-    border-bottom: none;
-  }
+  .gigs-mobile-nav-overlay li:last-child { border-bottom: none; }
 }
 
-/* DESKTOP NAV ONLY ON DESKTOP */
+/* ============== RESPONSIVE TOGGLES ============== */
 @media (min-width: 769px) {
-  .gigs-desktop-nav {
-    display: block;
-  }
-
-  .gigs-mobile-topbar {
-    display: none;
-  }
+  .gigs-desktop-nav { display: block; }
+  .gigs-mobile-topbar { display: none; }
+  /* Hide hero auth buttons on desktop; desktop nav handles auth */
+  .gigs-topbar .gigs-auth-buttons { display: none; }
 }
