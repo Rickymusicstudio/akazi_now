@@ -10,28 +10,59 @@ import "./Gigs.css";
 function Gigs() {
   const [jobs, setJobs] = useState([]);
   const [userProfile, setUserProfile] = useState(null);
+  const [sessionUser, setSessionUser] = useState(null);
+
   const [mobileNavVisible, setMobileNavVisible] = useState(false);
   const [slideDirection, setSlideDirection] = useState("");
   const mobileNavRef = useRef(null);
   const navigate = useNavigate();
 
+  // ---- session + profile ----
   useEffect(() => {
-    fetchJobs();
-    fetchUserProfile();
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setSessionUser(user || null);
+      if (user) await fetchUserProfile(user.id);
+    })();
+
+    // keep session reactive
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      const u = session?.user ?? null;
+      setSessionUser(u);
+      if (u) fetchUserProfile(u.id);
+      else setUserProfile(null);
+    });
+    return () => sub?.subscription?.unsubscribe();
   }, []);
 
+  // ---- data ----
+  useEffect(() => {
+    fetchJobs();
+  }, []);
+
+  const fetchJobs = async () => {
+    const { data, error } = await supabase
+      .from("jobs")
+      .select(`*, user:users (full_name)`);
+    if (!error && data) setJobs(data);
+  };
+
+  const fetchUserProfile = async (authUserId) => {
+    const { data } = await supabase
+      .from("users")
+      .select("image_url")
+      .eq("auth_user_id", authUserId)
+      .single();
+    setUserProfile(data || null);
+  };
+
+  // ---- mobile gestures ----
   useEffect(() => {
     let touchStartY = 0;
-
-    const handleTouchStart = (e) => {
-      touchStartY = e.touches[0].clientY;
-    };
-
+    const handleTouchStart = (e) => { touchStartY = e.touches[0].clientY; };
     const handleTouchMove = (e) => {
       if (!mobileNavVisible) return;
-      const touchEndY = e.touches[0].clientY;
-      const swipeDistance = touchStartY - touchEndY;
-
+      const swipeDistance = touchStartY - e.touches[0].clientY;
       if (swipeDistance > 50) {
         setSlideDirection("slide-up");
         setTimeout(() => {
@@ -40,7 +71,6 @@ function Gigs() {
         }, 300);
       }
     };
-
     const handleScroll = () => {
       if (!mobileNavVisible) return;
       setSlideDirection("slide-up");
@@ -49,11 +79,9 @@ function Gigs() {
         setSlideDirection("");
       }, 300);
     };
-
     window.addEventListener("touchstart", handleTouchStart);
     window.addEventListener("touchmove", handleTouchMove);
     window.addEventListener("scroll", handleScroll);
-
     return () => {
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
@@ -61,25 +89,7 @@ function Gigs() {
     };
   }, [mobileNavVisible]);
 
-  const fetchJobs = async () => {
-    const { data, error } = await supabase
-      .from("jobs")
-      .select(`*, user:users (full_name)`);
-
-    if (!error) setJobs(data);
-  };
-
-  const fetchUserProfile = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const { data } = await supabase
-      .from("users")
-      .select("image_url")
-      .eq("auth_user_id", user.id)
-      .single();
-    setUserProfile(data);
-  };
-
+  // ---- actions ----
   const handleHamburgerClick = () => {
     if (!mobileNavVisible) {
       setSlideDirection("slide-down");
@@ -90,12 +100,14 @@ function Gigs() {
     }
   };
 
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    navigate("/");
+  };
+
   const handleApply = async (job) => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      navigate("/login");
-      return;
-    }
+    if (!user) return navigate("/login");
 
     const { data: existingApp } = await supabase
       .from("applications")
@@ -104,10 +116,7 @@ function Gigs() {
       .eq("worker_id", user.id)
       .single();
 
-    if (existingApp) {
-      alert("You have already applied for this job.");
-      return;
-    }
+    if (existingApp) return alert("You have already applied for this job.");
 
     const message = prompt("Enter a short message for the employer:");
     if (!message) return;
@@ -118,11 +127,7 @@ function Gigs() {
       message,
       status: "pending",
     }]);
-
-    if (appError) {
-      alert("Failed to apply. Please try again.");
-      return;
-    }
+    if (appError) return alert("Failed to apply. Please try again.");
 
     const { data: jobDetails } = await supabase
       .from("jobs")
@@ -131,25 +136,20 @@ function Gigs() {
       .single();
 
     if (jobDetails && jobDetails.user_id !== user.id) {
-      const { error: notifError } = await supabase.from("notifications").insert([{
+      await supabase.from("notifications").insert([{
         recipient_id: jobDetails.user_id,
         message: `New application received for "${jobDetails.title}"`,
         type: "application",
         related_gig_id: job.id,
         read: false,
       }]);
-
-      if (notifError) {
-        console.error("❌ Notification insert failed:", notifError.message);
-      }
     }
-
     alert("Application submitted successfully!");
   };
 
   return (
     <div className="gigs-container">
-      {/* MOBILE NAV */}
+      {/* ===== MOBILE TOP BAR ===== */}
       <div className="gigs-mobile-topbar">
         <div className="gigs-mobile-left">
           <img
@@ -163,11 +163,9 @@ function Gigs() {
         <NotificationBell />
       </div>
 
+      {/* ===== MOBILE NAV OVERLAY ===== */}
       {mobileNavVisible && (
-        <div
-          ref={mobileNavRef}
-          className={`gigs-mobile-nav-overlay ${slideDirection}`}
-        >
+        <div ref={mobileNavRef} className={`gigs-mobile-nav-overlay ${slideDirection}`}>
           <ul>
             <li onClick={() => { setMobileNavVisible(false); navigate("/"); }}>Home</li>
             <li onClick={() => { setMobileNavVisible(false); navigate("/gigs"); }}>Gigs</li>
@@ -176,32 +174,51 @@ function Gigs() {
             <li onClick={() => { setMobileNavVisible(false); navigate("/profile"); }}>Profile</li>
             <li onClick={() => { setMobileNavVisible(false); navigate("/inbox"); }}>Inbox</li>
             <li onClick={() => { setMobileNavVisible(false); navigate("/carpools"); }}>Car Pooling</li>
-            <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Logout</li>
+            {sessionUser ? (
+              <li onClick={async () => { setMobileNavVisible(false); await signOut(); }}>Logout</li>
+            ) : (
+              <>
+                <li onClick={() => { setMobileNavVisible(false); navigate("/login"); }}>Sign In</li>
+                <li onClick={() => { setMobileNavVisible(false); navigate("/signup"); }}>Sign Up</li>
+              </>
+            )}
           </ul>
         </div>
       )}
 
-      {/* DESKTOP NAV */}
-      <div className="gigs-desktop-nav">
-        <ul>
-          <li onClick={() => navigate("/")}>Home</li>
-          <li onClick={() => navigate("/gigs")}>Gigs</li>
-          <li onClick={() => navigate("/post-job")}>Post a Job</li>
-          <li onClick={() => navigate("/my-jobs")}>My Jobs</li>
-          <li onClick={() => navigate("/profile")}>Profile</li>
-          <li onClick={() => navigate("/inbox")}>Inbox</li>
-          <li onClick={() => navigate("/carpools")}>Car Pooling</li>
-          <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Logout</li>
-        </ul>
-      </div>
-
-      {/* HERO */}
+      {/* ===== HERO + TOPBAR (now the real navbar) ===== */}
       <div className="gigs-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
         <div className="gigs-topbar">
-          <div className="gigs-logo">AkaziNow</div>
-          <div className="gigs-auth-buttons">
-            <button onClick={() => navigate("/login")}>Sign In</button>
-            <button onClick={() => navigate("/signup")}>Sign Up</button>
+          <div className="gigs-logo" onClick={() => navigate("/")}>AkaziNow</div>
+
+          <ul className="gigs-nav">
+            <li onClick={() => navigate("/")}>Home</li>
+            <li onClick={() => navigate("/gigs")}>Gigs</li>
+            <li onClick={() => navigate("/post-job")}>Post a Job</li>
+            <li onClick={() => navigate("/my-jobs")}>My Jobs</li>
+            <li onClick={() => navigate("/profile")}>Profile</li>
+            <li onClick={() => navigate("/inbox")}>Inbox</li>
+            <li onClick={() => navigate("/carpools")}>Car Pooling</li>
+          </ul>
+
+          <div className="gigs-right">
+            {sessionUser ? (
+              <>
+                <NotificationBell />
+                <img
+                  src={userProfile?.image_url || defaultAvatar}
+                  alt="avatar"
+                  className="gigs-right-avatar"
+                  onClick={() => navigate("/profile")}
+                />
+                <button className="gigs-logout" onClick={signOut}>Logout</button>
+              </>
+            ) : (
+              <div className="gigs-auth-buttons">
+                <button onClick={() => navigate("/login")}>Sign In</button>
+                <button onClick={() => navigate("/signup")}>Sign Up</button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -220,7 +237,7 @@ function Gigs() {
         </div>
       </div>
 
-      {/* JOB CARDS */}
+      {/* ===== JOB CARDS ===== */}
       <section className="gigs-cards-section">
         {jobs.length > 0 ? (
           jobs.map((job) => (
@@ -230,15 +247,9 @@ function Gigs() {
                   <img
                     src={job.poster_image || defaultAvatar}
                     alt="poster"
-                    style={{
-                      width: "32px",
-                      height: "32px",
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                      marginRight: "10px"
-                    }}
+                    style={{ width: 32, height: 32, borderRadius: "50%", objectFit: "cover", marginRight: 10 }}
                   />
-                  <span style={{ fontWeight: "600", fontSize: "0.95rem" }}>
+                  <span style={{ fontWeight: 600, fontSize: "0.95rem" }}>
                     {job.user?.full_name || "Anonymous"}
                   </span>
                 </div>
@@ -247,7 +258,7 @@ function Gigs() {
                 <p>{job.job_description}</p>
                 <p><strong>Price:</strong> {job.price} RWF</p>
                 <p><strong>Location:</strong> {job.address}</p>
-                <p><strong>Contact:</strong> {userProfile ? job.contact_info : "Login to view"}</p>
+                <p><strong>Contact:</strong> {sessionUser ? job.contact_info : "Login to view"}</p>
                 <button onClick={() => handleApply(job)}>Apply</button>
               </div>
 
@@ -265,7 +276,7 @@ function Gigs() {
         )}
       </section>
 
-      {/* FOOTER */}
+      {/* ===== FOOTER ===== */}
       <footer className="gigs-footer">
         <p>&copy; {new Date().getFullYear()} AkaziNow. All rights reserved.</p>
         <div className="gigs-footer-links">
