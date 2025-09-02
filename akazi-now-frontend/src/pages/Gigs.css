@@ -237,17 +237,9 @@ html, body {
   cursor: pointer;
   font-weight: 700;
 }
-.gigs-auth-buttons--desktop button:hover,
-.gigs-auth-button:hover { opacity: 0.9; }
 
-.gigs-nav-avatar {
-  height: 36px;
-  width: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #fff;
-  cursor: pointer;
-}
+/* Default hover for generic nav buttons (e.g., Logout) */
+.gigs-auth-button:hover { opacity: 0.9; }
 
 /* ============== MOBILE NAV ============== */
 @media (max-width: 768px) {
@@ -352,10 +344,20 @@ html, body {
   .gigs-mobile-nav-overlay li:last-child { border-bottom: none; }
 }
 
-/* ============== RESPONSIVE TOGGLES ============== */
+/* ============== RESPONSIVE TOGGLES & FINAL OVERRIDES ============== */
 @media (min-width: 769px) {
   .gigs-desktop-nav { display: block; }
   .gigs-mobile-topbar { display: none; }
   /* Hide hero auth buttons on desktop; desktop nav handles auth */
   .gigs-topbar .gigs-auth-buttons { display: none; }
+  /* ✅ Hide the hero's "AkaziNow" label on desktop (avoid duplicate header) */
+  .gigs-topbar .gigs-logo { display: none; }
+}
+
+/* ✅ Remove hover effect for Sign In / Sign Up (both mobile & desktop containers) */
+.gigs-auth-buttons button:hover,
+.gigs-auth-buttons--desktop button:hover {
+  opacity: 1 !important;        /* cancel the dimming */
+  filter: none !important;
+  text-decoration: none !important;
 }
