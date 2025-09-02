@@ -166,8 +166,16 @@ function Signup() {
           <input type="text" name="village" value={formData.village} onChange={handleChange} required />
 
           <div className="terms">
-            <input type="checkbox" name="agree" checked={formData.agree} onChange={handleChange} />
-            <span>I agree to the <a href="#">Terms of Use</a></span>
+            <input
+              id="agree"
+              type="checkbox"
+              name="agree"
+              checked={formData.agree}
+              onChange={handleChange}
+            />
+            <label htmlFor="agree">
+              I agree to the <a href="#">Terms of Use</a>
+            </label>
           </div>
 
           <button type="submit" className="btn">Sign Up</button>
