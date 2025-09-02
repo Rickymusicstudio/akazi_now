@@ -66,18 +66,20 @@ function Gigs() {
       .from("jobs")
       .select(`*, user:users (full_name)`);
 
-    if (!error) setJobs(data);
+    if (!error) setJobs(data || []);
   };
 
   const fetchUserProfile = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return;
     const { data } = await supabase
       .from("users")
       .select("image_url")
       .eq("auth_user_id", user.id)
       .single();
-    setUserProfile(data);
+    setUserProfile(data || null);
   };
 
   const handleHamburgerClick = () => {
@@ -91,7 +93,9 @@ function Gigs() {
   };
 
   const handleApply = async (job) => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
       navigate("/login");
       return;
@@ -112,12 +116,14 @@ function Gigs() {
     const message = prompt("Enter a short message for the employer:");
     if (!message) return;
 
-    const { error: appError } = await supabase.from("applications").insert([{
-      gig_id: job.id,
-      worker_id: user.id,
-      message,
-      status: "pending",
-    }]);
+    const { error: appError } = await supabase.from("applications").insert([
+      {
+        gig_id: job.id,
+        worker_id: user.id,
+        message,
+        status: "pending",
+      },
+    ]);
 
     if (appError) {
       alert("Failed to apply. Please try again.");
@@ -131,13 +137,15 @@ function Gigs() {
       .single();
 
     if (jobDetails && jobDetails.user_id !== user.id) {
-      const { error: notifError } = await supabase.from("notifications").insert([{
-        recipient_id: jobDetails.user_id,
-        message: `New application received for "${jobDetails.title}"`,
-        type: "application",
-        related_gig_id: job.id,
-        read: false,
-      }]);
+      const { error: notifError } = await supabase.from("notifications").insert([
+        {
+          recipient_id: jobDetails.user_id,
+          message: `New application received for "${jobDetails.title}"`,
+          type: "application",
+          related_gig_id: job.id,
+          read: false,
+        },
+      ]);
 
       if (notifError) {
         console.error("❌ Notification insert failed:", notifError.message);
@@ -157,7 +165,10 @@ function Gigs() {
             alt="avatar"
             className="gigs-mobile-avatar"
           />
-          <FaBars className="gigs-mobile-hamburger" onClick={handleHamburgerClick} />
+          <FaBars
+            className="gigs-mobile-hamburger"
+            onClick={handleHamburgerClick}
+          />
         </div>
         <h2 className="gigs-mobile-title">Gigs</h2>
         <NotificationBell />
@@ -169,14 +180,70 @@ function Gigs() {
           className={`gigs-mobile-nav-overlay ${slideDirection}`}
         >
           <ul>
-            <li onClick={() => { setMobileNavVisible(false); navigate("/"); }}>Home</li>
-            <li onClick={() => { setMobileNavVisible(false); navigate("/gigs"); }}>Gigs</li>
-            <li onClick={() => { setMobileNavVisible(false); navigate("/post-job"); }}>Post a Job</li>
-            <li onClick={() => { setMobileNavVisible(false); navigate("/my-jobs"); }}>My Jobs</li>
-            <li onClick={() => { setMobileNavVisible(false); navigate("/profile"); }}>Profile</li>
-            <li onClick={() => { setMobileNavVisible(false); navigate("/inbox"); }}>Inbox</li>
-            <li onClick={() => { setMobileNavVisible(false); navigate("/carpools"); }}>Car Pooling</li>
-            <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Logout</li>
+            <li
+              onClick={() => {
+                setMobileNavVisible(false);
+                navigate("/");
+              }}
+            >
+              Home
+            </li>
+            <li
+              onClick={() => {
+                setMobileNavVisible(false);
+                navigate("/gigs");
+              }}
+            >
+              Gigs
+            </li>
+            <li
+              onClick={() => {
+                setMobileNavVisible(false);
+                navigate("/post-job");
+              }}
+            >
+              Post a Job
+            </li>
+            <li
+              onClick={() => {
+                setMobileNavVisible(false);
+                navigate("/my-jobs");
+              }}
+            >
+              My Jobs
+            </li>
+            <li
+              onClick={() => {
+                setMobileNavVisible(false);
+                navigate("/profile");
+              }}
+            >
+              Profile
+            </li>
+            <li
+              onClick={() => {
+                setMobileNavVisible(false);
+                navigate("/inbox");
+              }}
+            >
+              Inbox
+            </li>
+            <li
+              onClick={() => {
+                setMobileNavVisible(false);
+                navigate("/carpools");
+              }}
+            >
+              Car Pooling
+            </li>
+            <li
+              onClick={async () => {
+                await supabase.auth.signOut();
+                navigate("/");
+              }}
+            >
+              Logout
+            </li>
           </ul>
         </div>
       )}
@@ -191,12 +258,22 @@ function Gigs() {
           <li onClick={() => navigate("/profile")}>Profile</li>
           <li onClick={() => navigate("/inbox")}>Inbox</li>
           <li onClick={() => navigate("/carpools")}>Car Pooling</li>
-          <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Logout</li>
+          <li
+            onClick={async () => {
+              await supabase.auth.signOut();
+              navigate("/");
+            }}
+          >
+            Logout
+          </li>
         </ul>
       </div>
 
       {/* HERO */}
-      <div className="gigs-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
+      <div
+        className="gigs-hero"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      >
         <div className="gigs-topbar">
           <div className="gigs-logo">AkaziNow</div>
           <div className="gigs-auth-buttons">
@@ -224,9 +301,19 @@ function Gigs() {
       <section className="gigs-cards-section">
         {jobs.length > 0 ? (
           jobs.map((job) => (
-            <div className="gigs-card" key={job.id} style={{ background: "#fff8d4" }}>
+            <div
+              className="gigs-card"
+              key={job.id}
+              style={{ background: "#fff8d4" }}
+            >
               <div className="gigs-card-text">
-                <div style={{ display: "flex", alignItems: "center", marginBottom: "0.5rem" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "0.5rem",
+                  }}
+                >
                   <img
                     src={job.poster_image || defaultAvatar}
                     alt="poster"
@@ -235,7 +322,7 @@ function Gigs() {
                       height: "32px",
                       borderRadius: "50%",
                       objectFit: "cover",
-                      marginRight: "10px"
+                      marginRight: "10px",
                     }}
                   />
                   <span style={{ fontWeight: "600", fontSize: "0.95rem" }}>
@@ -245,9 +332,16 @@ function Gigs() {
 
                 <h2>{job.title}</h2>
                 <p>{job.job_description}</p>
-                <p><strong>Price:</strong> {job.price} RWF</p>
-                <p><strong>Location:</strong> {job.address}</p>
-                <p><strong>Contact:</strong> {userProfile ? job.contact_info : "Login to view"}</p>
+                <p>
+                  <strong>Price:</strong> {job.price} RWF
+                </p>
+                <p>
+                  <strong>Location:</strong> {job.address}
+                </p>
+                <p>
+                  <strong>Contact:</strong>{" "}
+                  {userProfile ? job.contact_info : "Login to view"}
+                </p>
                 <button onClick={() => handleApply(job)}>Apply</button>
               </div>
 
