@@ -17,87 +17,7 @@ html, body {
   text-align: center;
 }
 
-/* =========================
-   DESKTOP NAV (like PostGig)
-   ========================= */
-.gigs-desktop-nav {
-  display: none;              /* shown >=769px */
-  position: relative;
-  width: 100%;
-  padding: 1rem 2rem;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-}
-
-.gigs-nav-left-logo {
-  position: absolute;
-  left: 2rem;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #FFD700;
-  cursor: pointer;
-  user-select: none;
-}
-
-.gigs-desktop-menu {
-  list-style: none;
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-}
-
-.gigs-desktop-menu li {
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-}
-.gigs-desktop-menu li:hover { text-decoration: underline; }
-
-.gigs-nav-right {
-  position: absolute;
-  right: 2rem;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.gigs-right-avatar {
-  width: 36px; height: 36px;
-  border-radius: 999px;
-  object-fit: cover;
-  border: 2px solid #fff;
-  cursor: pointer;
-}
-
-.gigs-logout {
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.85);
-  color: #fff;
-  padding: 6px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-.gigs-logout:hover { background: rgba(255,255,255,0.12); }
-
-.gigs-auth-btn {
-  background: #fff;
-  color: #203a43;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 700;
-}
-
-/* show desktop nav on larger screens */
-@media (min-width: 769px) {
-  .gigs-desktop-nav { display: block; }
-}
-
-/* ===== HERO ===== */
+/* HERO */
 .gigs-hero {
   width: 100%;
   height: 75vh;
@@ -113,137 +33,85 @@ html, body {
   flex-direction: column;
 }
 
-.gigs-hero-content { max-width: 600px; z-index: 1; }
+/* ==== TOPBAR (now the navbar) ==== */
+.gigs-topbar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 64px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.00));
+}
+
+.gigs-logo {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #fdd835;
+  cursor: pointer;
+}
+
+/* center nav */
+.gigs-nav {
+  list-style: none;
+  display: none;
+  gap: 1.5rem;
+  align-items: center;
+}
+.gigs-nav li {
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+.gigs-nav li:hover { text-decoration: underline; }
+
+/* right side */
+.gigs-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.gigs-right-avatar {
+  width: 36px; height: 36px; border-radius: 999px; object-fit: cover; border: 2px solid #fff; cursor: pointer;
+}
+.gigs-logout {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.85);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.gigs-logout:hover { background: rgba(255,255,255,0.15); }
+
+/* auth buttons (only when logged out) */
+.gigs-auth-buttons button {
+  background: #fff;
+  color: #203a43;
+  padding: 0.5rem 1rem;
+  margin-left: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.gigs-auth-buttons button:hover { opacity: 0.9; }
+
+/* center nav shows on desktops */
+@media (min-width: 992px) {
+  .gigs-nav { display: flex; }
+}
+
+/* HERO CONTENT */
+.gigs-hero-content { max-width: 600px; }
 .gigs-heading { font-size: 2.2rem; font-weight: 800; margin-bottom: 1rem; }
 .gigs-subheading { font-size: 1.1rem; }
 
-/* FLOATING COUNT BOX */
+/* FLOATING GIG COUNT BOX */
 .gigs-floating-count-box {
   position: absolute;
   bottom: -2rem;
   left: 50%;
   transform: translateX(-50%);
-  background: #fff;
-  padding: 1.2rem 1rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 20px rgba(0,0,0,.1);
-  width: 90%;
-  max-width: 400px;
-  z-index: 20;
-  text-align: center;
-}
-.gigs-count-title { font-size: 1.3rem; font-weight: 700; color: #333; margin-bottom: .4rem; }
-.gigs-count-display { font-size: 1.05rem; color: #444; display: flex; align-items: center; justify-content: center; gap: .4rem; }
-
-/* ===== JOB CARDS ===== */
-.gigs-cards-section {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1.5rem;
-  width: 100%;
-  max-width: 1200px;
-  padding: 5rem 1rem 2rem;
-}
-
-.gigs-card {
-  width: 100%;
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(0,0,0,.05);
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-@media (min-width: 768px) { .gigs-card { width: 45%; } }
-
-.gigs-card img { width: 100%; max-height: 300px; object-fit: cover; border-radius: 10px; }
-.gigs-card-text h2 { font-size: 1.3rem; font-weight: 800; color: #222; }
-.gigs-card-text p { margin: .2rem 0; color: #333; }
-.gigs-card-text button {
-  margin-top: .5rem; padding: .6rem 1.2rem;
-  background: #203a43; color: #fff;
-  border: none; border-radius: 8px; cursor: pointer; font-weight: 700;
-}
-.gigs-card-text button:hover { opacity: .95; }
-
-/* JOB IMAGE WRAPPER */
-.gigs-card-image-wrapper img {
-  width: 100%;
-  max-height: 300px;
-  object-fit: cover;
-  border-radius: 10px;
-  display: block;
-  margin-top: 1rem;
-}
-
-/* ===== FOOTER ===== */
-.gigs-footer {
-  width: 100%;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-  color: #fff;
-  padding: 2rem 1rem;
-  margin-top: 3rem;
-  text-align: center;
-}
-.gigs-footer-links { margin-top: 1rem; }
-.gigs-footer-links button {
-  background: none; border: none; color: #fff;
-  margin: 0 .5rem; cursor: pointer; font-weight: 500;
-}
-.gigs-footer-links button:hover { text-decoration: underline; }
-
-/* =========================
-   MOBILE TOPBAR + OVERLAY
-   ========================= */
-@media (max-width: 768px) {
-  .gigs-mobile-topbar {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: 60px;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 1.5rem;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-    color: #fff;
-  }
-
-  .gigs-mobile-left { display: flex; align-items: center; gap: .4rem; margin-left: .3rem; }
-  .gigs-mobile-avatar {
-    height: 42px; width: 42px; border-radius: 50%;
-    object-fit: cover; border: 2px solid #fff;
-  }
-  .gigs-mobile-hamburger { font-size: 52px; padding: .6rem; margin-left: .2rem; color: #fff; cursor: pointer; line-height: 1; }
-
-  .gigs-mobile-title {
-    position: absolute; left: 50%; transform: translateX(-50%);
-    font-size: 1.1rem; font-weight: 800; color: #fff; z-index: 1; pointer-events: none;
-  }
-  .gigs-mobile-topbar .notification-bell { z-index: 2; }
-
-  .gigs-mobile-nav-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-    color: #fff; z-index: 999; padding-top: 60px;
-    display: flex; flex-direction: column; align-items: center; overflow-y: auto;
-    animation-duration: .3s; animation-fill-mode: both;
-  }
-  .slide-down { animation-name: slideDown; }
-  .slide-up   { animation-name: slideUp; }
-  @keyframes slideDown { from { opacity: 0; transform: translateY(-20%);} to { opacity: 1; transform: translateY(0);} }
-  @keyframes slideUp   { from { opacity: 1; transform: translateY(0);}   to { opacity: 0; transform: translateY(-20%);} }
-
-  .gigs-mobile-nav-overlay ul { list-style: none; padding: 0; margin: 0; width: 100%; text-align: center; }
-  .gigs-mobile-nav-overlay li {
-    padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,.1);
-    cursor: pointer; font-size: 1.1rem;
-  }
-  .gigs-mobile-nav-overlay li:last-child { border-bottom: none; }
-}
-
-/* Safety: remove any legacy topbar block if present */
-.gigs-topbar { display: none !important; }
+  backgrou

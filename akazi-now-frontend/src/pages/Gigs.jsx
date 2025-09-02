@@ -9,120 +9,181 @@ import "./Gigs.css";
 
 function Gigs() {
   const [jobs, setJobs] = useState([]);
-  const [sessionUser, setSessionUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
-
   const [mobileNavVisible, setMobileNavVisible] = useState(false);
   const [slideDirection, setSlideDirection] = useState("");
   const mobileNavRef = useRef(null);
   const navigate = useNavigate();
 
-  // session + profile
   useEffect(() => {
-    (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setSessionUser(user || null);
-      if (user) await fetchUserProfile(user.id);
-    })();
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      const u = session?.user ?? null;
-      setSessionUser(u);
-      if (u) fetchUserProfile(u.id);
-      else setUserProfile(null);
-    });
-    return () => sub?.subscription?.unsubscribe();
+    fetchJobs();
+    fetchUserProfile();
   }, []);
 
-  // jobs
-  useEffect(() => { fetchJobs(); }, []);
-  const fetchJobs = async () => {
-    const { data, error } = await supabase.from("jobs").select(`*, user:users(full_name)`);
-    if (!error && data) setJobs(data);
-  };
-
-  const fetchUserProfile = async (authUserId) => {
-    const { data } = await supabase
-      .from("users")
-      .select("image_url")
-      .eq("auth_user_id", authUserId)
-      .single();
-    setUserProfile(data || null);
-  };
-
-  // mobile gestures
   useEffect(() => {
-    let startY = 0;
-    const onStart = (e) => (startY = e.touches[0].clientY);
-    const onMove = (e) => {
+    let touchStartY = 0;
+
+    const handleTouchStart = (e) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e) => {
       if (!mobileNavVisible) return;
-      if (startY - e.touches[0].clientY > 50) {
+      const touchEndY = e.touches[0].clientY;
+      const swipeDistance = touchStartY - touchEndY;
+
+      if (swipeDistance > 50) {
         setSlideDirection("slide-up");
-        setTimeout(() => { setMobileNavVisible(false); setSlideDirection(""); }, 300);
+        setTimeout(() => {
+          setMobileNavVisible(false);
+          setSlideDirection("");
+        }, 300);
       }
     };
-    const onScroll = () => {
+
+    const handleScroll = () => {
       if (!mobileNavVisible) return;
       setSlideDirection("slide-up");
-      setTimeout(() => { setMobileNavVisible(false); setSlideDirection(""); }, 300);
+      setTimeout(() => {
+        setMobileNavVisible(false);
+        setSlideDirection("");
+      }, 300);
     };
-    window.addEventListener("touchstart", onStart);
-    window.addEventListener("touchmove", onMove);
-    window.addEventListener("scroll", onScroll);
+
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchmove", handleTouchMove);
+    window.addEventListener("scroll", handleScroll);
+
     return () => {
-      window.removeEventListener("touchstart", onStart);
-      window.removeEventListener("touchmove", onMove);
-      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, [mobileNavVisible]);
 
-  const toggleMobileNav = () => {
-    if (!mobileNavVisible) { setSlideDirection("slide-down"); setMobileNavVisible(true); }
-    else { setSlideDirection("slide-up"); setTimeout(() => setMobileNavVisible(false), 300); }
+  const fetchJobs = async () => {
+    const { data, error } = await supabase
+      .from("jobs")
+      .select(`*, user:users (full_name)`);
+
+    if (!error) setJobs(data);
   };
 
-  const signOut = async () => { await supabase.auth.signOut(); navigate("/"); };
+  const fetchUserProfile = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data } = await supabase
+      .from("users")
+      .select("image_url")
+      .eq("auth_user_id", user.id)
+      .single();
+    setUserProfile(data);
+  };
+
+  const handleHamburgerClick = () => {
+    if (!mobileNavVisible) {
+      setSlideDirection("slide-down");
+      setMobileNavVisible(true);
+    } else {
+      setSlideDirection("slide-up");
+      setTimeout(() => setMobileNavVisible(false), 300);
+    }
+  };
 
   const handleApply = async (job) => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return navigate("/login");
+    if (!user) {
+      navigate("/login");
+      return;
+    }
 
-    const { data: existing } = await supabase
+    const { data: existingApp } = await supabase
       .from("applications")
       .select("*")
       .eq("gig_id", job.id)
       .eq("worker_id", user.id)
       .single();
-    if (existing) return alert("You have already applied for this job.");
+
+    if (existingApp) {
+      alert("You have already applied for this job.");
+      return;
+    }
 
     const message = prompt("Enter a short message for the employer:");
     if (!message) return;
 
-    const { error } = await supabase.from("applications").insert([{
-      gig_id: job.id, worker_id: user.id, message, status: "pending",
+    const { error: appError } = await supabase.from("applications").insert([{
+      gig_id: job.id,
+      worker_id: user.id,
+      message,
+      status: "pending",
     }]);
-    if (error) return alert("Failed to apply. Please try again.");
+
+    if (appError) {
+      alert("Failed to apply. Please try again.");
+      return;
+    }
 
     const { data: jobDetails } = await supabase
-      .from("jobs").select("user_id, title").eq("id", job.id).single();
+      .from("jobs")
+      .select("user_id, title")
+      .eq("id", job.id)
+      .single();
+
     if (jobDetails && jobDetails.user_id !== user.id) {
-      await supabase.from("notifications").insert([{
+      const { error: notifError } = await supabase.from("notifications").insert([{
         recipient_id: jobDetails.user_id,
         message: `New application received for "${jobDetails.title}"`,
         type: "application",
         related_gig_id: job.id,
         read: false,
       }]);
+
+      if (notifError) {
+        console.error("❌ Notification insert failed:", notifError.message);
+      }
     }
+
     alert("Application submitted successfully!");
   };
 
   return (
     <div className="gigs-container">
-      {/* DESKTOP NAV (logo left, menu center, auth right) */}
-      <div className="gigs-desktop-nav">
-        <div className="gigs-nav-left-logo" onClick={() => navigate("/")}>AkaziNow</div>
+      {/* MOBILE NAV */}
+      <div className="gigs-mobile-topbar">
+        <div className="gigs-mobile-left">
+          <img
+            src={userProfile?.image_url || defaultAvatar}
+            alt="avatar"
+            className="gigs-mobile-avatar"
+          />
+          <FaBars className="gigs-mobile-hamburger" onClick={handleHamburgerClick} />
+        </div>
+        <h2 className="gigs-mobile-title">Gigs</h2>
+        <NotificationBell />
+      </div>
 
-        <ul className="gigs-desktop-menu">
+      {mobileNavVisible && (
+        <div
+          ref={mobileNavRef}
+          className={`gigs-mobile-nav-overlay ${slideDirection}`}
+        >
+          <ul>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/"); }}>Home</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/gigs"); }}>Gigs</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/post-job"); }}>Post a Job</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/my-jobs"); }}>My Jobs</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/profile"); }}>Profile</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/inbox"); }}>Inbox</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/carpools"); }}>Car Pooling</li>
+            <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Logout</li>
+          </ul>
+        </div>
+      )}
+
+      {/* DESKTOP NAV */}
+      <div className="gigs-desktop-nav">
+        <ul>
           <li onClick={() => navigate("/")}>Home</li>
           <li onClick={() => navigate("/gigs")}>Gigs</li>
           <li onClick={() => navigate("/post-job")}>Post a Job</li>
@@ -130,72 +191,25 @@ function Gigs() {
           <li onClick={() => navigate("/profile")}>Profile</li>
           <li onClick={() => navigate("/inbox")}>Inbox</li>
           <li onClick={() => navigate("/carpools")}>Car Pooling</li>
+          <li onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Logout</li>
         </ul>
-
-        <div className="gigs-nav-right">
-          {sessionUser ? (
-            <>
-              <NotificationBell />
-              <img
-                src={userProfile?.image_url || defaultAvatar}
-                alt="avatar"
-                className="gigs-right-avatar"
-                onClick={() => navigate("/profile")}
-              />
-              <button className="gigs-logout" onClick={signOut}>Logout</button>
-            </>
-          ) : (
-            <>
-              <button className="gigs-auth-btn" onClick={() => navigate("/login")}>Sign In</button>
-              <button className="gigs-auth-btn" onClick={() => navigate("/signup")}>Sign Up</button>
-            </>
-          )}
-        </div>
       </div>
 
       {/* HERO */}
       <div className="gigs-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
-        {/* Mobile topbar */}
-        <div className="gigs-mobile-topbar">
-          <div className="gigs-mobile-left">
-            <img
-              src={userProfile?.image_url || defaultAvatar}
-              alt="avatar"
-              className="gigs-mobile-avatar"
-            />
-            <FaBars className="gigs-mobile-hamburger" onClick={toggleMobileNav} />
+        <div className="gigs-topbar">
+          <div className="gigs-logo">AkaziNow</div>
+          <div className="gigs-auth-buttons">
+            <button onClick={() => navigate("/login")}>Sign In</button>
+            <button onClick={() => navigate("/signup")}>Sign Up</button>
           </div>
-          <h2 className="gigs-mobile-title">Gigs</h2>
-          <NotificationBell />
         </div>
-
-        {mobileNavVisible && (
-          <div ref={mobileNavRef} className={`gigs-mobile-nav-overlay ${slideDirection}`}>
-            <ul>
-              <li onClick={() => { setMobileNavVisible(false); navigate("/"); }}>Home</li>
-              <li onClick={() => { setMobileNavVisible(false); navigate("/gigs"); }}>Gigs</li>
-              <li onClick={() => { setMobileNavVisible(false); navigate("/post-job"); }}>Post a Job</li>
-              <li onClick={() => { setMobileNavVisible(false); navigate("/my-jobs"); }}>My Jobs</li>
-              <li onClick={() => { setMobileNavVisible(false); navigate("/profile"); }}>Profile</li>
-              <li onClick={() => { setMobileNavVisible(false); navigate("/inbox"); }}>Inbox</li>
-              <li onClick={() => { setMobileNavVisible(false); navigate("/carpools"); }}>Car Pooling</li>
-              {sessionUser ? (
-                <li onClick={async () => { setMobileNavVisible(false); await supabase.auth.signOut(); navigate("/"); }}>
-                  Logout
-                </li>
-              ) : (
-                <>
-                  <li onClick={() => { setMobileNavVisible(false); navigate("/login"); }}>Sign In</li>
-                  <li onClick={() => { setMobileNavVisible(false); navigate("/signup"); }}>Sign Up</li>
-                </>
-              )}
-            </ul>
-          </div>
-        )}
 
         <div className="gigs-hero-content">
           <h1 className="gigs-heading">Explore Gigs. Earn Fast. Start Today.</h1>
-          <p className="gigs-subheading">Discover flexible jobs available in your area now.</p>
+          <p className="gigs-subheading">
+            Discover flexible jobs available in your area now.
+          </p>
         </div>
 
         <div className="gigs-floating-count-box">
@@ -216,19 +230,27 @@ function Gigs() {
                   <img
                     src={job.poster_image || defaultAvatar}
                     alt="poster"
-                    style={{ width: 32, height: 32, borderRadius: "50%", objectFit: "cover", marginRight: 10 }}
+                    style={{
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                      marginRight: "10px"
+                    }}
                   />
-                  <span style={{ fontWeight: 600, fontSize: "0.95rem" }}>
+                  <span style={{ fontWeight: "600", fontSize: "0.95rem" }}>
                     {job.user?.full_name || "Anonymous"}
                   </span>
                 </div>
+
                 <h2>{job.title}</h2>
                 <p>{job.job_description}</p>
                 <p><strong>Price:</strong> {job.price} RWF</p>
                 <p><strong>Location:</strong> {job.address}</p>
-                <p><strong>Contact:</strong> {sessionUser ? job.contact_info : "Login to view"}</p>
+                <p><strong>Contact:</strong> {userProfile ? job.contact_info : "Login to view"}</p>
                 <button onClick={() => handleApply(job)}>Apply</button>
               </div>
+
               {job.image_url && (
                 <div className="gigs-card-image-wrapper">
                   <img src={job.image_url} alt="job" />
@@ -237,7 +259,9 @@ function Gigs() {
             </div>
           ))
         ) : (
-          <p style={{ marginTop: "2rem", fontWeight: "bold" }}>No gigs available at the moment.</p>
+          <p style={{ marginTop: "2rem", fontWeight: "bold" }}>
+            No gigs available at the moment.
+          </p>
         )}
       </section>
 
