@@ -9,12 +9,16 @@ function ResetPassword() {
   const navigate = useNavigate();
 
   const handleUpdate = async () => {
+    if (!newPassword || newPassword.length < 6) {
+      return setMessage("⚠️ Password must be at least 6 characters long");
+    }
+
     const { error } = await supabase.auth.updateUser({ password: newPassword });
 
     if (error) {
-      setMessage("❌ Failed to reset password");
+      setMessage("❌ Failed to reset password: " + error.message);
     } else {
-      setMessage("✅ Password updated. Redirecting...");
+      setMessage("✅ Password updated. Redirecting to login...");
       setTimeout(() => navigate("/login"), 2000);
     }
   };
@@ -22,10 +26,10 @@ function ResetPassword() {
   return (
     <div className="reset-container">
       <h2>Reset Password</h2>
-      {message && <p>{message}</p>}
+      {message && <p className="reset-message">{message}</p>}
       <input
         type="password"
-        placeholder="New password"
+        placeholder="Enter new password"
         value={newPassword}
         onChange={(e) => setNewPassword(e.target.value)}
       />
