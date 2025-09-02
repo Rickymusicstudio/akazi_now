@@ -177,6 +177,16 @@ html, body {
   opacity: 0.95;
 }
 
+/* ✅ NEW: JOB IMAGE STYLING */
+.gigs-card-image-wrapper img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+  margin-top: 1rem;
+}
+
 /* FOOTER */
 .gigs-footer {
   width: 100%;

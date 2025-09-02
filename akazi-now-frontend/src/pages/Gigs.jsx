@@ -64,10 +64,7 @@ function Gigs() {
   const fetchJobs = async () => {
     const { data, error } = await supabase
       .from("jobs")
-      .select(`
-        *,
-        user:users (full_name, image_url)
-      `);
+      .select(`*, user:users (full_name)`);
 
     if (!error) setJobs(data);
   };
@@ -115,14 +112,12 @@ function Gigs() {
     const message = prompt("Enter a short message for the employer:");
     if (!message) return;
 
-    const { error: appError } = await supabase.from("applications").insert([
-      {
-        gig_id: job.id,
-        worker_id: user.id,
-        message,
-        status: "pending",
-      },
-    ]);
+    const { error: appError } = await supabase.from("applications").insert([{
+      gig_id: job.id,
+      worker_id: user.id,
+      message,
+      status: "pending",
+    }]);
 
     if (appError) {
       alert("Failed to apply. Please try again.");
@@ -136,15 +131,13 @@ function Gigs() {
       .single();
 
     if (jobDetails && jobDetails.user_id !== user.id) {
-      const { error: notifError } = await supabase.from("notifications").insert([
-        {
-          recipient_id: jobDetails.user_id,
-          message: `New application received for "${jobDetails.title}"`,
-          type: "application",
-          related_gig_id: job.id,
-          read: false,
-        },
-      ]);
+      const { error: notifError } = await supabase.from("notifications").insert([{
+        recipient_id: jobDetails.user_id,
+        message: `New application received for "${jobDetails.title}"`,
+        type: "application",
+        related_gig_id: job.id,
+        read: false,
+      }]);
 
       if (notifError) {
         console.error("❌ Notification insert failed:", notifError.message);
@@ -233,11 +226,9 @@ function Gigs() {
           jobs.map((job) => (
             <div className="gigs-card" key={job.id} style={{ background: "#fff8d4" }}>
               <div className="gigs-card-text">
-
-                {/* ✅ Poster info */}
                 <div style={{ display: "flex", alignItems: "center", marginBottom: "0.5rem" }}>
                   <img
-                    src={job.user?.image_url || defaultAvatar}
+                    src={job.poster_image || defaultAvatar}
                     alt="poster"
                     style={{
                       width: "32px",
@@ -259,8 +250,11 @@ function Gigs() {
                 <p><strong>Contact:</strong> {userProfile ? job.contact_info : "Login to view"}</p>
                 <button onClick={() => handleApply(job)}>Apply</button>
               </div>
-              {job.poster_image && (
-                <img src={job.poster_image} alt="gig" />
+
+              {job.image_url && (
+                <div className="gigs-card-image-wrapper">
+                  <img src={job.image_url} alt="job" />
+                </div>
               )}
             </div>
           ))

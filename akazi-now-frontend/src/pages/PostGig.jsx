@@ -119,11 +119,11 @@ function PostGig() {
         return;
       }
 
-      const { data } = supabase.storage
+      const { data: urlData } = supabase.storage
         .from("job-images")
         .getPublicUrl(filePath);
 
-      imageUrl = data.publicUrl;
+      imageUrl = urlData?.publicUrl || null;
     }
 
     const { data: userProfile } = await supabase
@@ -202,17 +202,17 @@ function PostGig() {
       {/* Hero */}
       <div className="postgig-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
         <div className="postgig-mobile-topbar">
-  <div className="postgig-mobile-left">
-    <img
-      src={userProfile?.image_url || defaultAvatar}
-      alt="avatar"
-      className="postgig-mobile-avatar"
-    />
-    <FaBars className="postgig-mobile-hamburger" onClick={handleMenuToggle} />
-  </div>
-  <div className="postgig-mobile-title">Post a Job</div>
-  <NotificationBell />
-</div>
+          <div className="postgig-mobile-left">
+            <img
+              src={userProfile?.image_url || defaultAvatar}
+              alt="avatar"
+              className="postgig-mobile-avatar"
+            />
+            <FaBars className="postgig-mobile-hamburger" onClick={handleMenuToggle} />
+          </div>
+          <div className="postgig-mobile-title">Post a Job</div>
+          <NotificationBell />
+        </div>
 
         <div className="postgig-hero-content">
           <h1 className="postgig-hero-title">Post your Gig</h1>
