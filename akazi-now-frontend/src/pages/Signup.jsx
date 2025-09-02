@@ -5,6 +5,7 @@ import { supabase } from '../supabaseClient';
 
 function Signup() {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -20,13 +21,15 @@ function Signup() {
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [districts, setDistricts] = useState([]);
   const [sectors, setSectors] = useState([]);
 
   useEffect(() => {
     async function fetchDistricts() {
-      const { data } = await supabase.from('districts').select('*');
-      if (data) setDistricts(data);
+      const { data, error } = await supabase.from('districts').select('*');
+      if (!error && data) setDistricts(data);
     }
     fetchDistricts();
   }, []);
@@ -34,11 +37,11 @@ function Signup() {
   useEffect(() => {
     async function fetchSectors() {
       if (!formData.district_id) return setSectors([]);
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('sectors')
         .select('*')
         .eq('district_id', formData.district_id);
-      setSectors(data);
+      if (!error && data) setSectors(data);
     }
     fetchSectors();
   }, [formData.district_id]);
@@ -59,8 +62,12 @@ function Signup() {
     if (!formData.agree) return setError('❗You must agree to the terms');
     if (formData.password !== formData.confirmPassword)
       return setError('❗Passwords do not match');
+    if (!formData.password || formData.password.length < 6)
+      return setError('❗Password must be at least 6 characters');
 
+    setIsSubmitting(true);
     try {
+      // 1) Create auth user
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
@@ -68,13 +75,21 @@ function Signup() {
 
       if (signUpError) {
         if (signUpError.status === 422) {
-          setError('❌ This email is already registered. Try logging in.');
+          setError('❌ This email already has an account. Try logging in or reset your password.');
         } else {
           setError('❌ Signup failed: ' + signUpError.message);
         }
+        setIsSubmitting(false);
         return;
       }
 
+      if (!authData?.user) {
+        setError('❌ Signup failed: no user returned.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // 2) Insert profile row only after successful auth
       const { error: insertError } = await supabase.from('users').insert([{
         full_name: formData.name,
         email: formData.email,
@@ -88,12 +103,17 @@ function Signup() {
 
       if (insertError) {
         setError('❌ User profile creation failed: ' + insertError.message);
+        setIsSubmitting(false);
         return;
       }
 
       setSuccess('✅ Signup successful! Please check your email to confirm.');
+      setIsSubmitting(false);
+
+      // Optional redirect after a short success toast
       setTimeout(() => navigate('/login'), 2000);
 
+      // Reset form
       setFormData({
         name: '',
         email: '',
@@ -108,7 +128,8 @@ function Signup() {
       });
     } catch (err) {
       console.error('Unexpected error:', err);
-      setError('❌ Unexpected error: ' + err.message);
+      setError('❌ Unexpected error: ' + (err?.message || 'Please try again.'));
+      setIsSubmitting(false);
     }
   };
 
@@ -125,7 +146,16 @@ function Signup() {
         <form className="signup-form" onSubmit={handleSubmit}>
           <h2>Sign Up</h2>
 
-          {error && <p style={{ color: 'red' }}>{error}</p>}
+          {error && (
+            <p style={{ color: 'red' }}>
+              {error}
+              {error.includes('already has an account') && (
+                <>
+                  {' '}<a href="/login">Log in</a> or <a href="/forgot-password">reset password</a>.
+                </>
+              )}
+            </p>
+          )}
           {success && <p style={{ color: 'green' }}>{success}</p>}
 
           <label>Full Name</label>
@@ -178,7 +208,9 @@ function Signup() {
             </label>
           </div>
 
-          <button type="submit" className="btn">Sign Up</button>
+          <button type="submit" className="btn" disabled={isSubmitting}>
+            {isSubmitting ? 'Creating account…' : 'Sign Up'}
+          </button>
 
           <p className="signin-link">
             Already have an account? <a href="/login">Sign in →</a>
