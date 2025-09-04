@@ -4,7 +4,7 @@ import backgroundImage from "../assets/kcc_bg_clean.png";
 import stickerJobs from "../assets/sticker1_transparent.png";
 import stickerCar from "../assets/sticker_clean_2.png";
 import stickerDriver from "../assets/sticker_clean_1.png";
-import storeSticker from "../assets/store.png"; // <-- your Isoko sticker
+import storeSticker from "../assets/store.jpg"; // <-- your Isoko sticker
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import {
