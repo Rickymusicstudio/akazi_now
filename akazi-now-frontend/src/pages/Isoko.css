@@ -1,9 +1,5 @@
-/* ================= RESET & BASE ================= */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* ============== RESET & BASE ============== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 html, body {
   height: 100%;
@@ -12,6 +8,7 @@ html, body {
   overflow-x: hidden;
 }
 
+/* ============== MAIN CONTAINER ============== */
 .gigs-container {
   width: 100%;
   display: flex;
@@ -20,7 +17,7 @@ html, body {
   text-align: center;
 }
 
-/* ================= HERO ================= */
+/* ============== HERO SECTION ============== */
 .gigs-hero {
   width: 100%;
   height: 75vh;
@@ -65,6 +62,7 @@ html, body {
 .gigs-auth-buttons button:hover { opacity: 0.9; }
 
 .gigs-hero-content { max-width: 600px; }
+
 .gigs-heading { font-size: 2.2rem; font-weight: bold; margin-bottom: 1rem; }
 .gigs-subheading { font-size: 1.1rem; }
 
@@ -79,9 +77,9 @@ html, body {
   box-shadow: 0 8px 20px rgba(0,0,0,0.1);
   width: 90%;
   max-width: 400px;
+  z-index: 20;
   text-align: center;
 }
-
 .gigs-count-title { font-size: 1.3rem; font-weight: 600; color: #333; margin-bottom: 0.4rem; }
 .gigs-count-display {
   font-size: 1.05rem;
@@ -92,96 +90,7 @@ html, body {
   gap: 0.4rem;
 }
 
-/* ================= CATEGORY CHIPS ================= */
-.isoko-chip {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 999px;
-  padding: 8px 14px;
-  cursor: pointer;
-  font-weight: 600;
-}
-.isoko-chip:hover { background: #f1f1f1; }
-
-/* ================= ISOKO CARDS ================= */
-.gigs-cards-section {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1.5rem;
-  width: 100%;
-  max-width: 1200px;
-  padding: 5rem 1rem 2rem;
-}
-
-.isoko-card {
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-  width: 100%;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.05);
-  text-align: left;
-}
-@media (min-width: 768px) {
-  .isoko-card { width: 45%; }
-}
-.isoko-card-image img {
-  width: 100%;
-  max-height: 220px;
-  object-fit: cover;
-  border-radius: 10px;
-  display: block;
-}
-.isoko-card-text { flex: 1; }
-
-.isoko-card-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-.isoko-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 10px;
-}
-.isoko-intent {
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-.isoko-intent.buy { color: #2c7be5; }
-.isoko-intent.sell { color: #e55353; }
-
-.isoko-title { font-size: 1.3rem; font-weight: bold; margin: 0.3rem 0; }
-.isoko-desc { margin: 0.3rem 0; color: #444; }
-
-.isoko-meta {
-  font-size: 0.9rem;
-  color: #555;
-  margin: 0.4rem 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem;
-}
-.isoko-dot { margin: 0 0.3rem; color: #aaa; }
-.isoko-price { font-weight: bold; color: #203a43; }
-
-.isoko-actions button {
-  margin-top: 0.5rem;
-  padding: 0.6rem 1.2rem;
-  background: #203a43;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-}
-.isoko-actions button:hover { opacity: 0.95; }
-
-/* ================= FOOTER ================= */
+/* ============== FOOTER ============== */
 .gigs-footer {
   width: 100%;
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
@@ -190,6 +99,7 @@ html, body {
   margin-top: 3rem;
   text-align: center;
 }
+
 .gigs-footer-links { margin-top: 1rem; }
 .gigs-footer-links button {
   background: none;
@@ -201,13 +111,14 @@ html, body {
 }
 .gigs-footer-links button:hover { text-decoration: underline; }
 
-/* ================= DESKTOP NAV ================= */
+/* ============== DESKTOP NAV ============== */
 .gigs-desktop-nav {
   display: none;
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
   padding: 0.8rem 2rem;
   width: 100%;
 }
+
 .gigs-desktop-nav-inner {
   max-width: 1200px;
   margin: 0 auto;
@@ -215,13 +126,19 @@ html, body {
   align-items: center;
   gap: 1rem;
 }
+
 .gigs-nav-left-logo {
   color: #fdd835;
   font-weight: 800;
   font-size: 1.25rem;
+  letter-spacing: 0.5px;
   cursor: pointer;
   user-select: none;
+  white-space: nowrap;
+  line-height: 1;
 }
+.gigs-nav-left-logo:hover { opacity: 0.9; }
+
 .gigs-nav-center { flex: 1; }
 .gigs-nav-center ul {
   display: flex;
@@ -235,6 +152,7 @@ html, body {
   cursor: pointer;
 }
 .gigs-nav-center li:hover { text-decoration: underline; }
+
 .gigs-nav-right {
   display: flex;
   align-items: center;
@@ -242,6 +160,7 @@ html, body {
   min-width: 220px;
   justify-content: flex-end;
 }
+
 .gigs-auth-buttons--desktop button,
 .gigs-auth-button {
   background: white;
@@ -252,8 +171,9 @@ html, body {
   cursor: pointer;
   font-weight: 700;
 }
+.gigs-auth-button:hover { opacity: 0.9; }
 
-/* ================= MOBILE NAV ================= */
+/* ============== MOBILE NAV ============== */
 @media (max-width: 768px) {
   .gigs-mobile-topbar {
     position: fixed;
@@ -269,7 +189,13 @@ html, body {
     background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
     color: white;
   }
-  .gigs-mobile-left { display: flex; align-items: center; gap: 0.4rem; }
+
+  .gigs-mobile-left {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
   .gigs-mobile-avatar {
     height: 42px;
     width: 42px;
@@ -277,12 +203,14 @@ html, body {
     object-fit: cover;
     border: 2px solid white;
   }
+
   .gigs-mobile-hamburger {
     font-size: 52px;
     padding: 0.6rem;
     color: white;
     cursor: pointer;
   }
+
   .gigs-mobile-title {
     position: absolute;
     left: 50%;
@@ -290,11 +218,14 @@ html, body {
     font-size: 1.1rem;
     font-weight: bold;
     color: white;
-    z-index: 1;
   }
+
+  .gigs-mobile-topbar .notification-bell { z-index: 2; }
+
   .gigs-mobile-nav-overlay {
     position: fixed;
-    top: 0; left: 0;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100vh;
     background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
@@ -303,25 +234,40 @@ html, body {
     padding-top: 60px;
     display: flex;
     flex-direction: column;
+    align-items: center;
     overflow-y: auto;
     animation-duration: 0.3s;
     animation-fill-mode: both;
   }
+
   .slide-down { animation-name: slideDown; }
   .slide-up { animation-name: slideUp; }
-  @keyframes slideDown { from { opacity: 0; transform: translateY(-20%);} to {opacity:1; transform:translateY(0);} }
-  @keyframes slideUp { from { opacity:1; transform:translateY(0);} to {opacity:0; transform:translateY(-20%);} }
-  .gigs-mobile-nav-overlay ul { list-style: none; width: 100%; text-align: center; }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20%); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(-20%); }
+  }
+
+  .gigs-mobile-nav-overlay ul {
+    list-style: none;
+    width: 100%;
+    text-align: center;
+  }
+
   .gigs-mobile-nav-overlay li {
     padding: 1rem 0;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     cursor: pointer;
     font-size: 1.1rem;
   }
-  .gigs-mobile-nav-overlay li:last-child { border-bottom: none; }
 }
 
-/* ================= RESPONSIVE ================= */
+/* ============== RESPONSIVE TOGGLES ============== */
 @media (min-width: 769px) {
   .gigs-desktop-nav { display: block; }
   .gigs-mobile-topbar { display: none; }
@@ -329,16 +275,108 @@ html, body {
   .gigs-topbar .gigs-logo { display: none; }
 }
 
-/* ================= ISOKO NAV GROUP ================= */
-.nav-section {
-  padding: 1rem 0 .4rem 0;
-  font-weight: 900;
-  letter-spacing: .3px;
-  opacity: .85;
-  pointer-events: none;
+.gigs-auth-buttons button:hover,
+.gigs-auth-buttons--desktop button:hover {
+  opacity: 1 !important;
+  filter: none !important;
+  text-decoration: none !important;
 }
-.nav-sublink {
-  padding-left: 2rem !important;
+
+/* ============== ISOKO CATEGORY CHIPS ============== */
+.isoko-chip {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+/* ============== ISOKO CARDS (Index-style) ============== */
+.isoko-card {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.05);
   text-align: left;
-  font-size: 1rem !important;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .isoko-card--row {
+    flex-direction: row;
+    align-items: stretch;
+  }
+}
+
+.isoko-card-text {
+  padding: 1.2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.isoko-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: .4rem;
+}
+
+.isoko-avatar {
+  width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
+  border: 2px solid rgba(255,255,255,.7);
+}
+
+.isoko-intent {
+  font-weight: 800;
+  font-size: .85rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.06);
+}
+.isoko-intent.buy { background: rgba(56,142,60,.15); }
+.isoko-intent.sell { background: rgba(251,140,0,.15); }
+
+.isoko-title { font-size: 1.25rem; font-weight: 800; color: #223; margin: .2rem 0 .35rem; }
+.isoko-desc  { color: #333; line-height: 1.35; max-height: 3.4em; overflow: hidden; }
+
+.isoko-meta {
+  margin-top: .45rem;
+  color: #2a2a2a;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .35rem;
+}
+.isoko-price { font-weight: 900; }
+.isoko-dot   { opacity: .5; }
+.isoko-actions { margin-top: .6rem; }
+
+.isoko-actions button {
+  background: #203a43;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: .55rem 1rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.isoko-actions button:hover { opacity: .95; }
+
+.isoko-card-image {
+  flex: 0 0 38%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.isoko-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  max-height: 260px;
+  border-radius: 10px;
 }

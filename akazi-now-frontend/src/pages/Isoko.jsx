@@ -36,7 +36,6 @@ function Isoko() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Title changes when on /isoko/categories/:slug
   const sectionTitle = (() => {
     const m = location.pathname.match(/\/isoko\/categories\/([^/]+)/i);
     if (!m) return "Isoko — Buy & Sell Locally";
@@ -92,7 +91,7 @@ function Isoko() {
     setUserProfile(data || null);
   };
 
-  // Mobile overlay interactions
+  // mobile overlay behavior
   useEffect(() => {
     let touchStartY = 0;
     const handleTouchStart = (e) => { touchStartY = e.touches[0].clientY; };
@@ -129,8 +128,7 @@ function Isoko() {
     }
   };
 
-  const bgFor = (cat) =>
-    CATEGORY_STYLES[cat?.toLowerCase?.()]?.bg || CATEGORY_STYLES.default.bg;
+  const bgFor = (cat) => CATEGORY_STYLES[cat?.toLowerCase?.()]?.bg || CATEGORY_STYLES.default.bg;
 
   return (
     <div className="gigs-container">
@@ -148,7 +146,7 @@ function Isoko() {
         <NotificationBell />
       </div>
 
-      {/* MOBILE OVERLAY NAV (Isoko grouped with sublinks) */}
+      {/* MOBILE OVERLAY NAV (no category sublinks) */}
       {mobileNavVisible && (
         <div ref={mobileNavRef} className={`gigs-mobile-nav-overlay ${slideDirection}`}>
           <ul>
@@ -160,20 +158,9 @@ function Isoko() {
             <li onClick={() => { setMobileNavVisible(false); navigate("/inbox"); }}>Inbox</li>
             <li onClick={() => { setMobileNavVisible(false); navigate("/carpools"); }}>Car Pooling</li>
 
-            {/* ---- Isoko group ---- */}
-            <li className="nav-section">Isoko</li>
-            <li
-              className="nav-sublink"
-              onClick={() => { setMobileNavVisible(false); navigate("/isoko"); }}
-            >
-              Browse
-            </li>
-            <li
-              className="nav-sublink"
-              onClick={() => { setMobileNavVisible(false); navigate("/isoko/post-item"); }}
-            >
-              Post Item
-            </li>
+            {/* Isoko main links only */}
+            <li onClick={() => { setMobileNavVisible(false); navigate("/isoko"); }}>Isoko</li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/isoko/post-item"); }}>Post Item</li>
 
             {authUser ? (
               <li
@@ -198,11 +185,7 @@ function Isoko() {
       {/* DESKTOP NAV */}
       <div className="gigs-desktop-nav">
         <div className="gigs-desktop-nav-inner">
-          <div
-            className="gigs-nav-left-logo"
-            onClick={() => navigate("/")}
-            title="AkaziNow Home"
-          >
+          <div className="gigs-nav-left-logo" onClick={() => navigate("/")} title="AkaziNow Home">
             AkaziNow
           </div>
 
@@ -216,7 +199,7 @@ function Isoko() {
               <li onClick={() => navigate("/inbox")}>Inbox</li>
               <li onClick={() => navigate("/carpools")}>Car Pooling</li>
 
-              {/* Isoko desktop links */}
+              {/* Isoko */}
               <li onClick={() => navigate("/isoko")}>Isoko</li>
               <li onClick={() => navigate("/isoko/post-item")}>Post Item</li>
             </ul>
@@ -292,7 +275,7 @@ function Isoko() {
         </div>
       </div>
 
-      {/* CATEGORY CHIPS (stay on page, not in mobile menu) */}
+      {/* CATEGORY CHIPS (kept here; no longer in mobile nav) */}
       <div style={{ width: "100%", maxWidth: 1200, padding: "3.5rem 1rem 0.5rem" }}>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", justifyContent: "center" }}>
           {CATEGORIES.map((c) => (
@@ -307,7 +290,7 @@ function Isoko() {
         </div>
       </div>
 
-      {/* LISTING CARDS */}
+      {/* LISTING CARDS (Index-style) */}
       <section className="gigs-cards-section">
         {listings.length > 0 ? (
           listings.map((item) => {
