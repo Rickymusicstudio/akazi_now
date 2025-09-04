@@ -113,9 +113,9 @@ function Index() {
         </div>
 
         {/* NEW: ISOKO CARD */}
-        <div className="service-card" style={{ background: "#b4f3cbff" }}>
+        <div className="service-card" style={{ background: "#ade1c0ff" }}>
           <div className="service-text">
-            <h2>Isoko Marketplace 🛍️</h2>
+            <h2>Isoko Marketplace </h2>
             <p>Buy & sell locally — electronics, houses, cars, and more.</p>
             <button onClick={() => navigate("/isoko")}>Explore Isoko</button>
           </div>
