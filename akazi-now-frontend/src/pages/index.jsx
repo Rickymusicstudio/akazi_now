@@ -113,7 +113,7 @@ function Index() {
         </div>
 
         {/* NEW: ISOKO CARD */}
-        <div className="service-card" style={{ background: "#c5f7d8ff" }}>
+        <div className="service-card" style={{ background: "#cfffe2ff" }}>
           <div className="service-text">
             <h2>Isoko Marketplace </h2>
             <p>Buy & sell locally — electronics, houses, cars, and more.</p>
