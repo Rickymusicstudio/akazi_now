@@ -4,6 +4,7 @@ import backgroundImage from "../assets/kcc_bg_clean.png";
 import stickerJobs from "../assets/sticker1_transparent.png";
 import stickerCar from "../assets/sticker_clean_2.png";
 import stickerDriver from "../assets/sticker_clean_1.png";
+import storeSticker from "../assets/store.png"; // <-- your Isoko sticker
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import {
@@ -108,18 +109,17 @@ function Index() {
             <p>Connect with trusted Abasare to get home safe.</p>
             <button onClick={() => navigate("/abasare")}>View Drivers</button>
           </div>
-          <img src={stickerDriver} alt="Abasare" />
+        <img src={stickerDriver} alt="Abasare" />
         </div>
 
-        {/* ✅ NEW: Isoko Market card */}
-        <div className="service-card" style={{ background: "#e7fff0" }}>
+        {/* NEW: ISOKO CARD */}
+        <div className="service-card" style={{ background: "#dfffe8" }}>
           <div className="service-text">
-            <h2>Isoko Market</h2>
-            <p>Buy & sell locally. Post items or find great deals.</p>
-            <button onClick={() => navigate("/isoko")}>Open Isoko</button>
+            <h2>Isoko Marketplace 🛍️</h2>
+            <p>Buy & sell locally — electronics, houses, cars, and more.</p>
+            <button onClick={() => navigate("/isoko")}>Explore Isoko</button>
           </div>
-          {/* Reusing an existing sticker; swap when you add a market sticker asset */}
-          <img src={stickerJobs} alt="Isoko Market" />
+          <img src={storeSticker} alt="Isoko" />
         </div>
       </section>
 
