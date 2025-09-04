@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import backgroundImage from "../assets/kcc_bg_clean.png";
 import defaultAvatar from "../assets/avatar.png";
 import NotificationBell from "../components/NotificationBell.jsx";
 import { FaBars, FaCalendarCheck } from "react-icons/fa";
-import "./Isoko.css";
+import "./Isoko.css"; 
 
 const CATEGORIES = [
   { slug: "electronics", label: "Electronics" },
@@ -24,15 +24,22 @@ function Isoko() {
   const [slideDirection, setSlideDirection] = useState("");
   const mobileNavRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Optional: derive section title from URL (/isoko or /isoko/categories/:slug)
+  const sectionTitle = (() => {
+    const m = location.pathname.match(/\/isoko\/categories\/([^/]+)/i);
+    if (!m) return "Isoko — Buy & Sell Locally";
+    const slug = m[1];
+    const label = CATEGORIES.find(c => c.slug === slug)?.label || slug;
+    return `Isoko — ${label.charAt(0).toUpperCase() + label.slice(1)}`;
+  })();
 
   useEffect(() => {
     fetchListings();
     fetchUserAndProfile();
 
-    // Keep auth state in sync across pages
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_evt, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_evt, session) => {
       const user = session?.user || null;
       setAuthUser(user);
       if (user) {
@@ -63,9 +70,7 @@ function Isoko() {
   };
 
   const fetchUserAndProfile = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     setAuthUser(user || null);
     if (!user) return;
     const { data } = await supabase
@@ -76,39 +81,26 @@ function Isoko() {
     setUserProfile(data || null);
   };
 
+  // Mobile overlay interactions (same as Gigs)
   useEffect(() => {
     let touchStartY = 0;
-
-    const handleTouchStart = (e) => {
-      touchStartY = e.touches[0].clientY;
-    };
-
+    const handleTouchStart = (e) => { touchStartY = e.touches[0].clientY; };
     const handleTouchMove = (e) => {
       if (!mobileNavVisible) return;
-      const touchEndY = e.touches[0].clientY;
-      const swipeDistance = touchStartY - touchEndY;
-      if (swipeDistance > 50) {
+      const swipe = touchStartY - e.touches[0].clientY;
+      if (swipe > 50) {
         setSlideDirection("slide-up");
-        setTimeout(() => {
-          setMobileNavVisible(false);
-          setSlideDirection("");
-        }, 300);
+        setTimeout(() => { setMobileNavVisible(false); setSlideDirection(""); }, 300);
       }
     };
-
     const handleScroll = () => {
       if (!mobileNavVisible) return;
       setSlideDirection("slide-up");
-      setTimeout(() => {
-        setMobileNavVisible(false);
-        setSlideDirection("");
-      }, 300);
+      setTimeout(() => { setMobileNavVisible(false); setSlideDirection(""); }, 300);
     };
-
     window.addEventListener("touchstart", handleTouchStart);
     window.addEventListener("touchmove", handleTouchMove);
     window.addEventListener("scroll", handleScroll);
-
     return () => {
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
@@ -154,7 +146,7 @@ function Isoko() {
             <li onClick={() => { setMobileNavVisible(false); navigate("/inbox"); }}>Inbox</li>
             <li onClick={() => { setMobileNavVisible(false); navigate("/carpools"); }}>Car Pooling</li>
 
-            {/* Isoko links */}
+            {/* Isoko */}
             <li onClick={() => { setMobileNavVisible(false); navigate("/isoko"); }}>Isoko</li>
             <li onClick={() => { setMobileNavVisible(false); navigate("/isoko/post-item"); }}>Post Item</li>
             {CATEGORIES.map(c => (
@@ -255,7 +247,6 @@ function Isoko() {
       <div className="gigs-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
         <div className="gigs-topbar">
           <div className="gigs-logo">AkaziNow</div>
-
           {!authUser && (
             <div className="gigs-auth-buttons">
               <button onClick={() => navigate("/login")}>Sign In</button>
@@ -265,8 +256,12 @@ function Isoko() {
         </div>
 
         <div className="gigs-hero-content">
-          <h1 className="gigs-heading">Isoko — Buy & Sell Locally</h1>
-          <p className="gigs-subheading">Post what you want to sell or find what you need.</p>
+          <h1 className="gigs-heading">{sectionTitle}</h1>
+          <p className="gigs-subheading">
+            {sectionTitle.includes("—")
+              ? `Browse ${sectionTitle.split("—")[1].trim()} listings in your area.`
+              : "Post what you want to sell or find what you need."}
+          </p>
         </div>
 
         <div className="gigs-floating-count-box">
