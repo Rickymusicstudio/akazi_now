@@ -5,7 +5,7 @@ import backgroundImage from "../assets/kcc_bg_clean.png";
 import defaultAvatar from "../assets/avatar.png";
 import NotificationBell from "../components/NotificationBell.jsx";
 import { FaBars, FaCalendarCheck } from "react-icons/fa";
-import "./Isoko.css"; 
+import "./Isoko.css";
 
 const CATEGORIES = [
   { slug: "electronics", label: "Electronics" },
@@ -15,6 +15,16 @@ const CATEGORIES = [
   { slug: "kitchen",     label: "Kitchen" },
   { slug: "clothes",     label: "Clothes" },
 ];
+
+const CATEGORY_STYLES = {
+  electronics: { bg: "#e0f7ff" }, // soft blue
+  houses:      { bg: "#fff8d4" }, // soft yellow
+  plots:       { bg: "#e8ffe8" }, // soft green
+  cars:        { bg: "#f0e8ff" }, // soft purple
+  kitchen:     { bg: "#ffe9f0" }, // soft pink
+  clothes:     { bg: "#f6f6f6" }, // soft gray
+  default:     { bg: "#ffffff" },
+};
 
 function Isoko() {
   const [listings, setListings] = useState([]);
@@ -26,7 +36,6 @@ function Isoko() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Optional: derive section title from URL (/isoko or /isoko/categories/:slug)
   const sectionTitle = (() => {
     const m = location.pathname.match(/\/isoko\/categories\/([^/]+)/i);
     if (!m) return "Isoko — Buy & Sell Locally";
@@ -39,20 +48,21 @@ function Isoko() {
     fetchListings();
     fetchUserAndProfile();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_evt, session) => {
-      const user = session?.user || null;
-      setAuthUser(user);
-      if (user) {
-        const { data } = await supabase
-          .from("users")
-          .select("image_url")
-          .eq("auth_user_id", user.id)
-          .single();
-        setUserProfile(data || null);
-      } else {
-        setUserProfile(null);
-      }
-    });
+    const { data: { subscription } } =
+      supabase.auth.onAuthStateChange(async (_evt, session) => {
+        const user = session?.user || null;
+        setAuthUser(user);
+        if (user) {
+          const { data } = await supabase
+            .from("users")
+            .select("image_url")
+            .eq("auth_user_id", user.id)
+            .single();
+          setUserProfile(data || null);
+        } else {
+          setUserProfile(null);
+        }
+      });
 
     return () => subscription?.unsubscribe();
   }, []);
@@ -81,7 +91,7 @@ function Isoko() {
     setUserProfile(data || null);
   };
 
-  // Mobile overlay interactions (same as Gigs)
+  // mobile overlay behavior
   useEffect(() => {
     let touchStartY = 0;
     const handleTouchStart = (e) => { touchStartY = e.touches[0].clientY; };
@@ -118,6 +128,8 @@ function Isoko() {
     }
   };
 
+  const bgFor = (cat) => CATEGORY_STYLES[cat?.toLowerCase?.()]?.bg || CATEGORY_STYLES.default.bg;
+
   return (
     <div className="gigs-container">
       {/* MOBILE TOPBAR */}
@@ -134,7 +146,7 @@ function Isoko() {
         <NotificationBell />
       </div>
 
-      {/* MOBILE OVERLAY NAV */}
+      {/* MOBILE OVERLAY NAV (no category sublinks) */}
       {mobileNavVisible && (
         <div ref={mobileNavRef} className={`gigs-mobile-nav-overlay ${slideDirection}`}>
           <ul>
@@ -146,14 +158,9 @@ function Isoko() {
             <li onClick={() => { setMobileNavVisible(false); navigate("/inbox"); }}>Inbox</li>
             <li onClick={() => { setMobileNavVisible(false); navigate("/carpools"); }}>Car Pooling</li>
 
-            {/* Isoko */}
+            {/* Isoko main links only */}
             <li onClick={() => { setMobileNavVisible(false); navigate("/isoko"); }}>Isoko</li>
             <li onClick={() => { setMobileNavVisible(false); navigate("/isoko/post-item"); }}>Post Item</li>
-            {CATEGORIES.map(c => (
-              <li key={c.slug} onClick={() => { setMobileNavVisible(false); navigate(`/isoko/categories/${c.slug}`); }}>
-                {c.label}
-              </li>
-            ))}
 
             {authUser ? (
               <li
@@ -178,11 +185,7 @@ function Isoko() {
       {/* DESKTOP NAV */}
       <div className="gigs-desktop-nav">
         <div className="gigs-desktop-nav-inner">
-          <div
-            className="gigs-nav-left-logo"
-            onClick={() => navigate("/")}
-            title="AkaziNow Home"
-          >
+          <div className="gigs-nav-left-logo" onClick={() => navigate("/")} title="AkaziNow Home">
             AkaziNow
           </div>
 
@@ -272,21 +275,14 @@ function Isoko() {
         </div>
       </div>
 
-      {/* QUICK CATEGORY CHIPS */}
+      {/* CATEGORY CHIPS (kept here; no longer in mobile nav) */}
       <div style={{ width: "100%", maxWidth: 1200, padding: "3.5rem 1rem 0.5rem" }}>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", justifyContent: "center" }}>
           {CATEGORIES.map((c) => (
             <button
               key={c.slug}
               onClick={() => navigate(`/isoko/categories/${c.slug}`)}
-              style={{
-                background: "white",
-                border: "1px solid #e2e8f0",
-                borderRadius: 999,
-                padding: "8px 14px",
-                cursor: "pointer",
-                fontWeight: 600,
-              }}
+              className="isoko-chip"
             >
               {c.label}
             </button>
@@ -294,48 +290,49 @@ function Isoko() {
         </div>
       </div>
 
-      {/* LISTING CARDS */}
+      {/* LISTING CARDS (Index-style) */}
       <section className="gigs-cards-section">
         {listings.length > 0 ? (
           listings.map((item) => {
             const imgUrl = item.first_image_url;
             const isHeic = imgUrl?.toLowerCase().endsWith(".heic");
             const displayUrl = isHeic ? null : imgUrl;
+            const bg = bgFor(item.category);
 
             return (
-              <div className="gigs-card" key={item.id} style={{ background: "#fff" }}>
-                <div className="gigs-card-text">
-                  <div style={{ display: "flex", alignItems: "center", marginBottom: "0.5rem" }}>
+              <div className="isoko-card isoko-card--row" key={item.id} style={{ background: bg }}>
+                <div className="isoko-card-text">
+                  <div className="isoko-card-header">
                     <img
                       src={userProfile?.image_url || defaultAvatar}
                       alt="poster"
-                      style={{
-                        width: "32px",
-                        height: "32px",
-                        borderRadius: "50%",
-                        objectFit: "cover",
-                        marginRight: "10px",
-                      }}
+                      className="isoko-avatar"
                     />
-                    <span style={{ fontWeight: "600", fontSize: "0.95rem" }}>
+                    <span className={`isoko-intent ${item.intent?.toLowerCase() === "buy" ? "buy" : "sell"}`}>
                       {item.intent?.toUpperCase() === "BUY" ? "Buyer" : "Seller"}
                     </span>
                   </div>
 
-                  <h2>{item.title}</h2>
-                  <p>{item.description}</p>
-                  <p><strong>Price:</strong> {Number(item.price || 0).toLocaleString()} {item.currency || "RWF"}</p>
-                  <p><strong>Location:</strong> {item.location || "—"}</p>
-                  <p><strong>Category:</strong> {item.category || "—"}</p>
-                  <p><strong>Intent:</strong> {item.intent || "sell"}</p>
+                  <h2 className="isoko-title">{item.title}</h2>
+                  <p className="isoko-desc">{item.description}</p>
 
-                  <div style={{ display: "flex", gap: "8px", marginTop: "6px" }}>
+                  <div className="isoko-meta">
+                    <span className="isoko-price">
+                      {Number(item.price || 0).toLocaleString()} {item.currency || "RWF"}
+                    </span>
+                    <span className="isoko-dot">•</span>
+                    <span className="isoko-loc">{item.location || "—"}</span>
+                    <span className="isoko-dot">•</span>
+                    <span className="isoko-cat">{item.category || "—"}</span>
+                  </div>
+
+                  <div className="isoko-actions">
                     <button onClick={() => navigate("/isoko/post-item")}>Post Item</button>
                   </div>
                 </div>
 
                 {displayUrl && (
-                  <div className="gigs-card-image-wrapper">
+                  <div className="isoko-card-image">
                     <img
                       src={displayUrl}
                       alt={item.title}
