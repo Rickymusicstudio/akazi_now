@@ -110,6 +110,17 @@ function Index() {
           </div>
           <img src={stickerDriver} alt="Abasare" />
         </div>
+
+        {/* ✅ NEW: Isoko Market card */}
+        <div className="service-card" style={{ background: "#e7fff0" }}>
+          <div className="service-text">
+            <h2>Isoko Market</h2>
+            <p>Buy & sell locally. Post items or find great deals.</p>
+            <button onClick={() => navigate("/isoko")}>Open Isoko</button>
+          </div>
+          {/* Reusing an existing sticker; swap when you add a market sticker asset */}
+          <img src={stickerJobs} alt="Isoko Market" />
+        </div>
       </section>
 
       {/* FOOTER */}
