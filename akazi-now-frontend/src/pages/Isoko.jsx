@@ -1,4 +1,5 @@
-import { useEffect, useState, useRef, useMemo } from "react";
+// Isoko.jsx
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate, useLocation } from "react-router-dom";
 import backgroundImage from "../assets/kcc_bg_clean.png";
@@ -21,17 +22,16 @@ function Isoko() {
   const [userProfile, setUserProfile] = useState(null);
   const [authUser, setAuthUser] = useState(null);
 
+  // mobile nav (same behavior as Gigs)
   const [mobileNavVisible, setMobileNavVisible] = useState(false);
   const [slideDirection, setSlideDirection] = useState("");
   const mobileNavRef = useRef(null);
 
+  // lightbox
+  const [lightboxUrl, setLightboxUrl] = useState(null);
+
   const navigate = useNavigate();
   const location = useLocation();
-
-  const activeCategory = useMemo(() => {
-    const m = location.pathname.match(/\/isoko\/categories\/([^/]+)/i);
-    return m ? m[1] : null;
-  }, [location.pathname]);
 
   const isActive = (item) => {
     if (item.key === "logout") return false;
@@ -39,11 +39,13 @@ function Isoko() {
     return item.to ? location.pathname.startsWith(item.to) : false;
   };
 
-  const sectionTitle = useMemo(() => {
-    if (!activeCategory) return "Isoko — Buy & Sell Locally";
-    const label = ISOKO_LINKS.find((l) => l.key === activeCategory)?.label || activeCategory;
+  const sectionTitle = (() => {
+    const m = location.pathname.match(/\/isoko\/categories\/([^/]+)/i);
+    if (!m) return "Isoko — Buy & Sell Locally";
+    const slug = m[1];
+    const label = ISOKO_LINKS.find((l) => l.key === slug)?.label || slug;
     return `Isoko — ${label.charAt(0).toUpperCase() + label.slice(1)}`;
-  }, [activeCategory]);
+  })();
 
   useEffect(() => {
     fetchListings();
@@ -70,45 +72,21 @@ function Isoko() {
   }, []);
 
   const fetchListings = async () => {
-    const { data: rawListings, error } = await supabase
+    // include user_id + seller name/avatar for the card & notifications
+    const { data, error } = await supabase
       .from("market_listings")
-      .select(
-        "id, user_id, title, description, price, currency, intent, category, location, first_image_url, created_at"
-      )
+      .select(`
+        id, user_id, title, description, price, currency, intent,
+        category, location, first_image_url, created_at,
+        seller:users ( full_name, image_url, auth_user_id )
+      `)
       .order("created_at", { ascending: false });
 
-    if (error) {
-      console.error("fetchListings error:", error.message);
-      setListings([]);
-      return;
-    }
-    const list = rawListings || [];
-
-    const userIds = Array.from(new Set(list.map((l) => l.user_id).filter(Boolean)));
-    let userMap = new Map();
-    if (userIds.length > 0) {
-      const { data: usersData, error: usersErr } = await supabase
-        .from("users")
-        .select("auth_user_id, full_name, image_url")
-        .in("auth_user_id", userIds);
-
-      if (!usersErr && usersData) {
-        userMap = new Map(usersData.map((u) => [u.auth_user_id, u]));
-      }
-    }
-
-    setListings(
-      list.map((l) => ({
-        ...l,
-        user: userMap.get(l.user_id) || null,
-      }))
-    );
+    if (!error) setListings(data || []);
   };
 
   const fetchUserAndProfile = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     setAuthUser(user || null);
     if (!user) return;
     const { data } = await supabase
@@ -119,6 +97,7 @@ function Isoko() {
     setUserProfile(data || null);
   };
 
+  // mobile overlay UX
   useEffect(() => {
     let touchStartY = 0;
     const handleTouchStart = (e) => { touchStartY = e.touches[0].clientY; };
@@ -135,7 +114,6 @@ function Isoko() {
       setSlideDirection("slide-up");
       setTimeout(() => { setMobileNavVisible(false); setSlideDirection(""); }, 300);
     };
-
     window.addEventListener("touchstart", handleTouchStart);
     window.addEventListener("touchmove", handleTouchMove);
     window.addEventListener("scroll", handleScroll);
@@ -162,33 +140,26 @@ function Isoko() {
     navigate("/");
   };
 
+  // ====== NEW: Interested CTA ======
   const handleInterested = async (listing) => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { navigate("/login"); return; }
 
-    if (!user) {
-      navigate("/login");
-      return;
-    }
     if (user.id === listing.user_id) {
-      alert("This is your own listing.");
+      alert("You posted this item.");
       return;
     }
 
-    const note = prompt(`Send a message to the seller of "${listing.title}"`, "Hi! I'm interested.");
-    if (note === null) return; // cancelled
-    const message = note.trim() || "Hi! I'm interested.";
+    const text = prompt("Send a short message to the seller:");
+    if (!text) return;
 
-    // Lightweight notification to the seller
-    const { error: notifError } = await supabase.from("notifications").insert([
-      {
-        recipient_id: listing.user_id,
-        message: `Interest on "${listing.title}": ${message}`,
-        type: "isoko_interest",
-        read: false,
-      },
-    ]);
+    // Insert notification WITHOUT 'type' (your table doesn't have it)
+    const { error: notifError } = await supabase.from("notifications").insert([{
+      recipient_id: listing.user_id,
+      message: `Interest on "${listing.title}": ${text}`,
+      related_listing_id: listing.id,
+      read: false,
+    }]);
 
     if (notifError) {
       console.error("notify error", notifError.message);
@@ -196,15 +167,8 @@ function Isoko() {
       return;
     }
 
-    alert("Your message was sent to the seller!");
+    alert("Your interest was sent to the seller ✅");
   };
-
-  const visibleListings = useMemo(() => {
-    if (!activeCategory) return listings;
-    return listings.filter(
-      (l) => (l.category || "").toLowerCase() === activeCategory.toLowerCase()
-    );
-  }, [listings, activeCategory]);
 
   return (
     <div className="gigs-container">
@@ -222,22 +186,24 @@ function Isoko() {
         <NotificationBell />
       </div>
 
-      {/* MOBILE OVERLAY NAV */}
+      {/* MOBILE NAV OVERLAY */}
       {mobileNavVisible && (
         <div ref={mobileNavRef} className={`gigs-mobile-nav-overlay ${slideDirection}`}>
           <ul>
-            {ISOKO_LINKS.filter((i) => !i.private || authUser).map((item) => (
-              <li
-                key={item.key}
-                onClick={() => {
-                  if (item.action === "logout") { handleLogout(); return; }
-                  setMobileNavVisible(false);
-                  navigate(item.to);
-                }}
-              >
-                {item.label}
-              </li>
-            ))}
+            {ISOKO_LINKS
+              .filter((i) => !i.private || authUser)
+              .map((item) => (
+                <li
+                  key={item.key}
+                  onClick={() => {
+                    if (item.action === "logout") { handleLogout(); return; }
+                    setMobileNavVisible(false);
+                    navigate(item.to);
+                  }}
+                >
+                  {item.label}
+                </li>
+              ))}
             <li onClick={() => { setMobileNavVisible(false); navigate("/isoko/post-item"); }}>
               Post Item
             </li>
@@ -260,15 +226,19 @@ function Isoko() {
 
           <nav className="gigs-nav-center">
             <ul>
-              {ISOKO_LINKS.filter((i) => !i.private || authUser).map((item) => (
-                <li
-                  key={item.key}
-                  className={isActive(item) ? "active" : ""}
-                  onClick={() => (item.action === "logout" ? handleLogout() : navigate(item.to))}
-                >
-                  {item.label}
-                </li>
-              ))}
+              {ISOKO_LINKS
+                .filter((i) => !i.private || authUser)
+                .map((item) => (
+                  <li
+                    key={item.key}
+                    className={isActive(item) ? "active" : ""}
+                    onClick={() =>
+                      item.action === "logout" ? handleLogout() : navigate(item.to)
+                    }
+                  >
+                    {item.label}
+                  </li>
+                ))}
             </ul>
           </nav>
 
@@ -318,66 +288,61 @@ function Isoko() {
         <div className="gigs-hero-content">
           <h1 className="gigs-heading">{sectionTitle}</h1>
           <p className="gigs-subheading">
-            {activeCategory
-              ? `Browse ${activeCategory} listings in your area.`
-              : "Browse Buy & Sell Locally listings in your area."}
+            {sectionTitle.includes("—")
+              ? `Browse ${sectionTitle.split("—")[1].trim()} listings in your area.`
+              : "Post what you want to sell or find what you need."}
           </p>
         </div>
 
         <div className="gigs-floating-count-box">
           <h2 className="gigs-count-title">🛍️ Listings</h2>
           <div className="gigs-count-display">
-            <FaCalendarCheck /> {visibleListings.length} Items
+            <FaCalendarCheck /> {listings.length} Items
           </div>
         </div>
       </div>
 
-      {/* LISTING CARDS */}
-      <section className="gigs-cards-section isoko-cards">
-        {visibleListings.length > 0 ? (
-          visibleListings.map((item) => (
-            <div className="gigs-card isoko-card" key={item.id}>
-              <div className="isoko-card-header">
-                <div className="isoko-user">
-                  <img
-                    src={item.user?.image_url || defaultAvatar}
-                    alt="poster"
-                    className="isoko-avatar"
-                  />
-                  <span className="isoko-name">{item.user?.full_name || "Anonymous"}</span>
-                </div>
-                {item.price ? (
-                  <span className="isoko-price-chip">
-                    {item.price} {item.currency || ""}
-                  </span>
-                ) : null}
-              </div>
+      {/* CARDS */}
+      <section className="isoko-cards">
+        {listings.map((item, idx) => {
+          const sellerName = item?.seller?.full_name || "Anonymous";
+          const sellerAvatar = item?.seller?.image_url || defaultAvatar;
 
-              <h2 className="isoko-title">{item.title}</h2>
-              {item.description && (
+          return (
+            <article
+              key={item.id}
+              className={`isoko-card ${idx % 2 === 0 ? "alt-a" : "alt-b"}`}
+            >
+              <header className="isoko-card-header">
+                <img src={sellerAvatar} alt="" className="isoko-card-avatar" />
+                <span className="isoko-card-seller">{sellerName}</span>
+              </header>
+
+              <div className="isoko-card-body">
+                <h3 className="isoko-title">{item.title}</h3>
                 <p className="isoko-desc">{item.description}</p>
-              )}
-
-              <div className="isoko-meta">
-                <div><strong>Location:</strong> {item.location || "—"}</div>
-                <div><strong>Category:</strong> {item.category || "—"}</div>
-                <div><strong>Intent:</strong> {item.intent || "—"}</div>
+                <p><strong>Price:</strong> {item.price} {item.currency}</p>
+                <p><strong>Location:</strong> {item.location}</p>
+                <p><strong>Category:</strong> {item.category}</p>
+                <p><strong>Intent:</strong> {item.intent}</p>
               </div>
 
               {item.first_image_url && (
-                <div className="gigs-card-image-wrapper">
-                  <img src={item.first_image_url} alt="listing" />
+                <div className="isoko-img-wrap" onClick={() => setLightboxUrl(item.first_image_url)}>
+                  <img src={item.first_image_url} alt={item.title} />
                 </div>
               )}
 
-              <div className="isoko-actions">
-                <button className="isoko-btn" onClick={() => handleInterested(item)}>
+              <footer className="isoko-card-actions">
+                <button className="btn-interested" onClick={() => handleInterested(item)}>
                   Interested
                 </button>
-              </div>
-            </div>
-          ))
-        ) : (
+              </footer>
+            </article>
+          );
+        })}
+
+        {listings.length === 0 && (
           <p style={{ marginTop: "2rem", fontWeight: "bold" }}>
             No items yet. Be the first to{" "}
             <span
@@ -389,6 +354,13 @@ function Isoko() {
           </p>
         )}
       </section>
+
+      {/* LIGHTBOX */}
+      {lightboxUrl && (
+        <div className="isoko-lightbox" onClick={() => setLightboxUrl(null)}>
+          <img src={lightboxUrl} alt="Preview" />
+        </div>
+      )}
 
       {/* FOOTER */}
       <footer className="gigs-footer">

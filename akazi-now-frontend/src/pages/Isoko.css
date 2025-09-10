@@ -1,77 +1,94 @@
-/* ================================
+/* =========================
    RESET / BASE
-   ================================ */
+   ========================= */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { height: 100%; font-family: 'Segoe UI', sans-serif; background: #f9f9f9; overflow-x: hidden; }
 
 .gigs-container { width: 100%; min-height: 100vh; display: flex; flex-direction: column; align-items: center; text-align: center; }
 
-/* Keep a default section wrapper; Isoko will override to a grid */
-.gigs-cards-section { flex: 1; display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; width: 100%; max-width: 1200px; padding: 5rem 1rem 2rem; }
-
-/* ================================
+/* =========================
    DESKTOP NAV (GREEN)
-   ================================ */
-.gigs-desktop-nav { display: none; background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); padding: 0.8rem 2rem; width: 100%; }
+   ========================= */
+.gigs-desktop-nav {
+  display: none;
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+  padding: 0.8rem 2rem;
+  width: 100%;
+}
 .gigs-desktop-nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 1rem; }
 
-.gigs-nav-left-logo { color: #fdd835; font-weight: 800; font-size: 1.25rem; letter-spacing: .5px; cursor: pointer; user-select: none; white-space: nowrap; line-height: 1; }
+.gigs-nav-left-logo {
+  color: #fdd835;
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: .5px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  line-height: 1;
+}
 .gigs-nav-left-logo:hover { opacity: .9; }
 
 .gigs-nav-center { flex: 1; }
-.gigs-nav-center ul { display: flex; justify-content: center; gap: 1.6rem; list-style: none; margin: 0; padding: 0; }
+.gigs-nav-center ul { display: flex; justify-content: center; gap: 1.6rem; list-style: none; }
 .gigs-nav-center li { color: #fff; font-weight: 600; cursor: pointer; }
 .gigs-nav-center li:hover, .gigs-nav-center li.active { text-decoration: underline; }
 
 .gigs-nav-right { display: flex; align-items: center; gap: .6rem; min-width: 220px; justify-content: flex-end; }
-
 .gigs-auth-button { background: #fff; color: #203a43; padding: .5rem .9rem; border: none; border-radius: 6px; cursor: pointer; font-weight: 700; }
 .gigs-auth-button--gold { background: #FFD700; color: #111; }
 .gigs-auth-button--gold:hover { background: #e6c200; }
 
 .gigs-mobile-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; }
 
-/* ================================
+/* =========================
    HERO
-   ================================ */
+   ========================= */
 .gigs-hero {
-  width: 100%; height: 75vh;
-  background-size: cover; background-position: center top; background-repeat: no-repeat;
-  color: #fff; position: relative;
-  display: flex; justify-content: center; align-items: center; padding: 2rem; flex-direction: column;
+  width: 100%;
+  height: 75vh;
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  color: #fff;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  flex-direction: column;
 }
-
 .gigs-topbar { position: absolute; top: 1rem; left: 2rem; right: 2rem; display: flex; justify-content: space-between; align-items: center; }
 .gigs-logo { font-size: 1.4rem; font-weight: bold; color: #fdd835; }
-
-.gigs-auth-buttons button { background: #fff; color: #203a43; padding: .5rem 1rem; margin-left: .5rem; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+.gigs-auth-buttons button {
+  background: #fff; color: #203a43; padding: .5rem 1rem; margin-left: .5rem;
+  border: none; border-radius: 6px; cursor: pointer; font-weight: bold;
+}
 .gigs-auth-buttons button:hover { opacity: .9; }
-
 .gigs-hero-content { max-width: 600px; }
 .gigs-heading { font-size: 2.2rem; font-weight: bold; margin-bottom: 1rem; }
 .gigs-subheading { font-size: 1.1rem; }
 
-/* Floating count box */
+/* floating count box */
 .gigs-floating-count-box {
   position: absolute; bottom: -2rem; left: 50%; transform: translateX(-50%);
   background: #fff; padding: 1.2rem 1rem; border-radius: 16px;
-  box-shadow: 0 8px 20px rgba(0,0,0,.1);
-  width: 90%; max-width: 400px; z-index: 20; text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,.1); width: 90%; max-width: 400px; z-index: 20; text-align: center;
 }
 .gigs-count-title { font-size: 1.3rem; font-weight: 600; color: #333; margin-bottom: .4rem; }
 .gigs-count-display { font-size: 1.05rem; color: #444; display: flex; align-items: center; justify-content: center; gap: .4rem; }
 
-/* ================================
+/* =========================
    FOOTER (GREEN)
-   ================================ */
+   ========================= */
 .gigs-footer { width: 100%; background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); color: #fff; padding: 2rem 1rem; margin-top: 3rem; text-align: center; }
 .gigs-footer-links { margin-top: 1rem; }
 .gigs-footer-links button { background: none; border: none; color: #fff; margin: 0 .5rem; cursor: pointer; font-weight: 500; }
 .gigs-footer-links button:hover { text-decoration: underline; }
 
-/* ================================
+/* =========================
    MOBILE NAV (FIXED TOPBAR + OVERLAY)
-   ================================ */
+   ========================= */
 @media (max-width: 768px) {
   .gigs-desktop-nav { display: none; }
 
@@ -104,117 +121,92 @@ html, body { height: 100%; font-family: 'Segoe UI', sans-serif; background: #f9f
   .gigs-mobile-nav-overlay li:last-child { border-bottom: none; }
 }
 
-/* ================================
-   DESKTOP ONLY TOGGLES
-   ================================ */
+/* =========================
+   DESKTOP ONLY
+   ========================= */
 @media (min-width: 769px) {
   .gigs-desktop-nav { display: block; }
   .gigs-mobile-topbar { display: none; }
-  /* Hide the hero’s small topbar on desktop (prevents white strip) */
+  /* Hide the small hero topbar on desktop */
   .gigs-topbar .gigs-auth-buttons { display: none; }
   .gigs-topbar .gigs-logo { display: none; }
 }
 
-/* ================================
-   BASE CARD STYLES (shared)
-   ================================ */
-.gigs-card {
+/* =========================
+   ISOKO LISTING CARDS (compact, alternating tint, lightbox)
+   ========================= */
+.isoko-cards {
   width: 100%;
-  background: #fff;
-  padding: 1.2rem;
-  border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.05);
-  text-align: left;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 5rem 1rem 2rem; /* space below the floating count box */
   display: flex;
   flex-direction: column;
-  gap: .8rem;
+  gap: 18px;
 }
-.gigs-card-image-wrapper img {
-  width: 100%;
-  max-height: 300px;
-  object-fit: cover;
-  border-radius: 10px;
-  display: block;
-  margin-top: .5rem;
-}
-
-/* ================================
-   ISOKO-SPECIFIC CARD GRID
-   ================================ */
-.isoko-cards{
-  /* override the flex layout with a responsive grid */
-  display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1rem;
-  width: 100%;
-  max-width: 1200px;
-  padding: 5rem 1rem 2rem;
-}
-
-/* smaller, tighter card with colorful rotations */
-.isoko-card{
-  max-width: 420px;
-  margin: 0 auto;
-  padding: 1rem 1.1rem;
+.isoko-card {
+  background: #ffffff;
   border-radius: 14px;
-  box-shadow: 0 8px 18px rgba(0,0,0,.06);
-  overflow: hidden;
+  box-shadow: 0 10px 26px rgba(0,0,0,.06);
+  padding: 16px;
+  text-align: left;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.isoko-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(0,0,0,.09);
+}
+/* Subtle alternating tints (index-like vibe) */
+.isoko-card.alt-a { background: #fffdf3; } /* warm */
+.isoko-card.alt-b { background: #f6fbff; } /* cool */
+
+.isoko-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.isoko-card-avatar {
+  width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
+  border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.12);
+}
+.isoko-card-seller { font-weight: 700; color: #111; }
+
+.isoko-card-body { color: #222; }
+.isoko-title { font-size: 1.05rem; font-weight: 800; margin-bottom: 6px; }
+.isoko-desc  { margin: 4px 0 8px; color: #333; }
+
+.isoko-img-wrap { margin: 10px 0 6px; border-radius: 12px; overflow: hidden; cursor: zoom-in; }
+.isoko-img-wrap img {
+  width: 100%;
+  height: 260px;              /* compact image height */
+  object-fit: cover;
+  display: block;
+  transition: transform .2s ease;
+}
+.isoko-img-wrap:hover img { transform: scale(1.01); }
+
+.isoko-card-actions { margin-top: 6px; display: flex; justify-content: flex-end; }
+.btn-interested {
+  background: #203a43; color: #fff; border: none; border-radius: 10px;
+  padding: 8px 14px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 6px 14px rgba(0,0,0,.08);
+}
+.btn-interested:hover { opacity: .95; }
+
+/* Lightbox */
+.isoko-lightbox {
+  position: fixed; inset: 0; background: rgba(0,0,0,.9);
+  display: flex; align-items: center; justify-content: center;
+  padding: 2rem; z-index: 2000; cursor: zoom-out;
+}
+.isoko-lightbox img {
+  max-width: 92vw; max-height: 88vh;
+  border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,.6);
 }
 
-/* alternating soft backgrounds (index-style vibe) */
-.isoko-card:nth-child(4n+1){ background: #fff8d4; } /* pale yellow */
-.isoko-card:nth-child(4n+2){ background: #fff3e6; } /* peach */
-.isoko-card:nth-child(4n+3){ background: #eaf7ff; } /* light blue */
-.isoko-card:nth-child(4n+4){ background: #f0f9eb; } /* mint */
-
-/* header */
-.isoko-card-header{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: .6rem;
-}
-.isoko-user{ display:flex; align-items:center; gap:.5rem; }
-.isoko-avatar{
-  width: 32px; height: 32px; border-radius: 50%;
-  object-fit: cover; border: 2px solid rgba(0,0,0,.06);
-}
-.isoko-name{ font-weight: 600; font-size: .95rem; }
-
-.isoko-price-chip{
-  background:#203a43; color:#fff; font-weight:700;
-  padding: .25rem .55rem; border-radius: 999px; font-size: .85rem;
+/* Mobile tweaks for images */
+@media (max-width: 600px) {
+  .isoko-img-wrap img { height: 220px; }
 }
 
-/* title / desc / meta */
-.isoko-title{ font-size: 1.15rem; font-weight: 800; margin: .1rem 0 .25rem; color:#111; }
-.isoko-desc{
-  color:#333; margin-bottom:.5rem; line-height:1.45;
-  display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
-}
-.isoko-meta{ font-size:.95rem; color:#222; display:grid; gap:.1rem; margin-bottom:.6rem; }
-
-/* image tighter on isoko cards */
-.isoko-card .gigs-card-image-wrapper img{
-  max-height: 220px; object-fit: cover; border-radius: 10px;
-}
-
-/* actions */
-.isoko-actions{ margin-top:.6rem; display:flex; justify-content:flex-end; }
-.isoko-btn{
-  background:#203a43; color:#fff; border:none; border-radius:8px;
-  padding:.55rem .9rem; font-weight:800; cursor:pointer;
-}
-.isoko-btn:hover{ opacity:.95; }
-
-@media (max-width: 420px){
-  .isoko-cards{ grid-template-columns: 1fr; }
-}
-
-/* Subtle hover for nav auth buttons only (keep as-is everywhere else) */
+/* Optional: keep auth buttons from dimming on hover (match Gigs) */
 .gigs-auth-buttons button:hover,
 .gigs-auth-buttons--desktop button:hover {
-  opacity: 1 !important;
-  filter: none !important;
-  text-decoration: none !important;
+  opacity: 1 !important; filter: none !important; text-decoration: none !important;
 }
