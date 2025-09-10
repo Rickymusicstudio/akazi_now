@@ -4,10 +4,11 @@ import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/kcc_bg_clean.png";
 import defaultAvatar from "../assets/avatar.png";
 import NotificationBell from "../components/NotificationBell.jsx";
-import { FaBars } from "react-icons/fa";
-import "./Isoko.css";         // keep shared nav/hero styles
-import "./PostIsoko.css";     // form-specific fixes (light inputs, grid, etc)
+import { FaBars, FaCalendarCheck } from "react-icons/fa";
+import "./Isoko.css";      // shared Isoko/Gigs chrome (nav, hero, footer)
+import "./PostIsoko.css";  // form-specific styles (2-col layout + mobile input fixes)
 
+/* ====== CONFIG ====== */
 const BUCKET = "market-images"; // Supabase Storage bucket
 
 const CATEGORIES = [
@@ -20,14 +21,28 @@ const CATEGORIES = [
   "other",
 ];
 
+/** Isoko-only nav items (like the Isoko page) */
+const ISOKO_LINKS = [
+  { to: "/",                             label: "Home",        key: "home" },
+  { to: "/isoko/categories/electronics", label: "Electronics", key: "electronics" },
+  { to: "/isoko/categories/houses",      label: "Houses",      key: "houses" },
+  { to: "/isoko/categories/cars",        label: "Cars",        key: "cars" },
+  { to: "/isoko/categories/clothes",     label: "Clothes",     key: "clothes" },
+  { label: "Logout", key: "logout", action: "logout", private: true },
+];
+
 function PostIsoko() {
   const [authUser, setAuthUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
+
+  // mobile overlay
   const [mobileNavVisible, setMobileNavVisible] = useState(false);
   const [slideDirection, setSlideDirection] = useState("");
   const mobileNavRef = useRef(null);
+
   const navigate = useNavigate();
 
+  // form
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -41,6 +56,7 @@ function PostIsoko() {
   const [preview, setPreview] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
+  /* ---------- auth / profile ---------- */
   useEffect(() => {
     fetchUserAndProfile();
 
@@ -77,7 +93,7 @@ function PostIsoko() {
     setUserProfile(data || null);
   };
 
-  // mobile overlay UX
+  /* ---------- mobile overlay UX (same as Gigs/Isoko) ---------- */
   useEffect(() => {
     let touchStartY = 0;
     const handleTouchStart = (e) => { touchStartY = e.touches[0].clientY; };
@@ -114,6 +130,19 @@ function PostIsoko() {
     }
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setMobileNavVisible(false);
+    navigate("/");
+  };
+
+  const isActive = (item) => {
+    if (item.key === "logout") return false;
+    if (item.key === "home") return location.pathname === "/isoko" || location.pathname === "/";
+    return false; // not highlighting categories while on /isoko/post-item
+  };
+
+  /* ---------- form helpers ---------- */
   function onChange(e) {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
@@ -184,9 +213,10 @@ function PostIsoko() {
     }
   }
 
+  /* ---------- UI ---------- */
   return (
     <div className="gigs-container">
-      {/* MOBILE TOPBAR */}
+      {/* MOBILE TOPBAR (Isoko style) */}
       <div className="gigs-mobile-topbar">
         <div className="gigs-mobile-left">
           <img
@@ -196,38 +226,30 @@ function PostIsoko() {
           />
           <FaBars className="gigs-mobile-hamburger" onClick={handleHamburgerClick} />
         </div>
-        <h2 className="gigs-mobile-title">Post Item</h2>
+        <h2 className="gigs-mobile-title">Isoko</h2>
         <NotificationBell />
       </div>
 
-      {/* MOBILE OVERLAY NAV — Isoko group only */}
+      {/* MOBILE OVERLAY NAV (Isoko links only) */}
       {mobileNavVisible && (
         <div ref={mobileNavRef} className={`gigs-mobile-nav-overlay ${slideDirection}`}>
           <ul>
-            <li onClick={() => { setMobileNavVisible(false); navigate("/"); }}>Home</li>
-            <li onClick={() => { setMobileNavVisible(false); navigate("/gigs"); }}>Gigs</li>
-            <li onClick={() => { setMobileNavVisible(false); navigate("/post-job"); }}>Post a Job</li>
-            <li onClick={() => { setMobileNavVisible(false); navigate("/my-jobs"); }}>My Jobs</li>
-            <li onClick={() => { setMobileNavVisible(false); navigate("/profile"); }}>Profile</li>
-            <li onClick={() => { setMobileNavVisible(false); navigate("/inbox"); }}>Inbox</li>
-            <li onClick={() => { setMobileNavVisible(false); navigate("/carpools"); }}>Car Pooling</li>
-
-            {/* Isoko group */}
-            <li className="nav-section">Isoko</li>
-            <li className="nav-sublink"
-                onClick={() => { setMobileNavVisible(false); navigate("/isoko"); }}>
-              Browse
-            </li>
-            <li className="nav-sublink"
-                onClick={() => { setMobileNavVisible(false); navigate("/isoko/post-item"); }}>
+            {ISOKO_LINKS.filter(i => !i.private || authUser).map(item => (
+              <li
+                key={item.key}
+                onClick={() => {
+                  if (item.action === "logout") { handleLogout(); return; }
+                  setMobileNavVisible(false);
+                  navigate(item.to);
+                }}
+              >
+                {item.label}
+              </li>
+            ))}
+            <li onClick={() => { setMobileNavVisible(false); navigate("/isoko/post-item"); }}>
               Post Item
             </li>
-
-            {authUser ? (
-              <li onClick={async () => { await supabase.auth.signOut(); setMobileNavVisible(false); navigate("/"); }}>
-                Logout
-              </li>
-            ) : (
+            {!authUser && (
               <>
                 <li onClick={() => { setMobileNavVisible(false); navigate("/login"); }}>Sign In</li>
                 <li onClick={() => { setMobileNavVisible(false); navigate("/signup"); }}>Sign Up</li>
@@ -237,7 +259,7 @@ function PostIsoko() {
         </div>
       )}
 
-      {/* DESKTOP NAV */}
+      {/* DESKTOP NAV (Isoko style) */}
       <div className="gigs-desktop-nav">
         <div className="gigs-desktop-nav-inner">
           <div className="gigs-nav-left-logo" onClick={() => navigate("/")} title="AkaziNow Home">
@@ -246,40 +268,44 @@ function PostIsoko() {
 
           <nav className="gigs-nav-center">
             <ul>
-              <li onClick={() => navigate("/")}>Home</li>
-              <li onClick={() => navigate("/gigs")}>Gigs</li>
-              <li onClick={() => navigate("/post-job")}>Post a Job</li>
-              <li onClick={() => navigate("/my-jobs")}>My Jobs</li>
-              <li onClick={() => navigate("/profile")}>Profile</li>
-              <li onClick={() => navigate("/inbox")}>Inbox</li>
-              <li onClick={() => navigate("/carpools")}>Car Pooling</li>
-              <li onClick={() => navigate("/isoko")}>Isoko</li>
-              <li onClick={() => navigate("/isoko/post-item")}>Post Item</li>
+              {ISOKO_LINKS.filter(i => !i.private || authUser).map(item => (
+                <li
+                  key={item.key}
+                  className={isActive(item) ? "active" : ""}
+                  onClick={() => item.action === "logout" ? handleLogout() : navigate(item.to)}
+                >
+                  {item.label}
+                </li>
+              ))}
             </ul>
           </nav>
 
           <div className="gigs-nav-right">
+            <button
+              className="gigs-auth-button gigs-auth-button--gold"
+              onClick={() => navigate("/isoko")}
+              title="View Listings"
+            >
+              View Listings
+            </button>
             {authUser ? (
+              <img
+                src={userProfile?.image_url || defaultAvatar}
+                alt="me"
+                className="gigs-mobile-avatar"
+                style={{ width: 34, height: 34, cursor: "pointer" }}
+                onClick={() => navigate("/profile")}
+                title="Profile"
+              />
+            ) : (
               <>
-                <img
-                  src={userProfile?.image_url || defaultAvatar}
-                  alt="me"
-                  className="gigs-nav-avatar"
-                  onClick={() => navigate("/profile")}
-                  title="Profile"
-                />
-                <button className="gigs-auth-button" onClick={() => navigate("/isoko")}>
-                  View Listings
+                <button className="gigs-auth-button" onClick={() => navigate("/login")}>
+                  Sign In
                 </button>
-                <button className="gigs-auth-button" onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>
-                  Logout
+                <button className="gigs-auth-button" onClick={() => navigate("/signup")}>
+                  Sign Up
                 </button>
               </>
-            ) : (
-              <div className="gigs-auth-buttons gigs-auth-buttons--desktop">
-                <button className="gigs-auth-button" onClick={() => navigate("/login")}>Sign In</button>
-                <button className="gigs-auth-button" onClick={() => navigate("/signup")}>Sign Up</button>
-              </div>
             )}
           </div>
         </div>
@@ -301,73 +327,42 @@ function PostIsoko() {
           <h1 className="gigs-heading">Post an Item on Isoko</h1>
           <p className="gigs-subheading">Add your listing and reach local buyers.</p>
         </div>
+
+        <div className="gigs-floating-count-box">
+          <h2 className="gigs-count-title">🛍️ Listings</h2>
+          <div className="gigs-count-display">
+            <FaCalendarCheck /> Post yours now
+          </div>
+        </div>
       </div>
 
-      {/* FORM */}
-      <section className="gigs-cards-section" style={{ paddingTop: "2rem" }}>
-        <div className="post-card">
-          <form onSubmit={handleSubmit} className="post-form" autoComplete="off">
-            <h2 className="post-form-title">Create Listing</h2>
+      {/* TWO-COLUMN SECTION */}
+      <section className="postitem-section">
+        {/* Left: Form */}
+        <div className="postitem-form-card">
+          <form className="postitem-form" onSubmit={handleSubmit} autoComplete="on">
+            <h2 className="postitem-title">Create Listing</h2>
 
-            <div className="post-grid">
-              {/* Title */}
-              <div className="post-field">
-                <label>Title</label>
-                <input
-                  name="title"
-                  value={form.title}
-                  onChange={onChange}
-                  required
-                  placeholder="e.g., iPhone 12, 128GB"
-                />
-              </div>
+            <label>Title</label>
+            <input
+              name="title"
+              value={form.title}
+              onChange={onChange}
+              required
+              placeholder="e.g., iPhone 12, 128GB"
+            />
 
-              {/* Description (spans 2 on desktop) */}
-              <div className="post-field span-2">
-                <label>Description</label>
-                <textarea
-                  name="description"
-                  value={form.description}
-                  onChange={onChange}
-                  rows={4}
-                  placeholder="Add details, condition, etc."
-                />
-              </div>
+            <label>Description</label>
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={onChange}
+              rows={4}
+              placeholder="Add details, condition, etc."
+            />
 
-              {/* Price */}
-              <div className="post-field">
-                <label>Price</label>
-                <input
-                  name="price"
-                  type="number"
-                  inputMode="decimal"
-                  step="0.01"
-                  value={form.price}
-                  onChange={onChange}
-                  placeholder="0"
-                />
-              </div>
-
-              {/* Currency */}
-              <div className="post-field">
-                <label>Currency</label>
-                <select name="currency" value={form.currency} onChange={onChange}>
-                  <option>RWF</option>
-                  <option>USD</option>
-                </select>
-              </div>
-
-              {/* Intent */}
-              <div className="post-field">
-                <label>Intent</label>
-                <select name="intent" value={form.intent} onChange={onChange}>
-                  <option value="sell">Sell</option>
-                  <option value="buy">Buy (Wanted)</option>
-                </select>
-              </div>
-
-              {/* Category */}
-              <div className="post-field">
+            <div className="postitem-row">
+              <div className="postitem-col">
                 <label>Category</label>
                 <select name="category" value={form.category} onChange={onChange}>
                   {CATEGORIES.map((c) => (
@@ -376,44 +371,73 @@ function PostIsoko() {
                 </select>
               </div>
 
-              {/* Location (span 2) */}
-              <div className="post-field span-2">
-                <label>Location</label>
-                <input
-                  name="location"
-                  value={form.location}
-                  onChange={onChange}
-                  placeholder="e.g., Kigali"
-                />
-              </div>
-
-              {/* Image (span 2) */}
-              <div className="post-field span-2">
-                <label>Image (JPG/PNG) — avoid HEIC</label>
-                <input
-                  type="file"
-                  accept=".jpg,.jpeg,.png,image/jpeg,image/png"
-                  onChange={onFileChange}
-                />
-                {preview && (
-                  <img className="post-preview" src={preview} alt="preview" />
-                )}
+              <div className="postitem-col">
+                <label>Intent</label>
+                <select name="intent" value={form.intent} onChange={onChange}>
+                  <option value="sell">Sell</option>
+                  <option value="buy">Buy</option>
+                </select>
               </div>
             </div>
 
-            <div className="post-actions">
-              <button
-                type="button"
-                className="btn-secondary"
-                onClick={() => navigate("/isoko")}
-              >
+            <div className="postitem-row">
+              <div className="postitem-col">
+                <label>Price</label>
+                <input
+                  name="price"
+                  type="number"
+                  inputMode="numeric"
+                  placeholder="0"
+                  value={form.price}
+                  onChange={onChange}
+                />
+              </div>
+
+              <div className="postitem-col">
+                <label>Currency</label>
+                <select name="currency" value={form.currency} onChange={onChange}>
+                  <option>RWF</option>
+                  <option>USD</option>
+                </select>
+              </div>
+            </div>
+
+            <label>Location</label>
+            <input
+              name="location"
+              value={form.location}
+              onChange={onChange}
+              placeholder="Kigali, Gasabo"
+            />
+
+            <label>Image (JPG/PNG) — avoid HEIC</label>
+            <input
+              type="file"
+              accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+              onChange={onFileChange}
+            />
+            {preview && <img className="post-preview" src={preview} alt="preview" />}
+
+            <div className="postitem-actions">
+              <button type="button" className="btn-secondary" onClick={() => navigate("/isoko")}>
                 Cancel
               </button>
-              <button type="submit" disabled={submitting} className="btn-primary">
+              <button type="submit" className="btn-primary" disabled={submitting}>
                 {submitting ? "Posting..." : "Post Item"}
               </button>
             </div>
           </form>
+        </div>
+
+        {/* Right: Info/visual */}
+        <div className="postitem-info-card">
+          <div className="postitem-info-content">
+            <h3>Post Your Item</h3>
+            <p>
+              Connect with local buyers. Clear details and bright photos help your item sell faster.
+            </p>
+            <div className="postitem-illus" aria-hidden />
+          </div>
         </div>
       </section>
 
