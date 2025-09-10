@@ -1,382 +1,364 @@
-/* ============== RESET & BASE ============== */
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* src/pages/Isoko.css */
 
-html, body {
-  height: 100%;
-  font-family: 'Segoe UI', sans-serif;
-  background: #f9f9f9;
-  overflow-x: hidden;
+/* ============ Base / Reset ============ */
+* { box-sizing: border-box; }
+:root {
+  --ink: #0f1e21;
+  --ink-2: #304447;
+  --muted: #6e7d80;
+  --bg: #f7f9fa;
+  --brand: #133337;       /* deep teal (header) */
+  --brand-2: #1e5960;     /* hover tint */
+  --pill: rgba(255,255,255,.08);
+  --white: #fff;
+  --shadow: 0 2px 10px rgba(0,0,0,.08);
 }
+html, body, #root { height: 100%; background: var(--bg); color: var(--ink); }
+img { max-width: 100%; display: block; }
 
-/* ============== MAIN CONTAINER ============== */
-.gigs-container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-/* ============== HERO SECTION ============== */
-.gigs-hero {
-  width: 100%;
-  height: 75vh;
-  background-size: cover;
-  background-position: center top;
-  background-repeat: no-repeat;
-  color: white;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-  flex-direction: column;
-}
-
-.gigs-topbar {
-  position: absolute;
-  top: 1rem;
-  left: 2rem;
-  right: 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.gigs-logo {
-  font-size: 1.4rem;
-  font-weight: bold;
-  color: #fdd835;
-}
-
-.gigs-auth-buttons button {
-  background: white;
-  color: #203a43;
-  padding: 0.5rem 1rem;
-  margin-left: 0.5rem;
-  border: none;
-  border-radius: 6px;
+/* Generic buttons used in the header/right side + actions */
+button {
+  border: 0;
+  outline: 0;
+  padding: .55rem .9rem;
+  border-radius: .7rem;
   cursor: pointer;
-  font-weight: bold;
+  background: var(--brand);
+  color: var(--white);
+  transition: transform .12s ease, filter .12s ease;
 }
-.gigs-auth-buttons button:hover { opacity: 0.9; }
-
-.gigs-hero-content { max-width: 600px; }
-
-.gigs-heading { font-size: 2.2rem; font-weight: bold; margin-bottom: 1rem; }
-.gigs-subheading { font-size: 1.1rem; }
-
-.gigs-floating-count-box {
-  position: absolute;
-  bottom: -2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background: white;
-  padding: 1.2rem 1rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-  width: 90%;
-  max-width: 400px;
-  z-index: 20;
-  text-align: center;
-}
-.gigs-count-title { font-size: 1.3rem; font-weight: 600; color: #333; margin-bottom: 0.4rem; }
-.gigs-count-display {
-  font-size: 1.05rem;
-  color: #444;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-}
-
-/* ============== FOOTER ============== */
-.gigs-footer {
-  width: 100%;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-  color: white;
-  padding: 2rem 1rem;
-  margin-top: 3rem;
-  text-align: center;
-}
-
-.gigs-footer-links { margin-top: 1rem; }
-.gigs-footer-links button {
-  background: none;
-  border: none;
-  color: white;
-  margin: 0 0.5rem;
-  cursor: pointer;
-  font-weight: 500;
-}
-.gigs-footer-links button:hover { text-decoration: underline; }
-
-/* ============== DESKTOP NAV ============== */
-.gigs-desktop-nav {
-  display: none;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-  padding: 0.8rem 2rem;
-  width: 100%;
-}
-
-.gigs-desktop-nav-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.gigs-nav-left-logo {
-  color: #fdd835;
-  font-weight: 800;
-  font-size: 1.25rem;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  user-select: none;
-  white-space: nowrap;
-  line-height: 1;
-}
-.gigs-nav-left-logo:hover { opacity: 0.9; }
-
-.gigs-nav-center { flex: 1; }
-.gigs-nav-center ul {
-  display: flex;
-  justify-content: center;
-  gap: 1.6rem;
-  list-style: none;
-}
-.gigs-nav-center li {
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-}
-.gigs-nav-center li:hover { text-decoration: underline; }
-
-.gigs-nav-right {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  min-width: 220px;
-  justify-content: flex-end;
-}
-
-.gigs-auth-buttons--desktop button,
+button:hover { transform: translateY(-1px); filter: brightness(1.05); }
+button:active { transform: translateY(0); }
 .gigs-auth-button {
-  background: white;
-  color: #203a43;
-  padding: 0.5rem 0.9rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 700;
+  background: var(--brand);
+  color: #fff;
 }
-.gigs-auth-button:hover { opacity: 0.9; }
+.gigs-auth-button:hover { filter: brightness(1.05); }
 
-/* ============== MOBILE NAV ============== */
-@media (max-width: 768px) {
+/* ============ Layout Shell ============ */
+.gigs-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============ Mobile Topbar ============ */
+.gigs-mobile-topbar {
+  display: none;
+}
+@media (max-width: 900px) {
   .gigs-mobile-topbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 60px;
-    z-index: 1000;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 1.5rem;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-    color: white;
+    gap: .5rem;
+    padding: .6rem .9rem;
+    background: var(--brand);
+    color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 40;
   }
-
   .gigs-mobile-left {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: .6rem;
   }
-
   .gigs-mobile-avatar {
-    height: 42px;
-    width: 42px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid white;
+    width: 34px; height: 34px; border-radius: 999px; object-fit: cover;
+    border: 2px solid rgba(255,255,255,.25);
+    cursor: pointer;
   }
-
   .gigs-mobile-hamburger {
-    font-size: 52px;
-    padding: 0.6rem;
-    color: white;
-    cursor: pointer;
+    font-size: 1.25rem; cursor: pointer;
   }
-
   .gigs-mobile-title {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: white;
-  }
-
-  .gigs-mobile-topbar .notification-bell { z-index: 2; }
-
-  .gigs-mobile-nav-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-    color: white;
-    z-index: 999;
-    padding-top: 60px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow-y: auto;
-    animation-duration: 0.3s;
-    animation-fill-mode: both;
-  }
-
-  .slide-down { animation-name: slideDown; }
-  .slide-up { animation-name: slideUp; }
-
-  @keyframes slideDown {
-    from { opacity: 0; transform: translateY(-20%); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes slideUp {
-    from { opacity: 1; transform: translateY(0); }
-    to   { opacity: 0; transform: translateY(-20%); }
-  }
-
-  .gigs-mobile-nav-overlay ul {
-    list-style: none;
-    width: 100%;
-    text-align: center;
-  }
-
-  .gigs-mobile-nav-overlay li {
-    padding: 1rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    cursor: pointer;
-    font-size: 1.1rem;
+    margin: 0; text-align: center; font-weight: 800; letter-spacing: .2px;
   }
 }
 
-/* ============== RESPONSIVE TOGGLES ============== */
-@media (min-width: 769px) {
-  .gigs-desktop-nav { display: block; }
-  .gigs-mobile-topbar { display: none; }
-  .gigs-topbar .gigs-auth-buttons { display: none; }
-  .gigs-topbar .gigs-logo { display: none; }
-}
-
-.gigs-auth-buttons button:hover,
-.gigs-auth-buttons--desktop button:hover {
-  opacity: 1 !important;
-  filter: none !important;
-  text-decoration: none !important;
-}
-
-/* ============== ISOKO CATEGORY CHIPS ============== */
-.isoko-chip {
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 999px;
-  padding: 8px 14px;
-  cursor: pointer;
-  font-weight: 700;
-}
-
-/* ============== ISOKO CARDS (Index-style) ============== */
-.isoko-card {
-  width: 100%;
-  border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.05);
-  text-align: left;
+/* ============ Mobile Sheet (Overlay) ============ */
+.gigs-mobile-nav-overlay {
+  position: fixed;
+  left: 0; right: 0; top: 0;
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(2px);
+  height: 100vh;
+  z-index: 45;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 64px;
+}
+.gigs-mobile-nav-overlay ul {
+  width: min(520px, 92vw);
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: .75rem;
   overflow: hidden;
 }
+.gigs-mobile-nav-overlay ul li {
+  list-style: none;
+  padding: .9rem 1rem;
+  margin: .15rem 0;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--ink);
+}
+.gigs-mobile-nav-overlay ul li:hover {
+  background: #f1f5f6;
+}
+.gigs-mobile-nav-overlay .isoko-active {
+  background: #e5f2f4;
+  color: var(--brand);
+}
+.isoko-sheet-heading {
+  margin-top: .35rem;
+  padding-top: .35rem;
+  font-weight: 800 !important;
+  opacity: .8;
+}
 
-@media (min-width: 768px) {
-  .isoko-card--row {
-    flex-direction: row;
-    align-items: stretch;
-  }
+/* Slide animations */
+.slide-down { animation: slideDown .25s ease-out; }
+.slide-up   { animation: slideUp   .25s ease-in; }
+@keyframes slideDown {
+  from { transform: translateY(-10px); opacity: .0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+@keyframes slideUp {
+  from { transform: translateY(0);     opacity: 1; }
+  to   { transform: translateY(-10px); opacity: .0; }
+}
+
+/* ============ Isoko Desktop Navbar (categories only) ============ */
+.isoko-desktop-nav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  width: 100%;
+  background: var(--brand);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+}
+.isoko-desktop-nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: .6rem 1rem;
+  display: grid;
+  grid-template-columns: 160px 1fr auto;
+  align-items: center;
+  gap: 1rem;
+}
+.isoko-nav-left {
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Category tabs */
+.isoko-nav-center ul {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0; padding: 0;
+}
+.isoko-nav-center li {
+  padding: .4rem .8rem;
+  border-radius: 999px;
+  background: var(--pill);
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+  transition: transform .12s ease, background .12s ease, color .12s ease;
+}
+.isoko-nav-center li:hover { transform: translateY(-1px); }
+.isoko-active { background: #fff !important; color: var(--brand) !important; font-weight: 700; }
+
+.isoko-nav-right { display: flex; align-items: center; }
+
+/* ============ Hero ============ */
+.gigs-hero {
+  position: relative;
+  min-height: 46vh;
+  background-size: cover;
+  background-position: center;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: #fff;
+}
+.gigs-hero::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.5));
+}
+.gigs-hero-content {
+  position: relative; z-index: 1;
+  padding: 3.5rem 1rem 2.5rem;
+}
+.gigs-heading {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  line-height: 1.15;
+  margin: 0 0 .4rem 0;
+  font-weight: 900;
+}
+.gigs-subheading { opacity: .95; font-weight: 500; }
+
+/* Count box floating on hero */
+.gigs-floating-count-box {
+  position: relative;
+  z-index: 2;
+  margin-top: 1.2rem;
+  background: #fff;
+  color: var(--ink);
+  border-radius: 18px;
+  padding: 1rem 1.2rem;
+  box-shadow: var(--shadow);
+  width: min(520px, 92vw);
+}
+.gigs-count-title {
+  margin: 0 0 .25rem 0;
+  font-size: 1.05rem;
+}
+.gigs-count-display {
+  display: inline-flex;
+  gap: .5rem;
+  align-items: center;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+
+/* Small hint under hero, hidden on mobile */
+.isoko-hero-hint {
+  position: relative;
+  z-index: 2;
+  margin: .5rem auto 0;
+  max-width: 980px;
+  color: rgba(255,255,255,.9);
+  text-align: center;
+  font-size: .9rem;
+}
+@media (max-width: 900px) {
+  .isoko-hero-hint { display: none; }
+}
+
+/* ============ Category Chips (optional section reuse) ============ */
+.isoko-chip {
+  border: 1px solid #e5ecee;
+  background: #fff;
+  color: var(--ink);
+  border-radius: 999px;
+  padding: .45rem .9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .12s ease, background .12s ease;
+}
+.isoko-chip:hover { transform: translateY(-1px); background: #f7fbfc; }
+
+/* ============ Cards ============ */
+.gigs-cards-section {
+  width: 100%;
+  max-width: 1200px;
+  margin: 1.25rem auto 2.5rem;
+  padding: 0 1rem;
+  display: grid;
+  gap: 1rem;
+}
+.isoko-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: grid;
+}
+.isoko-card--row {
+  grid-template-columns: 1.6fr 1fr;
+}
+@media (max-width: 900px) {
+  .isoko-card--row { grid-template-columns: 1fr; }
 }
 
 .isoko-card-text {
-  padding: 1.2rem;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  padding: 1rem 1rem 1.1rem 1.1rem;
 }
-
 .isoko-card-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: .4rem;
+  gap: .6rem;
+  margin-bottom: .35rem;
 }
-
 .isoko-avatar {
-  width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
-  border: 2px solid rgba(255,255,255,.7);
+  width: 36px; height: 36px; border-radius: 999px; object-fit: cover;
+  border: 2px solid rgba(0,0,0,.06);
 }
-
 .isoko-intent {
-  font-weight: 800;
-  font-size: .85rem;
-  padding: 4px 10px;
+  font-size: .78rem;
+  padding: .25rem .55rem;
   border-radius: 999px;
-  background: rgba(0,0,0,.06);
-}
-.isoko-intent.buy { background: rgba(56,142,60,.15); }
-.isoko-intent.sell { background: rgba(251,140,0,.15); }
-
-.isoko-title { font-size: 1.25rem; font-weight: 800; color: #223; margin: .2rem 0 .35rem; }
-.isoko-desc  { color: #333; line-height: 1.35; max-height: 3.4em; overflow: hidden; }
-
-.isoko-meta {
-  margin-top: .45rem;
-  color: #2a2a2a;
+  background: #ecf3f4;
+  color: var(--brand);
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+.isoko-intent.buy { background: #e9f7e9; color: #1a7a22; }
+
+.isoko-title {
+  margin: .2rem 0 .25rem 0;
+  font-size: 1.15rem;
+  line-height: 1.25;
+  font-weight: 800;
+  color: var(--ink);
+}
+.isoko-desc {
+  margin: 0 0 .6rem 0;
+  color: var(--muted);
+  line-height: 1.45;
+  max-height: 3.9em;          /* ~3 lines */
+  overflow: hidden;
+}
+.isoko-meta {
   display: flex;
-  align-items: center;
   flex-wrap: wrap;
-  gap: .35rem;
+  align-items: center;
+  gap: .35rem .5rem;
+  color: var(--ink-2);
+  margin-bottom: .7rem;
 }
 .isoko-price { font-weight: 900; }
-.isoko-dot   { opacity: .5; }
-.isoko-actions { margin-top: .6rem; }
+.isoko-dot { opacity: .45; }
+.isoko-loc, .isoko-cat { opacity: .9; }
 
-.isoko-actions button {
-  background: #203a43;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: .55rem 1rem;
-  font-weight: 800;
-  cursor: pointer;
-}
-.isoko-actions button:hover { opacity: .95; }
+.isoko-actions { display: flex; gap: .5rem; }
 
-.isoko-card-image {
-  flex: 0 0 38%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
+.isoko-card-image { position: relative; min-height: 220px; }
 .isoko-card-image img {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   object-fit: cover;
-  max-height: 260px;
-  border-radius: 10px;
 }
+
+/* ============ Footer ============ */
+.gigs-footer {
+  margin-top: auto;
+  background: #fff;
+  border-top: 1px solid #eef2f3;
+  padding: 1.1rem 1rem;
+  color: var(--ink-2);
+}
+.gigs-footer p { margin: 0; }
+.gigs-footer-links {
+  display: flex; gap: .6rem; margin-top: .4rem;
+}
+.gigs-footer-links button {
+  background: #f3f7f8;
+  color: var(--ink);
+}
+.gigs-footer-links button:hover { filter: brightness(1.03); }
+
+/* Optional utility: hide any image if it errors (we also hide via inline onError) */
+img[style*="display: none"] { display: none !important; }
+ 
