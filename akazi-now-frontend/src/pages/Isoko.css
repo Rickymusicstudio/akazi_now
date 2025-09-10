@@ -1,11 +1,13 @@
-/* RESET / BASE mirrors Gigs */
+/* RESET / BASE */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { height: 100%; font-family: 'Segoe UI', sans-serif; background: #f9f9f9; overflow-x: hidden; }
 
 .gigs-container { min-height: 100vh; display: flex; flex-direction: column; }
 .gigs-cards-section { flex: 1; }
 
-/* DESKTOP NAV — green gradient like Gigs/PostGig */
+/* =======================
+   DESKTOP NAV (green bar)
+   ======================= */
 .gigs-desktop-nav {
   position: sticky;
   top: 0;
@@ -14,14 +16,40 @@ html, body { height: 100%; font-family: 'Segoe UI', sans-serif; background: #f9f
   padding: 0.75rem 2rem;
   border-bottom: none;
 }
-.gigs-desktop-nav-inner { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
-.gigs-nav-left-logo { font-size: 1.2rem; font-weight: 700; color: #FFD700; cursor: pointer; user-select: none; }
+.gigs-desktop-nav-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+.gigs-nav-left-logo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #FFD700;              /* gold accent */
+  cursor: pointer;
+  user-select: none;
+}
 
-.gigs-nav-center ul { display: flex; list-style: none; gap: 2rem; }
-.gigs-nav-center li { color: #fff; font-weight: 600; cursor: pointer; }
-.gigs-nav-center li.active, .gigs-nav-center li:hover { text-decoration: underline; }
+/* center links */
+.gigs-nav-center ul {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+.gigs-nav-center li {
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .15s ease;
+}
+.gigs-nav-center li:hover { text-decoration: underline; }
+.gigs-nav-center li.active {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
 
-.gigs-nav-right { display: flex; align-items: center; gap: 0.75rem; }
+/* right side buttons */
+.gigs-nav-right { display: flex; align-items: center; gap: 0.5rem; }
 .gigs-auth-button {
   padding: 8px 14px;
   border-radius: 10px;
@@ -38,7 +66,18 @@ html, body { height: 100%; font-family: 'Segoe UI', sans-serif; background: #f9f
 }
 .gigs-auth-button--gold:hover { background: #e6c200; border-color: #e6c200; }
 
-/* MOBILE TOPBAR — same gradient */
+/* avatar used on right side when signed in */
+.gigs-mobile-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+}
+
+/* =======================
+   MOBILE TOPBAR & OVERLAY
+   ======================= */
 .gigs-mobile-topbar {
   position: sticky; top: 0; z-index: 1000;
   display: flex; align-items: center; justify-content: space-between;
@@ -47,11 +86,9 @@ html, body { height: 100%; font-family: 'Segoe UI', sans-serif; background: #f9f
   color: #fff;
 }
 .gigs-mobile-left { display: flex; align-items: center; gap: 0.5rem; }
-.gigs-mobile-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; }
 .gigs-mobile-hamburger { font-size: 32px; color: #fff; cursor: pointer; }
 .gigs-mobile-title { font-weight: 700; color: #fff; }
 
-/* MOBILE NAV OVERLAY — same animation */
 .gigs-mobile-nav-overlay {
   position: fixed; inset: 0; z-index: 999;
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
@@ -63,58 +100,96 @@ html, body { height: 100%; font-family: 'Segoe UI', sans-serif; background: #f9f
 .slide-up { animation-name: slideUp; }
 @keyframes slideDown { from { opacity: 0; transform: translateY(-20%);} to { opacity:1; transform: translateY(0);} }
 @keyframes slideUp { from { opacity:1; transform: translateY(0);} to { opacity:0; transform: translateY(-20%);} }
+
 .gigs-mobile-nav-overlay ul { list-style: none; width: 100%; text-align: center; }
 .gigs-mobile-nav-overlay li {
-  padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; font-size: 1.1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  cursor: pointer;
+  font-size: 1.1rem;
 }
 
-/* HERO — identical to Gigs (but hide topbar on desktop to remove white strip) */
+/* =====
+   HERO
+   ===== */
 .gigs-hero {
   position: relative;
-  background-size: cover; background-position: center top; background-repeat: no-repeat;
-  color: #fff; padding: 4rem 1rem 6rem; text-align: center;
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  color: #fff;
+  padding: 4rem 1rem 6rem;
+  text-align: center;
 }
+
+/* hide hero topbar on desktop to remove white strip */
 .gigs-topbar { display: flex; justify-content: space-between; align-items: center; }
 .gigs-logo { font-size: 1.4rem; font-weight: 700; cursor: pointer; }
 .gigs-auth-buttons { display: flex; gap: .75rem; }
-.gigs-auth-buttons button { background: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+.gigs-auth-buttons button {
+  background: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+@media (min-width: 901px) { .gigs-topbar { display: none; } }
+
 .gigs-hero-content { margin-top: 3rem; }
 .gigs-heading { font-size: 2.2rem; font-weight: 800; }
 .gigs-subheading { margin-top: .5rem; font-size: 1rem; }
 
-/* Hide hero’s topbar on desktop so we don’t get the white strip */
-@media (min-width: 901px) {
-  .gigs-topbar { display: none; }
-}
-
-/* Floating count box (same as Gigs) */
+/* floating stats card */
 .gigs-floating-count-box {
-  position: absolute; bottom: -2rem; left: 50%; transform: translateX(-50%);
-  background: #fff; color: #111; padding: 1rem 2rem; border-radius: 14px;
+  position: absolute;
+  bottom: -2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  color: #111;
+  padding: 1rem 2rem;
+  border-radius: 14px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.15);
 }
 .gigs-count-title { font-size: 1rem; font-weight: 600; margin-bottom: .25rem; }
 .gigs-count-display { display: flex; align-items: center; gap: 6px; font-weight: 700; }
 
-/* CARDS area spacing */
+/* =========
+   CONTENT
+   ========= */
 .gigs-cards-section { padding: 4rem 1rem 2rem; max-width: 1200px; margin: 0 auto; }
 
-/* FOOTER — same as Gigs */
+/* =======
+   FOOTER
+   ======= */
 .gigs-footer {
   margin-top: auto;
-  background: #fff;
-  border-top: 1px solid #eee;
-  padding: 1rem;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  color: #fff;
+  padding: 1.25rem 1rem;
   text-align: center;
   font-size: .9rem;
 }
-.gigs-footer-links { margin-top: .5rem; display: flex; justify-content: center; gap: 1rem; }
-.gigs-footer-links button { border: none; background: none; font-weight: 600; cursor: pointer; color: #111827; }
+.gigs-footer-links {
+  margin-top: .5rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+.gigs-footer-links button {
+  border: 1px solid rgba(255,255,255,0.5);
+  background: transparent;
+  color: #fff;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.gigs-footer-links button:hover { background: rgba(255,255,255,0.15); }
 
-/* Responsive parity with Gigs */
-@media (max-width: 900px) {
-  .gigs-desktop-nav { display: none; }
-}
-@media (min-width: 901px) {
-  .gigs-mobile-topbar { display: none; }
-}
+/* ============
+   RESPONSIVE
+   ============ */
+@media (max-width: 900px) { .gigs-desktop-nav { display: none; } }
+@media (min-width: 901px) { .gigs-mobile-topbar { display: none; } }

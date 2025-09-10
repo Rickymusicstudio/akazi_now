@@ -7,10 +7,14 @@ import NotificationBell from "../components/NotificationBell.jsx";
 import { FaBars, FaCalendarCheck } from "react-icons/fa";
 import "./Isoko.css";
 
+/** Center-nav links (now includes Home and Logout) */
 const ISOKO_LINKS = [
+  { to: "/",                             label: "Home",        key: "home" },
   { to: "/isoko/categories/electronics", label: "Electronics", key: "electronics" },
   { to: "/isoko/categories/houses",      label: "Houses",      key: "houses" },
   { to: "/isoko/categories/cars",        label: "Cars",        key: "cars" },
+  { to: "/isoko/categories/clothes",     label: "Clothes",     key: "clothes" },
+  { label: "Logout", key: "logout", action: "logout", private: true }, // only when signed in
 ];
 
 function Isoko() {
@@ -23,7 +27,16 @@ function Isoko() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const activeCat = location.pathname.match(/\/isoko\/categories\/([^/]+)/i)?.[1] ?? null;
+  const isActive = (item) => {
+    if (item.key === "logout") return false;
+    if (item.key === "home") {
+      return location.pathname === "/isoko" || location.pathname === "/";
+    }
+    return item.to ? location.pathname.startsWith(item.to) : false;
+  };
+
+  const activeCat =
+    location.pathname.match(/\/isoko\/categories\/([^/]+)/i)?.[1] ?? null;
 
   const sectionTitle = (() => {
     const m = location.pathname.match(/\/isoko\/categories\/([^/]+)/i);
@@ -79,7 +92,7 @@ function Isoko() {
     setUserProfile(data || null);
   };
 
-  // Mobile overlay UX (swipe up or scroll closes)
+  // Mobile overlay UX
   useEffect(() => {
     let touchStartY = 0;
     const handleTouchStart = (e) => { touchStartY = e.touches[0].clientY; };
@@ -116,9 +129,15 @@ function Isoko() {
     }
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setMobileNavVisible(false);
+    navigate("/");
+  };
+
   return (
     <div className="gigs-container">
-      {/* MOBILE TOPBAR (green like Gigs) */}
+      {/* MOBILE TOPBAR (green theme) */}
       <div className="gigs-mobile-topbar">
         <div className="gigs-mobile-left">
           <img
@@ -132,30 +151,30 @@ function Isoko() {
         <NotificationBell />
       </div>
 
-      {/* MOBILE OVERLAY NAV — Isoko links only */}
+      {/* MOBILE OVERLAY NAV (uses ISOKO_LINKS) */}
       {mobileNavVisible && (
         <div ref={mobileNavRef} className={`gigs-mobile-nav-overlay ${slideDirection}`}>
           <ul>
-            {ISOKO_LINKS.map((l) => (
-              <li key={l.to}
-                  onClick={() => { setMobileNavVisible(false); navigate(l.to); }}>
-                {l.label}
-              </li>
-            ))}
+            {ISOKO_LINKS
+              .filter((i) => !i.private || authUser)
+              .map((item) => (
+                <li
+                  key={item.key}
+                  onClick={() => {
+                    if (item.action === "logout") { handleLogout(); return; }
+                    setMobileNavVisible(false);
+                    navigate(item.to);
+                  }}
+                >
+                  {item.label}
+                </li>
+              ))}
+            {/* CTA inside overlay */}
             <li onClick={() => { setMobileNavVisible(false); navigate("/isoko/post-item"); }}>
               Post Item
             </li>
-            {authUser ? (
-              <li
-                onClick={async () => {
-                  await supabase.auth.signOut();
-                  setMobileNavVisible(false);
-                  navigate("/");
-                }}
-              >
-                Logout
-              </li>
-            ) : (
+            {/* Auth when logged out */}
+            {!authUser && (
               <>
                 <li onClick={() => { setMobileNavVisible(false); navigate("/login"); }}>Sign In</li>
                 <li onClick={() => { setMobileNavVisible(false); navigate("/signup"); }}>Sign Up</li>
@@ -165,7 +184,7 @@ function Isoko() {
         </div>
       )}
 
-      {/* DESKTOP NAV — same style as Gigs, Isoko links only */}
+      {/* DESKTOP NAV (green bar, center links from ISOKO_LINKS) */}
       <div className="gigs-desktop-nav">
         <div className="gigs-desktop-nav-inner">
           <div className="gigs-nav-left-logo" onClick={() => navigate("/")} title="AkaziNow Home">
@@ -174,15 +193,19 @@ function Isoko() {
 
           <nav className="gigs-nav-center">
             <ul>
-              {ISOKO_LINKS.map((l) => (
-                <li
-                  key={l.to}
-                  className={activeCat && l.key === activeCat ? "active" : ""}
-                  onClick={() => navigate(l.to)}
-                >
-                  {l.label}
-                </li>
-              ))}
+              {ISOKO_LINKS
+                .filter((i) => !i.private || authUser)
+                .map((item) => (
+                  <li
+                    key={item.key}
+                    className={isActive(item) ? "active" : ""}
+                    onClick={() =>
+                      item.action === "logout" ? handleLogout() : navigate(item.to)
+                    }
+                  >
+                    {item.label}
+                  </li>
+                ))}
             </ul>
           </nav>
 
@@ -194,13 +217,31 @@ function Isoko() {
             >
               Post Item
             </button>
+            {authUser ? (
+              <img
+                src={userProfile?.image_url || defaultAvatar}
+                alt="me"
+                className="gigs-mobile-avatar"
+                style={{ width: 34, height: 34, cursor: "pointer" }}
+                onClick={() => navigate("/profile")}
+                title="Profile"
+              />
+            ) : (
+              <>
+                <button className="gigs-auth-button" onClick={() => navigate("/login")}>
+                  Sign In
+                </button>
+                <button className="gigs-auth-button" onClick={() => navigate("/signup")}>
+                  Sign Up
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
 
-      {/* HERO (keep exactly like Gigs) */}
+      {/* HERO (white strip topbar hidden on desktop via CSS) */}
       <div className="gigs-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
-        {/* Hide on desktop via CSS to avoid the white strip */}
         <div className="gigs-topbar">
           <div className="gigs-logo">AkaziNow</div>
           {!authUser && (
@@ -228,7 +269,7 @@ function Isoko() {
         </div>
       </div>
 
-      {/* CONTENT — you can keep your cards here; placeholder left for now */}
+      {/* CONTENT (plug your listing cards here) */}
       <section className="gigs-cards-section">
         {listings.length > 0 ? (
           <p style={{ fontWeight: 600 }}>Render your Isoko listing cards here…</p>
@@ -245,7 +286,7 @@ function Isoko() {
         )}
       </section>
 
-      {/* FOOTER — identical to Gigs */}
+      {/* FOOTER (green gradient style set in Isoko.css) */}
       <footer className="gigs-footer">
         <p>&copy; {new Date().getFullYear()} AkaziNow. All rights reserved.</p>
         <div className="gigs-footer-links">
