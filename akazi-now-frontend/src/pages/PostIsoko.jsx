@@ -3,14 +3,14 @@ import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/kcc_bg_clean.png";
 import defaultAvatar from "../assets/avatar.png";
-import sellSticker from "../assets/sells.png"; // ← adjust extension/name if needed
+import sellSticker from "../assets/sells.png"; // adjust name/ext if needed
 import NotificationBell from "../components/NotificationBell.jsx";
 import { FaBars, FaCalendarCheck } from "react-icons/fa";
 import "./Isoko.css";
 import "./PostIsoko.css";
 
-/* ====== CONFIG ====== */
-const BUCKET = "market-images";
+/* ====== USE THE SAME BUCKET AS POSTGIG ====== */
+const BUCKET = "job-images";
 
 const CATEGORIES = [
   "electronics",
@@ -153,23 +153,31 @@ function PostIsoko() {
     setPreview(f ? URL.createObjectURL(f) : null);
   }
 
+  // ✅ Mirror PostGig's upload style & bucket
   async function uploadImageIfAny() {
     if (!file) return null;
 
+    // Optional: keep HEIC guard (can remove if you prefer)
     if (file.type === "image/heic" || /\.heic$/i.test(file.name)) {
       throw new Error("Please upload JPG or PNG. HEIC is not supported.");
     }
+
     const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
-    const filename = `${authUser.id}/${Date.now()}.${ext}`;
+    const fileName = `${Date.now()}.${ext}`;     // same pattern as PostGig
+    const filePath = `${fileName}`;
 
-    const { error: upErr } = await supabase
-      .storage
+    const { error: uploadError } = await supabase.storage
       .from(BUCKET)
-      .upload(filename, file, { cacheControl: "3600", upsert: false });
-    if (upErr) throw new Error(upErr.message);
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: true,
+        contentType: file.type || "image/jpeg",
+      });
 
-    const { data } = supabase.storage.from(BUCKET).getPublicUrl(filename);
-    return data?.publicUrl || null;
+    if (uploadError) throw new Error(uploadError.message);
+
+    const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(filePath);
+    return urlData?.publicUrl || null;
   }
 
   async function handleSubmit(e) {
@@ -200,6 +208,19 @@ function PostIsoko() {
 
       const { error } = await supabase.from("market_listings").insert([payload]);
       if (error) throw new Error(error.message);
+
+      // Reset and go back to Isoko
+      setForm({
+        title: "",
+        description: "",
+        price: "",
+        currency: "RWF",
+        intent: "sell",
+        category: "electronics",
+        location: "",
+      });
+      setFile(null);
+      setPreview(null);
 
       navigate("/isoko");
     } catch (err) {
