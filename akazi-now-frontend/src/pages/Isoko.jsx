@@ -7,36 +7,34 @@ import NotificationBell from "../components/NotificationBell.jsx";
 import { FaBars, FaCalendarCheck } from "react-icons/fa";
 import "./Isoko.css";
 
-/** Center-nav links (now includes Home and Logout) */
+/** Center/mobile links (Home + Isoko categories + Logout (auth only)) */
 const ISOKO_LINKS = [
   { to: "/",                             label: "Home",        key: "home" },
   { to: "/isoko/categories/electronics", label: "Electronics", key: "electronics" },
   { to: "/isoko/categories/houses",      label: "Houses",      key: "houses" },
   { to: "/isoko/categories/cars",        label: "Cars",        key: "cars" },
   { to: "/isoko/categories/clothes",     label: "Clothes",     key: "clothes" },
-  { label: "Logout", key: "logout", action: "logout", private: true }, // only when signed in
+  { label: "Logout", key: "logout", action: "logout", private: true },
 ];
 
 function Isoko() {
   const [listings, setListings] = useState([]);
   const [userProfile, setUserProfile] = useState(null);
   const [authUser, setAuthUser] = useState(null);
+
+  // --- Mobile toggle/overlay (IDENTICAL behavior to Gigs) ---
   const [mobileNavVisible, setMobileNavVisible] = useState(false);
   const [slideDirection, setSlideDirection] = useState("");
   const mobileNavRef = useRef(null);
+
   const navigate = useNavigate();
   const location = useLocation();
 
   const isActive = (item) => {
     if (item.key === "logout") return false;
-    if (item.key === "home") {
-      return location.pathname === "/isoko" || location.pathname === "/";
-    }
+    if (item.key === "home") return location.pathname === "/isoko" || location.pathname === "/";
     return item.to ? location.pathname.startsWith(item.to) : false;
   };
-
-  const activeCat =
-    location.pathname.match(/\/isoko\/categories\/([^/]+)/i)?.[1] ?? null;
 
   const sectionTitle = (() => {
     const m = location.pathname.match(/\/isoko\/categories\/([^/]+)/i);
@@ -50,21 +48,23 @@ function Isoko() {
     fetchListings();
     fetchUserAndProfile();
 
-    const { data: { subscription } } =
-      supabase.auth.onAuthStateChange(async (_evt, session) => {
-        const user = session?.user || null;
-        setAuthUser(user);
-        if (user) {
-          const { data } = await supabase
-            .from("users")
-            .select("image_url")
-            .eq("auth_user_id", user.id)
-            .single();
-          setUserProfile(data || null);
-        } else {
-          setUserProfile(null);
-        }
-      });
+    // keep auth state in sync (same as Gigs)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_evt, session) => {
+      const user = session?.user || null;
+      setAuthUser(user);
+      if (user) {
+        const { data } = await supabase
+          .from("users")
+          .select("image_url")
+          .eq("auth_user_id", user.id)
+          .single();
+        setUserProfile(data || null);
+      } else {
+        setUserProfile(null);
+      }
+    });
 
     return () => subscription?.unsubscribe();
   }, []);
@@ -81,7 +81,9 @@ function Isoko() {
   };
 
   const fetchUserAndProfile = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     setAuthUser(user || null);
     if (!user) return;
     const { data } = await supabase
@@ -92,26 +94,38 @@ function Isoko() {
     setUserProfile(data || null);
   };
 
-  // Mobile overlay UX
+  // --- MOBILE OVERLAY UX (exactly like Gigs) ---
   useEffect(() => {
     let touchStartY = 0;
+
     const handleTouchStart = (e) => { touchStartY = e.touches[0].clientY; };
+
     const handleTouchMove = (e) => {
       if (!mobileNavVisible) return;
-      const swipe = touchStartY - e.touches[0].clientY;
-      if (swipe > 50) {
+      const touchEndY = e.touches[0].clientY;
+      const swipeDistance = touchStartY - touchEndY;
+      if (swipeDistance > 50) {
         setSlideDirection("slide-up");
-        setTimeout(() => { setMobileNavVisible(false); setSlideDirection(""); }, 300);
+        setTimeout(() => {
+          setMobileNavVisible(false);
+          setSlideDirection("");
+        }, 300);
       }
     };
+
     const handleScroll = () => {
       if (!mobileNavVisible) return;
       setSlideDirection("slide-up");
-      setTimeout(() => { setMobileNavVisible(false); setSlideDirection(""); }, 300);
+      setTimeout(() => {
+        setMobileNavVisible(false);
+        setSlideDirection("");
+      }, 300);
     };
+
     window.addEventListener("touchstart", handleTouchStart);
     window.addEventListener("touchmove", handleTouchMove);
     window.addEventListener("scroll", handleScroll);
+
     return () => {
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
@@ -137,7 +151,7 @@ function Isoko() {
 
   return (
     <div className="gigs-container">
-      {/* MOBILE TOPBAR (green theme) */}
+      {/* MOBILE TOPBAR (green, fixed at top on mobile like Gigs) */}
       <div className="gigs-mobile-topbar">
         <div className="gigs-mobile-left">
           <img
@@ -151,7 +165,7 @@ function Isoko() {
         <NotificationBell />
       </div>
 
-      {/* MOBILE OVERLAY NAV (uses ISOKO_LINKS) */}
+      {/* MOBILE OVERLAY NAV (same structure/animation as Gigs) */}
       {mobileNavVisible && (
         <div ref={mobileNavRef} className={`gigs-mobile-nav-overlay ${slideDirection}`}>
           <ul>
@@ -169,11 +183,10 @@ function Isoko() {
                   {item.label}
                 </li>
               ))}
-            {/* CTA inside overlay */}
+            {/* CTA in overlay (optional but matches your pattern) */}
             <li onClick={() => { setMobileNavVisible(false); navigate("/isoko/post-item"); }}>
               Post Item
             </li>
-            {/* Auth when logged out */}
             {!authUser && (
               <>
                 <li onClick={() => { setMobileNavVisible(false); navigate("/login"); }}>Sign In</li>
@@ -184,10 +197,14 @@ function Isoko() {
         </div>
       )}
 
-      {/* DESKTOP NAV (green bar, center links from ISOKO_LINKS) */}
+      {/* DESKTOP NAV (green gradient, same as Gigs) */}
       <div className="gigs-desktop-nav">
         <div className="gigs-desktop-nav-inner">
-          <div className="gigs-nav-left-logo" onClick={() => navigate("/")} title="AkaziNow Home">
+          <div
+            className="gigs-nav-left-logo"
+            onClick={() => navigate("/")}
+            title="AkaziNow Home"
+          >
             AkaziNow
           </div>
 
@@ -240,7 +257,7 @@ function Isoko() {
         </div>
       </div>
 
-      {/* HERO (white strip topbar hidden on desktop via CSS) */}
+      {/* HERO (hero topbar hidden on desktop in CSS to avoid white strip) */}
       <div className="gigs-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
         <div className="gigs-topbar">
           <div className="gigs-logo">AkaziNow</div>
@@ -269,7 +286,7 @@ function Isoko() {
         </div>
       </div>
 
-      {/* CONTENT (plug your listing cards here) */}
+      {/* CONTENT (render your Isoko listing cards here) */}
       <section className="gigs-cards-section">
         {listings.length > 0 ? (
           <p style={{ fontWeight: 600 }}>Render your Isoko listing cards here…</p>
@@ -286,7 +303,7 @@ function Isoko() {
         )}
       </section>
 
-      {/* FOOTER (green gradient style set in Isoko.css) */}
+      {/* FOOTER (green gradient like Gigs) */}
       <footer className="gigs-footer">
         <p>&copy; {new Date().getFullYear()} AkaziNow. All rights reserved.</p>
         <div className="gigs-footer-links">
