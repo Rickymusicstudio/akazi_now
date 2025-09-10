@@ -3,13 +3,14 @@ import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/kcc_bg_clean.png";
 import defaultAvatar from "../assets/avatar.png";
+import sellSticker from "../assets/sells.png"; // ← adjust extension/name if needed
 import NotificationBell from "../components/NotificationBell.jsx";
 import { FaBars, FaCalendarCheck } from "react-icons/fa";
-import "./Isoko.css";      // shared Isoko/Gigs chrome (nav, hero, footer)
-import "./PostIsoko.css";  // form-specific styles (2-col layout + mobile input fixes)
+import "./Isoko.css";
+import "./PostIsoko.css";
 
 /* ====== CONFIG ====== */
-const BUCKET = "market-images"; // Supabase Storage bucket
+const BUCKET = "market-images";
 
 const CATEGORIES = [
   "electronics",
@@ -21,7 +22,7 @@ const CATEGORIES = [
   "other",
 ];
 
-/** Isoko-only nav items (like the Isoko page) */
+/** Isoko-only nav items */
 const ISOKO_LINKS = [
   { to: "/",                             label: "Home",        key: "home" },
   { to: "/isoko/categories/electronics", label: "Electronics", key: "electronics" },
@@ -48,7 +49,7 @@ function PostIsoko() {
     description: "",
     price: "",
     currency: "RWF",
-    intent: "sell", // sell | buy
+    intent: "sell",
     category: "electronics",
     location: "",
   });
@@ -80,9 +81,7 @@ function PostIsoko() {
   }, []);
 
   const fetchUserAndProfile = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) { navigate("/login"); return; }
     setAuthUser(user);
     const { data } = await supabase
@@ -93,7 +92,7 @@ function PostIsoko() {
     setUserProfile(data || null);
   };
 
-  /* ---------- mobile overlay UX (same as Gigs/Isoko) ---------- */
+  /* ---------- mobile overlay UX ---------- */
   useEffect(() => {
     let touchStartY = 0;
     const handleTouchStart = (e) => { touchStartY = e.touches[0].clientY; };
@@ -139,7 +138,7 @@ function PostIsoko() {
   const isActive = (item) => {
     if (item.key === "logout") return false;
     if (item.key === "home") return location.pathname === "/isoko" || location.pathname === "/";
-    return false; // not highlighting categories while on /isoko/post-item
+    return false;
   };
 
   /* ---------- form helpers ---------- */
@@ -157,11 +156,9 @@ function PostIsoko() {
   async function uploadImageIfAny() {
     if (!file) return null;
 
-    // Avoid HEIC (not supported by most browsers)
     if (file.type === "image/heic" || /\.heic$/i.test(file.name)) {
       throw new Error("Please upload JPG or PNG. HEIC is not supported.");
     }
-
     const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
     const filename = `${authUser.id}/${Date.now()}.${ext}`;
 
@@ -169,7 +166,6 @@ function PostIsoko() {
       .storage
       .from(BUCKET)
       .upload(filename, file, { cacheControl: "3600", upsert: false });
-
     if (upErr) throw new Error(upErr.message);
 
     const { data } = supabase.storage.from(BUCKET).getPublicUrl(filename);
@@ -195,7 +191,7 @@ function PostIsoko() {
         description: form.description.trim(),
         price: Number(form.price || 0),
         currency: form.currency,
-        intent: form.intent,         // 'sell' | 'buy'
+        intent: form.intent,
         category: form.category.trim(),
         location: form.location.trim(),
         first_image_url: firstImageUrl,
@@ -216,7 +212,7 @@ function PostIsoko() {
   /* ---------- UI ---------- */
   return (
     <div className="gigs-container">
-      {/* MOBILE TOPBAR (Isoko style) */}
+      {/* MOBILE TOPBAR */}
       <div className="gigs-mobile-topbar">
         <div className="gigs-mobile-left">
           <img
@@ -230,7 +226,7 @@ function PostIsoko() {
         <NotificationBell />
       </div>
 
-      {/* MOBILE OVERLAY NAV (Isoko links only) */}
+      {/* MOBILE OVERLAY NAV */}
       {mobileNavVisible && (
         <div ref={mobileNavRef} className={`gigs-mobile-nav-overlay ${slideDirection}`}>
           <ul>
@@ -259,7 +255,7 @@ function PostIsoko() {
         </div>
       )}
 
-      {/* DESKTOP NAV (Isoko style) */}
+      {/* DESKTOP NAV */}
       <div className="gigs-desktop-nav">
         <div className="gigs-desktop-nav-inner">
           <div className="gigs-nav-left-logo" onClick={() => navigate("/")} title="AkaziNow Home">
@@ -429,14 +425,20 @@ function PostIsoko() {
           </form>
         </div>
 
-        {/* Right: Info/visual */}
+        {/* Right: SELL sticker from assets */}
         <div className="postitem-info-card">
           <div className="postitem-info-content">
             <h3>Post Your Item</h3>
             <p>
               Connect with local buyers. Clear details and bright photos help your item sell faster.
             </p>
-            <div className="postitem-illus" aria-hidden />
+            <img
+              src={sellSticker}
+              alt="Sell sticker"
+              className="sell-sticker"
+              loading="lazy"
+              decoding="async"
+            />
           </div>
         </div>
       </section>

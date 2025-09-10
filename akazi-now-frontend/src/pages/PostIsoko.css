@@ -1,4 +1,33 @@
-/* Warm background + two-column layout (desktop) */
+/* =========================
+   PostIsoko.css – full file
+   Two–column form layout for /isoko/post-item
+   Warm background, light inputs (mobile-safe),
+   and SELL sticker styling.
+   ========================= */
+
+:root{
+  --brand-dark: #203a43;
+  --brand-dark-2: #2c5364;
+  --brand-gold: #d4a015;
+
+  --surface: #ffffff;
+  --surface-soft: #fff6ec;
+  --surface-card: #ffffff;
+
+  --border: #d7dbe0;
+  --muted: #6b7280;
+  --text: #1f2937;
+
+  --shadow-sm: 0 6px 12px rgba(0,0,0,.06);
+  --shadow-md: 0 12px 30px rgba(0,0,0,.08);
+
+  --radius: 12px;
+  --radius-lg: 22px;
+}
+
+/* =========================
+   SECTION LAYOUT
+   ========================= */
 .postitem-section {
   width: 100%;
   max-width: 1200px;
@@ -10,21 +39,22 @@
   background: linear-gradient(180deg, #fff7da 0%, #fff3e7 100%);
 }
 
-/* Left card (form shell) */
+/* =========================
+   LEFT: FORM CARD
+   ========================= */
 .postitem-form-card {
-  background: #fff2bf40;
+  background: #fff2bf40;              /* soft tint behind the inner card */
   padding: 1rem;
-  border-radius: 22px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
-/* Actual form panel */
 .postitem-form {
-  color-scheme: light;               /* ✅ force light controls on iOS Safari */
-  background: #ffffff;
+  color-scheme: light;                /* ✅ force light UI on iOS Safari */
+  background: var(--surface-card);
   border-radius: 18px;
   padding: 2rem;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
 }
@@ -39,7 +69,7 @@
 
 .postitem-form label {
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   margin: 0.6rem 0 0.35rem;
   color: #2b2f33;
 }
@@ -49,33 +79,39 @@
 .postitem-form select,
 .postitem-form textarea {
   width: 100%;
-  border: 1px solid #d7dbe0;
-  border-radius: 12px;
-  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.85rem 0.95rem;
   font-size: 1rem;
-  background: #ffffff !important;   /* ✅ stay white in dark mode */
-  color: #111 !important;           /* ✅ readable text */
+  background: var(--surface) !important;   /* ✅ stay white in dark mode */
+  color: #111 !important;                  /* ✅ readable text */
   outline: none;
-  transition: box-shadow .15s ease, border-color .15s ease;
+  transition: box-shadow .15s ease, border-color .15s ease, background .15s ease;
+  box-shadow: inset 0 1px 0 rgba(0,0,0,.02);
 }
+
+.postitem-form textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
 .postitem-form input:focus,
 .postitem-form select:focus,
 .postitem-form textarea:focus {
-  border-color: #2c5364;
+  border-color: var(--brand-dark-2);
   box-shadow: 0 0 0 3px rgba(44,83,100,0.15);
 }
-.postitem-form textarea { resize: vertical; min-height: 110px; }
 
 /* Autofill (Chrome/Android) */
-input:-webkit-autofill,
-select:-webkit-autofill,
-textarea:-webkit-autofill {
+.postitem-form input:-webkit-autofill,
+.postitem-form select:-webkit-autofill,
+.postitem-form textarea:-webkit-autofill {
   -webkit-text-fill-color: #111 !important;
   box-shadow: 0 0 0px 1000px #ffffff inset !important;
   caret-color: #111 !important;
 }
 
-/* Extra safety in dark mode */
+/* Extra safety in device dark mode */
 @media (prefers-color-scheme: dark) {
   .postitem-form input,
   .postitem-form select,
@@ -85,18 +121,25 @@ textarea:-webkit-autofill {
   }
 }
 
-/* Two-up rows */
+/* Two-up rows for compact fields */
 .postitem-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.8rem;
+  gap: 0.85rem;
 }
-.postitem-col { display: flex; flex-direction: column; }
+.postitem-col {
+  display: flex;
+  flex-direction: column;
+}
 
-/* Buttons */
-.postitem-actions,
-.postitem-form .postitem-actions { /* (guard if used elsewhere) */ }
+/* File input spacing consistency */
+.postitem-form input[type="file"] {
+  padding: 0.65rem 0.7rem;
+}
 
+/* =========================
+   ACTION BUTTONS
+   ========================= */
 .btn-primary,
 .btn-secondary {
   border: 0;
@@ -105,15 +148,21 @@ textarea:-webkit-autofill {
   font-weight: 800;
   cursor: pointer;
 }
+
 .btn-secondary {
   background: #f3f4f6;
   color: #111827;
 }
+
 .btn-primary {
-  background: #d4a015;
+  background: var(--brand-gold);
   color: #fff;
 }
-.btn-primary:disabled { opacity: .7; cursor: not-allowed; }
+
+.btn-primary:disabled {
+  opacity: .7;
+  cursor: not-allowed;
+}
 
 .postitem-actions {
   margin-top: 1rem;
@@ -122,50 +171,79 @@ textarea:-webkit-autofill {
   gap: 10px;
 }
 
-/* Preview image */
+/* Preview image of selected upload */
 .post-preview {
   margin-top: 0.6rem;
-  max-height: 220px;
   width: 100%;
+  max-height: 220px;
   object-fit: cover;
   border-radius: 10px;
   border: 1px solid #e5e7eb;
 }
 
-/* Right card (info) */
+/* =========================
+   RIGHT: INFO CARD
+   ========================= */
 .postitem-info-card {
-  background: #fff6ec;
-  border-radius: 22px;
+  background: var(--surface-soft);
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem;
 }
-.postitem-info-content { text-align: center; max-width: 420px; color: #2c3e50; }
-.postitem-info-content h3 { font-size: 1.6rem; font-weight: 800; margin-bottom: .6rem; }
-.postitem-info-content p { line-height: 1.6; color: #39434d; }
 
-/* simple abstract illustration */
-.postitem-illus {
-  margin: 1.25rem auto 0;
-  width: 100%;
-  max-width: 360px;
-  height: 200px;
-  border-radius: 16px;
-  background:
-    radial-gradient(120px 80px at 25% 35%, #fff1c7, transparent 60%),
-    radial-gradient(160px 120px at 75% 65%, #ffe6bf, transparent 60%),
-    #fff;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.04);
+.postitem-info-content {
+  text-align: center;
+  max-width: 420px;
+  color: #2c3e50;
 }
 
-/* Responsive */
+.postitem-info-content h3 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: .6rem;
+}
+
+.postitem-info-content p {
+  line-height: 1.6;
+  color: #39434d;
+}
+
+/* SELL sticker from assets */
+.sell-sticker {
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  display: block;
+  margin: 12px auto 0;
+  filter: drop-shadow(0 10px 24px rgba(0,0,0,.12));
+}
+
+/* Optional gentle float animation (comment out if not desired) */
+/*
+.sell-sticker {
+  animation: floatY 4s ease-in-out infinite;
+}
+@keyframes floatY {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-6px); }
+}
+*/
+
+/* =========================
+   RESPONSIVE
+   ========================= */
 @media (max-width: 900px) {
   .postitem-section {
     grid-template-columns: 1fr;
     gap: 1rem;
     padding: 4rem 1rem 1.5rem;
   }
-  .postitem-illus { height: 160px; }
-  .postitem-row { grid-template-columns: 1fr; }
+  .postitem-row {
+    grid-template-columns: 1fr;
+  }
+  .sell-sticker {
+    max-width: 300px;
+  }
 }
