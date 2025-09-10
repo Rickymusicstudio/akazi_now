@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate, useLocation } from "react-router-dom";
 import backgroundImage from "../assets/kcc_bg_clean.png";
@@ -30,19 +30,22 @@ function Isoko() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const activeCategory = useMemo(() => {
+    const m = location.pathname.match(/\/isoko\/categories\/([^/]+)/i);
+    return m ? m[1] : null;
+  }, [location.pathname]);
+
   const isActive = (item) => {
     if (item.key === "logout") return false;
     if (item.key === "home") return location.pathname === "/isoko" || location.pathname === "/";
     return item.to ? location.pathname.startsWith(item.to) : false;
   };
 
-  const sectionTitle = (() => {
-    const m = location.pathname.match(/\/isoko\/categories\/([^/]+)/i);
-    if (!m) return "Isoko — Buy & Sell Locally";
-    const slug = m[1];
-    const label = ISOKO_LINKS.find((l) => l.key === slug)?.label || slug;
+  const sectionTitle = useMemo(() => {
+    if (!activeCategory) return "Isoko — Buy & Sell Locally";
+    const label = ISOKO_LINKS.find((l) => l.key === activeCategory)?.label || activeCategory;
     return `Isoko — ${label.charAt(0).toUpperCase() + label.slice(1)}`;
-  })();
+  }, [activeCategory]);
 
   useEffect(() => {
     fetchListings();
@@ -70,14 +73,42 @@ function Isoko() {
   }, []);
 
   const fetchListings = async () => {
-    const { data, error } = await supabase
+    // 1) get listings (all; we'll filter client-side by URL category)
+    const { data: rawListings, error } = await supabase
       .from("market_listings")
-      .select(`
-        id, title, description, price, currency, intent,
-        category, location, first_image_url, created_at
-      `)
+      .select(
+        "id, user_id, title, description, price, currency, intent, category, location, first_image_url, created_at"
+      )
       .order("created_at", { ascending: false });
-    if (!error) setListings(data || []);
+
+    if (error) {
+      console.error("fetchListings error:", error.message);
+      setListings([]);
+      return;
+    }
+    const list = rawListings || [];
+
+    // 2) fetch poster info for all unique user_ids
+    const userIds = Array.from(new Set(list.map((l) => l.user_id).filter(Boolean)));
+    let userMap = new Map();
+    if (userIds.length > 0) {
+      const { data: usersData, error: usersErr } = await supabase
+        .from("users")
+        .select("auth_user_id, full_name, image_url")
+        .in("auth_user_id", userIds);
+
+      if (!usersErr && usersData) {
+        userMap = new Map(usersData.map((u) => [u.auth_user_id, u]));
+      }
+    }
+
+    // 3) attach user info
+    const joined = list.map((l) => ({
+      ...l,
+      user: userMap.get(l.user_id) || null,
+    }));
+
+    setListings(joined);
   };
 
   const fetchUserAndProfile = async () => {
@@ -99,11 +130,9 @@ function Isoko() {
     let touchStartY = 0;
 
     const handleTouchStart = (e) => { touchStartY = e.touches[0].clientY; };
-
     const handleTouchMove = (e) => {
       if (!mobileNavVisible) return;
-      const touchEndY = e.touches[0].clientY;
-      const swipeDistance = touchStartY - touchEndY;
+      const swipeDistance = touchStartY - e.touches[0].clientY;
       if (swipeDistance > 50) {
         setSlideDirection("slide-up");
         setTimeout(() => {
@@ -112,7 +141,6 @@ function Isoko() {
         }, 300);
       }
     };
-
     const handleScroll = () => {
       if (!mobileNavVisible) return;
       setSlideDirection("slide-up");
@@ -125,7 +153,6 @@ function Isoko() {
     window.addEventListener("touchstart", handleTouchStart);
     window.addEventListener("touchmove", handleTouchMove);
     window.addEventListener("scroll", handleScroll);
-
     return () => {
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
@@ -149,6 +176,12 @@ function Isoko() {
     navigate("/");
   };
 
+  // filter by URL category (client-side)
+  const visibleListings = useMemo(() => {
+    if (!activeCategory) return listings;
+    return listings.filter((l) => (l.category || "").toLowerCase() === activeCategory.toLowerCase());
+  }, [listings, activeCategory]);
+
   return (
     <div className="gigs-container">
       {/* MOBILE TOPBAR (green, fixed at top on mobile like Gigs) */}
@@ -165,7 +198,7 @@ function Isoko() {
         <NotificationBell />
       </div>
 
-      {/* MOBILE OVERLAY NAV (same structure/animation as Gigs) */}
+      {/* MOBILE OVERLAY NAV */}
       {mobileNavVisible && (
         <div ref={mobileNavRef} className={`gigs-mobile-nav-overlay ${slideDirection}`}>
           <ul>
@@ -183,7 +216,6 @@ function Isoko() {
                   {item.label}
                 </li>
               ))}
-            {/* CTA in overlay (optional but matches your pattern) */}
             <li onClick={() => { setMobileNavVisible(false); navigate("/isoko/post-item"); }}>
               Post Item
             </li>
@@ -197,7 +229,7 @@ function Isoko() {
         </div>
       )}
 
-      {/* DESKTOP NAV (green gradient, same as Gigs) */}
+      {/* DESKTOP NAV */}
       <div className="gigs-desktop-nav">
         <div className="gigs-desktop-nav-inner">
           <div
@@ -257,7 +289,7 @@ function Isoko() {
         </div>
       </div>
 
-      {/* HERO (hero topbar hidden on desktop in CSS to avoid white strip) */}
+      {/* HERO */}
       <div className="gigs-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
         <div className="gigs-topbar">
           <div className="gigs-logo">AkaziNow</div>
@@ -272,24 +304,59 @@ function Isoko() {
         <div className="gigs-hero-content">
           <h1 className="gigs-heading">{sectionTitle}</h1>
           <p className="gigs-subheading">
-            {sectionTitle.includes("—")
-              ? `Browse ${sectionTitle.split("—")[1].trim()} listings in your area.`
-              : "Post what you want to sell or find what you need."}
+            {activeCategory
+              ? `Browse ${activeCategory} listings in your area.`
+              : "Browse Buy & Sell Locally listings in your area."}
           </p>
         </div>
 
         <div className="gigs-floating-count-box">
           <h2 className="gigs-count-title">🛍️ Listings</h2>
           <div className="gigs-count-display">
-            <FaCalendarCheck /> {listings.length} Items
+            <FaCalendarCheck /> {visibleListings.length} Items
           </div>
         </div>
       </div>
 
-      {/* CONTENT (render your Isoko listing cards here) */}
+      {/* LISTING CARDS */}
       <section className="gigs-cards-section">
-        {listings.length > 0 ? (
-          <p style={{ fontWeight: 600 }}>Render your Isoko listing cards here…</p>
+        {visibleListings.length > 0 ? (
+          visibleListings.map((item) => (
+            <div className="gigs-card" key={item.id}>
+              <div className="gigs-card-text">
+                <div style={{ display: "flex", alignItems: "center", marginBottom: "0.5rem" }}>
+                  <img
+                    src={item.user?.image_url || defaultAvatar}
+                    alt="poster"
+                    style={{
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                      marginRight: "10px",
+                    }}
+                  />
+                  <span style={{ fontWeight: 600, fontSize: "0.95rem" }}>
+                    {item.user?.full_name || "Anonymous"}
+                  </span>
+                </div>
+
+                <h2>{item.title}</h2>
+                <p>{item.description}</p>
+
+                <p><strong>Price:</strong> {item.price ? `${item.price} ${item.currency || ""}` : "—"}</p>
+                <p><strong>Location:</strong> {item.location || "—"}</p>
+                <p><strong>Category:</strong> {item.category || "—"}</p>
+                <p><strong>Intent:</strong> {item.intent || "—"}</p>
+              </div>
+
+              {item.first_image_url && (
+                <div className="gigs-card-image-wrapper">
+                  <img src={item.first_image_url} alt="listing" />
+                </div>
+              )}
+            </div>
+          ))
         ) : (
           <p style={{ marginTop: "2rem", fontWeight: "bold" }}>
             No items yet. Be the first to{" "}
@@ -303,7 +370,7 @@ function Isoko() {
         )}
       </section>
 
-      {/* FOOTER (green gradient like Gigs) */}
+      {/* FOOTER */}
       <footer className="gigs-footer">
         <p>&copy; {new Date().getFullYear()} AkaziNow. All rights reserved.</p>
         <div className="gigs-footer-links">
