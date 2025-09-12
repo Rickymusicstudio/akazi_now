@@ -1,5 +1,5 @@
 /* =========================================================
-   Isoko.css — full stylesheet
+   Isoko.css — full stylesheet (updated)
    ========================================================= */
 
 /* ============== RESET / BASE ============== */
@@ -249,7 +249,6 @@ body {
 
 /* ============== LISTING GRID + COMPACT CARD SIZES ============== */
 .gigs-cards-section {
-  /* Grid instead of flex for tidy compact layout */
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 420px));
   gap: 1.25rem;
@@ -270,56 +269,70 @@ body {
   box-shadow: 0 8px 22px rgba(0,0,0,.08);
   text-align: left;
   border: 1px solid rgba(0,0,0,.04);
+  background: #ffffff;
 }
 
-/* Alternating soft backgrounds (like index) */
-.isoko-card.isoko-card--sun   { background: #fff8d4; } /* pale yellow */
-.isoko-card.isoko-card--mint  { background: #eaffe9; } /* pale mint */
-.isoko-card.isoko-card--peach { background: #fff3e6; } /* pale peach */
+/* (If you ever switch to class-based variants) */
+.isoko-card.isoko-card--sun   { background: #fff8d4; }
+.isoko-card.isoko-card--mint  { background: #eaffe9; }
+.isoko-card.isoko-card--peach { background: #fff3e6; }
 .isoko-card.isoko-card--base  { background: #ffffff; }
 
-/* Header: avatar + poster name */
-.isoko-card-header {
+/* ===== Seller chip (matches JSX: isoko-seller, isoko-seller-avatar, isoko-seller-name) */
+.isoko-seller {
   display: flex;
   align-items: center;
   gap: .55rem;
   margin-bottom: .25rem;
 }
-.isoko-avatar {
+.isoko-seller-avatar {
   width: 28px; height: 28px; border-radius: 50%;
   object-fit: cover; border: 1.5px solid #fff;
   box-shadow: 0 1px 4px rgba(0,0,0,.08);
 }
-.isoko-poster-name { font-weight: 700; font-size: .96rem; color: #111827; }
+.isoko-seller-name { font-weight: 700; font-size: .96rem; color: #111827; }
 
-/* Title & meta */
-.isoko-card-title {
+/* ===== Body + text (matches JSX: isoko-title, isoko-desc, isoko-meta) */
+.isoko-body { margin-top: .15rem; }
+.isoko-title {
   font-size: 1.1rem;
   font-weight: 800;
   color: #111827;
   margin: .25rem 0 .4rem;
 }
-.isoko-card-meta { font-size: .95rem; line-height: 1.4; }
-.isoko-card-meta b { font-weight: 800; }
+.isoko-desc { font-size: .95rem; color: #374151; line-height: 1.4; }
+.isoko-meta {
+  font-size: .95rem;
+  line-height: 1.45;
+  margin-top: .4rem;
+}
+.isoko-meta strong { font-weight: 800; }
 
-/* Image area (clickable) — fixed height so cards stay compact */
+/* ===== Image area (clickable) — CONSTRAINED via aspect-ratio */
 .isoko-img-wrap {
+  width: 100%;
+  aspect-ratio: 4 / 3;            /* desktop/tablet default */
   margin-top: .6rem;
-  height: 210px;             /* mobile default */
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
-  background: #fff;
-  cursor: pointer;
+  background: #f3f4f6;
+  cursor: zoom-in;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
 }
 .isoko-img-wrap img {
-  width: 100%; height: 100%;
-  object-fit: cover; display: block;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;              /* crop large images nicely */
 }
-@media (min-width: 768px)  { .isoko-img-wrap { height: 240px; } }
-@media (min-width: 1024px) { .isoko-img-wrap { height: 260px; } }
 
-/* Action row */
-.isoko-card-actions {
+/* Taller/square feel on small screens */
+@media (max-width: 768px) {
+  .isoko-img-wrap { aspect-ratio: 1 / 1; }
+}
+
+/* ===== Actions row (matches JSX: isoko-actions) */
+.isoko-actions {
   display: flex;
   justify-content: flex-end;
   margin-top: .6rem;
@@ -334,15 +347,16 @@ body {
 }
 .isoko-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 16px rgba(0,0,0,.07); }
 .isoko-btn:active { transform: translateY(0); }
-
 .isoko-btn--interest {
   background: #111827; color: #fff;
   border: 1px solid rgba(255,255,255,.08);
 }
 .isoko-btn--interest:hover { opacity: .92; }
+.isoko-btn--ghost { background: #f3f4f6; color: #111827; }
+.isoko-btn--primary { background: #203a43; color: #fff; }
 
-/* ============== INTEREST MODAL ============== */
-.isoko-modal-overlay {
+/* ============== INTEREST MODAL (matches JSX names) ============== */
+.isoko-interest-overlay {
   position: fixed; inset: 0; z-index: 1200;
   background: rgba(0,0,0,.45);
   display: flex; align-items: center; justify-content: center;
@@ -350,62 +364,45 @@ body {
 }
 @keyframes isokoFade { from { opacity: 0; } to { opacity: 1; } }
 
-.isoko-modal {
+.isoko-interest-modal {
   width: min(92vw, 520px);
   background: #fff;
   border-radius: 14px;
   padding: 1rem;
   box-shadow: 0 20px 60px rgba(0,0,0,.18);
 }
-.isoko-modal h3 {
+.isoko-interest-modal h3 {
   margin-bottom: .75rem; font-size: 1.25rem; font-weight: 800; color: #111827;
 }
-.isoko-modal textarea {
+.isoko-interest-modal textarea {
   width: 100%; min-height: 120px;
   border: 1px solid #e5e7eb; border-radius: 10px;
   padding: .75rem; resize: vertical;
   background: #fff; color: #111;
   outline: none;
 }
-.isoko-modal textarea:focus {
+.isoko-interest-modal textarea:focus {
   border-color: #cbd5e1;
   box-shadow: 0 0 0 3px rgba(32,58,67,.08);
 }
-
-.isoko-modal-actions {
+.isoko-interest-actions {
   display: flex; justify-content: flex-end; gap: .6rem;
   margin-top: .75rem;
 }
-.isoko-btn--ghost {
-  background: #f3f4f6; color: #111827;
-}
-.isoko-btn--primary {
-  background: #203a43; color: #fff;
-}
 
-/* ============== IMAGE VIEWER MODAL ============== */
-.isoko-img-modal-overlay {
-  position: fixed; inset: 0; z-index: 1300;
-  background: rgba(0,0,0,.7);
-  display: flex; align-items: center; justify-content: center;
-  animation: isokoFade .15s ease-out;
+/* ============== IMAGE LIGHTBOX (matches JSX: isoko-lightbox) ============== */
+.isoko-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: grid;
+  place-items: center;
+  padding: 4vmin;
+  z-index: 1300;
 }
-
-.isoko-img-modal {
-  max-width: 92vw; max-height: 90vh;
-  background: #111827;
-  padding: .5rem; border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0,0,0,.3);
-  position: relative;
+.isoko-lightbox img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
 }
-.isoko-img-modal img {
-  display: block; width: 100%; height: auto;
-  max-height: 84vh; object-fit: contain; border-radius: 8px;
-}
-.isoko-img-modal-close {
-  position: absolute; top: .5rem; right: .5rem;
-  background: rgba(255,255,255,.9);
-  color: #111827; border: none; border-radius: 8px;
-  padding: .35rem .6rem; font-weight: 800; cursor: pointer;
-}
-.isoko-img-modal-close:hover { opacity: .9; }
