@@ -1,140 +1,223 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import NotificationBell from "../components/NotificationBell.jsx";
 import { FaBars } from "react-icons/fa";
-import "./NotificationsDetail.css";
+
+import defaultAvatar from "../assets/avatar.png";
+import backgroundImage from "../assets/kcc_bg_clean.png";
+import "./NotificationsDetail.css"; // minimal extras; reuses the same "postgig-*" look from Inbox/PostGig
 
 function NotificationsDetail() {
   const { id } = useParams();
   const [notification, setNotification] = useState(null);
-  const [listing, setListing] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
+
+  // mobile overlay state (same pattern as Inbox/PostGig)
+  const [mobileNavVisible, setMobileNavVisible] = useState(false);
+  const [slideDirection, setSlideDirection] = useState("");
+  const mobileNavRef = useRef(null);
+  const touchStartY = useRef(0);
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchAll();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchUserProfile();
+    fetchNotification();
   }, [id]);
 
-  const fetchAll = async () => {
-    setLoading(true);
+  useEffect(() => {
+    const handleTouchStart = (e) => {
+      touchStartY.current = e.touches[0].clientY;
+    };
+    const handleTouchMove = (e) => {
+      const touchEndY = e.touches[0].clientY;
+      if (touchStartY.current - touchEndY > 50) {
+        setSlideDirection("slide-up");
+        setTimeout(() => setMobileNavVisible(false), 300);
+      }
+    };
 
-    // Load the notification
-    const { data: notif, error: nErr } = await supabase
+    if (mobileNavVisible) {
+      window.addEventListener("touchstart", handleTouchStart);
+      window.addEventListener("touchmove", handleTouchMove);
+    }
+    return () => {
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, [mobileNavVisible]);
+
+  const fetchUserProfile = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data } = await supabase
+      .from("users")
+      .select("image_url")
+      .eq("auth_user_id", user.id)
+      .single();
+
+    setUserProfile(data);
+  };
+
+  const fetchNotification = async () => {
+    // match current schema: id, message, status, created_at (no related_listing_id yet)
+    const { data: notif, error } = await supabase
       .from("notifications")
-      .select("*")
+      .select("id,message,status,created_at")
       .eq("id", id)
       .single();
 
-    if (nErr) {
-      console.error("❌ Failed to load notification:", nErr.message);
-      setNotification(null);
-      setListing(null);
-      setLoading(false);
-      return;
-    }
-    setNotification(notif);
+    if (!error && notif) {
+      setNotification(notif);
 
-    // If linked to an isoko item, load it
-    if (notif?.related_listing_id) {
-      const { data: item, error: lErr } = await supabase
-        .from("market_listings")
-        .select("id,title,price,currency,location,category,first_image_url")
-        .eq("id", notif.related_listing_id)
-        .single();
-
-      if (!lErr) setListing(item);
-      else console.warn("⚠️ Linked listing not found:", lErr.message);
+      // mark as read for consistency with Inbox
+      if (notif.status === "unread") {
+        await supabase
+          .from("notifications")
+          .update({ status: "read" })
+          .eq("id", id);
+      }
     } else {
-      setListing(null);
+      setNotification(null);
     }
-
-    setLoading(false);
   };
 
-  if (loading) return <p style={{ padding: "2rem" }}>Loading...</p>;
-  if (!notification) return <p style={{ padding: "2rem" }}>Notification not found.</p>;
+  const handleHamburgerClick = () => {
+    if (!mobileNavVisible) {
+      setSlideDirection("slide-down");
+      setMobileNavVisible(true);
+    } else {
+      setSlideDirection("slide-up");
+      setTimeout(() => setMobileNavVisible(false), 300);
+    }
+  };
+
+  const closeAndNavigate = async (path, logout = false) => {
+    setSlideDirection("slide-up");
+    setTimeout(async () => {
+      setMobileNavVisible(false);
+      setSlideDirection("");
+      if (logout) await supabase.auth.signOut();
+      navigate(path);
+    }, 300);
+  };
 
   return (
-    <div className="notifications-container">
-      {/* Mobile Top Bar */}
-      <div className="mobile-top-bar">
-        <FaBars className="mobile-hamburger" onClick={() => setMobileNavOpen(true)} />
-        <h2 className="mobile-title">Notification</h2>
-        <NotificationBell />
+    <div className="postgig-container">
+      {/* Desktop Nav (same as Inbox/PostGig) */}
+      <div className="postgig-desktop-nav">
+        <div className="postgig-nav-left-logo" onClick={() => navigate("/")}>
+          AkaziNow
+        </div>
+        <ul>
+          <li onClick={() => navigate("/")}>Home</li>
+          <li onClick={() => navigate("/gigs")}>Gigs</li>
+          <li onClick={() => navigate("/post-job")}>Post a Job</li>
+          <li onClick={() => navigate("/my-jobs")}>My Jobs</li>
+          <li onClick={() => navigate("/profile")}>Profile</li>
+          <li onClick={() => navigate("/inbox")}>Inbox</li>
+          <li onClick={() => navigate("/carpools")}>Car Pooling</li>
+          <li onClick={() => closeAndNavigate("/", true)}>Logout</li>
+        </ul>
       </div>
 
-      {mobileNavOpen && (
-        <div className="mobile-nav-overlay">
-          <ul>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/"); }}>Home</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/post-job"); }}>Post a Job</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/my-jobs"); }}>My Jobs</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/profile"); }}>Profile</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/inbox"); }}>Inbox</li>
-            <li onClick={() => { setMobileNavOpen(false); navigate("/carpool"); }}>Car Pooling</li>
-            <li onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>
-              Logout
-            </li>
-          </ul>
+      {/* Hero Section (same look) */}
+      <div
+        className="postgig-hero"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      >
+        <div className="postgig-mobile-topbar">
+          <div className="postgig-mobile-left">
+            <img
+              src={userProfile?.image_url || defaultAvatar}
+              alt="avatar"
+              className="postgig-mobile-avatar"
+            />
+            <FaBars
+              className="postgig-mobile-hamburger"
+              onClick={handleHamburgerClick}
+            />
+          </div>
+          <div className="postgig-mobile-title">Notification</div>
+          <NotificationBell />
         </div>
-      )}
 
-      {/* Left Panel (desktop) */}
-      <div className="notifications-left">
-        <div className="nav-buttons">
-          <button onClick={() => navigate("/")}>Home</button>
-          <button onClick={() => navigate("/post-job")}>Post a Job</button>
-          <button onClick={() => navigate("/my-jobs")}>My Jobs</button>
-          <button onClick={() => navigate("/profile")}>Profile</button>
-          <button onClick={() => navigate("/inbox")}>Inbox</button>
-          <button onClick={() => navigate("/carpool")}>Car Pooling</button>
-          <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }} style={{ color: "#ffcccc" }}>
-            Logout
-          </button>
+        <div className="postgig-hero-content">
+          <h1 className="postgig-hero-title">Notification Detail</h1>
+          <p className="postgig-hero-subtitle">
+            Review messages sent to you.
+          </p>
         </div>
-        <h2>Notification</h2>
-        <NotificationBell />
+
+        {mobileNavVisible && (
+          <div
+            ref={mobileNavRef}
+            className={`postgig-mobile-nav-overlay ${slideDirection}`}
+          >
+            <ul>
+              <li onClick={() => closeAndNavigate("/")}>Home</li>
+              <li onClick={() => closeAndNavigate("/gigs")}>Gigs</li>
+              <li onClick={() => closeAndNavigate("/post-job")}>Post a Job</li>
+              <li onClick={() => closeAndNavigate("/my-jobs")}>My Jobs</li>
+              <li onClick={() => closeAndNavigate("/profile")}>Profile</li>
+              <li onClick={() => closeAndNavigate("/inbox")}>Inbox</li>
+              <li onClick={() => closeAndNavigate("/carpools")}>Car Pooling</li>
+              <li onClick={() => closeAndNavigate("/", true)}>Logout</li>
+            </ul>
+          </div>
+        )}
       </div>
 
-      {/* Right Panel */}
-      <div className="notifications-right">
-        <div className="notification-card">
-          <p className="notif-message"><strong>{notification.message}</strong></p>
-          <p className="notif-date">Received: {new Date(notification.created_at).toLocaleString()}</p>
+      {/* Content Section — same card structure as Inbox */}
+      <section className="postgig-services-section">
+        <div className="postgig-form-card">
+          <h2 style={{ textAlign: "center", marginBottom: "1rem" }}>
+            Message
+          </h2>
 
-          {listing ? (
-            <div className="notif-item">
-              <div className="notif-item-thumb">
-                {listing.first_image_url ? (
-                  <img src={listing.first_image_url} alt={listing.title} loading="lazy" />
-                ) : (
-                  <div className="notif-item-thumb--placeholder">No image</div>
-                )}
-              </div>
-              <div className="notif-item-info">
-                <h4 className="notif-item-title">{listing.title}</h4>
-                <div className="notif-item-meta">
-                  {listing.price != null && (
-                    <div><b>Price:</b> {Number(listing.price).toLocaleString()} {listing.currency || "RWF"}</div>
-                  )}
-                  {listing.location && <div><b>Location:</b> {listing.location}</div>}
-                  {listing.category && <div><b>Category:</b> {listing.category}</div>}
-                </div>
-                <div className="notif-item-actions">
-                  <button className="notif-btn" onClick={() => navigate("/isoko")}>
-                    View item
-                  </button>
-                </div>
-              </div>
+          {notification ? (
+            <div
+              className="notifdetail-card"
+              role="article"
+              aria-label="Notification message"
+            >
+              <p className="notifdetail-message">
+                <strong>{notification.message}</strong>
+              </p>
+              <p className="notifdetail-time">
+                Received:{" "}
+                {new Date(notification.created_at).toLocaleString()}
+              </p>
+
+              {/* If you later add related_listing_id and join item, render a compact item block here */}
             </div>
           ) : (
-            <div className="notif-item-empty">This notification isn’t linked to a specific item.</div>
+            <p style={{ textAlign: "center", fontWeight: "bold" }}>
+              Notification not found.
+            </p>
           )}
         </div>
-      </div>
+
+        {/* Right info/sticker card — optional; mirrors Inbox layout */}
+        <div className="postgig-sticker-card">
+          <div className="postgig-info-card-content">
+            <h3>Stay Notified</h3>
+            <p>Keep an eye on your bell icon for new messages.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="postgig-footer">
+        <p>&copy; {new Date().getFullYear()} AkaziNow. All rights reserved.</p>
+        <div className="postgig-footer-links">
+          <button onClick={() => navigate("/about")}>About</button>
+          <button onClick={() => navigate("/help")}>Help</button>
+          <button onClick={() => navigate("/contact")}>Contact</button>
+        </div>
+      </footer>
     </div>
   );
 }

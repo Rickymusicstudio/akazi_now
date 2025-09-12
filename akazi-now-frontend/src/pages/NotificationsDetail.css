@@ -1,213 +1,173 @@
-/* Container */
-.notifications-container {
-  display: flex;
-  height: 100vh;
-  width: 100vw;
-  font-family: 'Segoe UI', sans-serif;
+/* =========================================================
+   NotificationsDetail.css — full stylesheet (Inbox-matched)
+   Uses the same visual system as PostGig/Inbox so the page
+   looks identical to Inbox.
+   ========================================================= */
+
+/* RESET */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+  background: #f4f6f8;
+  color: #111827;
 }
 
-/* LEFT (Desktop) */
-.notifications-left {
-  width: 50%;
-  background: linear-gradient(135deg, #6a00ff, #ff007a);
-  color: white;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.notifications-left h2 {
-  font-size: 32px;
-  font-weight: bold;
-  margin-top: 3rem;
-}
-
-/* RIGHT */
-.notifications-right {
-  width: 50%;
-  height: 100vh;
-  overflow-y: auto;
-  padding: 2rem;
-  background-color: #fff;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Notification Card */
-.notification-card {
-  background: white;
-  padding: 1.5rem 2rem;
-  border-radius: 20px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+/* ====== PAGE CONTAINER ====== */
+.postgig-container {
   width: 100%;
-  max-width: 500px;
-  margin-bottom: 1.5rem;
-}
-
-.notification-card strong {
-  color: #222;
-}
-
-.notification-card p {
-  margin-top: 0.75rem;
-  color: #666;
-  font-size: 0.95rem;
-}
-
-/* Desktop Bell */
-.notification-bell-container {
-  position: absolute;
-  top: 1rem;
-  right: 1.5rem;
-  z-index: 10;
-}
-
-.notification-bell-button {
-  background: #fff;
-  border: 2px solid #fff;
-  border-radius: 50%;
-  width: 42px;
-  height: 42px;
+  min-height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+  flex-direction: column;
 }
 
-.notification-dropdown {
-  position: absolute;
-  top: 50px;
-  right: 0;
-  width: 300px;
-  background: white;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  padding: 1rem;
-  max-height: 400px;
+/* ====== DESKTOP NAV (same as Inbox/PostGig) ====== */
+.postgig-desktop-nav {
+  position: sticky; top: 0; z-index: 20;
+  width: 100%;
+  padding: 1rem 2rem;
+  display: flex; align-items: center; justify-content: flex-start;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  color: #fff;
+}
+.postgig-nav-left-logo {
+  font-size: 1.5rem; font-weight: 800; color: #FFD700;
+  cursor: pointer; user-select: none; white-space: nowrap;
+}
+.postgig-desktop-nav ul {
+  list-style: none;
+  position: absolute; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 1rem;
+}
+.postgig-desktop-nav li { font-weight: 700; cursor: pointer; }
+.postgig-desktop-nav li:hover { text-decoration: underline; }
+
+/* ====== HERO ====== */
+.postgig-hero {
+  width: 100%;
+  height: 60vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #fff;
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.postgig-hero-content {
+  text-align: center;
+  background: rgba(0,0,0,0.4);
+  padding: 2rem;
+  border-radius: 16px;
+}
+.postgig-hero-title   { font-size: 2.5rem; font-weight: 800; }
+.postgig-hero-subtitle{ font-size: 1.15rem; margin-top: .5rem; }
+
+/* ====== MOBILE TOPBAR IN HERO ====== */
+.postgig-mobile-topbar {
+  position: absolute; inset: 0 auto auto 0;
+  height: 60px; padding: 0 1rem;
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(to right, rgba(15,32,39,.9), rgba(32,58,67,.6), rgba(44,83,100,.0));
+}
+.postgig-mobile-left { display: flex; align-items: center; gap: .5rem; }
+.postgig-mobile-avatar {
+  width: 35px; height: 35px; border-radius: 50%; object-fit: cover;
+  border: 2px solid #fff;
+}
+.postgig-mobile-hamburger { font-size: 1.6rem; cursor: pointer; color: #fff; }
+.postgig-mobile-title { font-weight: 800; color: #fff; }
+
+/* ====== MOBILE OVERLAY NAV ====== */
+.postgig-mobile-nav-overlay {
+  position: fixed; top: 60px; left: 0; right: 0; bottom: 0;
+  background: #0f2027; color: #fff; z-index: 30;
+  padding: 1.5rem;
+  animation-duration: .3s; animation-fill-mode: both;
   overflow-y: auto;
-  z-index: 999;
+}
+.slide-down { animation-name: notifSlideDown; }
+.slide-up   { animation-name: notifSlideUp; }
+
+@keyframes notifSlideDown { from { transform: translateY(-10%); opacity: .6; } to { transform: translateY(0); opacity: 1; } }
+@keyframes notifSlideUp   { from { transform: translateY(0); opacity: 1; }   to { transform: translateY(-10%); opacity: .0; } }
+
+.postgig-mobile-nav-overlay ul { list-style: none; }
+.postgig-mobile-nav-overlay li {
+  padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,.12);
+  font-weight: 700; cursor: pointer;
+}
+.postgig-mobile-nav-overlay li:last-child { border-bottom: none; }
+
+/* ====== CONTENT SECTION (two panels) ====== */
+.postgig-services-section {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1.25rem;
 }
 
-.notification-item {
-  border-bottom: 1px solid #eee;
-  padding: 0.5rem 0;
-  cursor: pointer;
+/* Left/main card (matches Inbox cards) */
+.postgig-form-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
 }
 
-.notification-item p {
-  margin: 0;
+/* Right info card (optional sticker/info) */
+.postgig-sticker-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  display: grid; align-content: start;
+}
+.postgig-info-card-content h3 { font-weight: 800; margin-bottom: .5rem; }
+.postgig-info-card-image { width: 100%; height: auto; display: block; margin-top: .75rem; }
+
+/* ====== FOOTER ====== */
+.postgig-footer {
+  margin-top: auto;
+  width: 100%;
+  background: #eef2f7;
+  color: #374151;
+  text-align: center;
+  padding: 1.25rem 1rem;
+}
+.postgig-footer-links { margin-top: .4rem; }
+.postgig-footer-links button {
+  background: none; border: none; color: #374151;
+  margin: 0 .5rem; font-weight: 600; cursor: pointer;
+}
+.postgig-footer-links button:hover { text-decoration: underline; }
+
+/* ====== NOTIFICATION DETAIL CARD (specific) ====== */
+.notifdetail-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+.notifdetail-message {
+  font-size: 1rem; color: #111827; margin-bottom: .35rem;
+}
+.notifdetail-time {
+  font-size: .9rem; color: #6b7280;
 }
 
-.notification-message {
-  font-weight: bold;
-  color: #333;
-}
-
-.notification-time {
-  font-size: 12px;
-  color: #888;
-}
-
-/* Top Bar - Mobile Only */
-.mobile-top-bar {
-  display: none;
+/* ====== RESPONSIVE ====== */
+@media (max-width: 1024px) {
+  .postgig-services-section {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
-  .notifications-container {
-    flex-direction: column;
-    height: 100vh;
-    overflow-y: auto;
-  }
-
-  .notifications-left {
-    display: none;
-  }
-
-  .notifications-right {
-    width: 100%;
-    height: auto;
-    overflow-y: visible;
-    padding: 1.5rem;
-    padding-top: 6rem; /* Fix: account for fixed mobile nav */
-  }
-
-  .mobile-top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background: linear-gradient(135deg, #6a00ff, #ff007a);
-    color: white;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    gap: 1rem;
-  }
-
-  .mobile-hamburger {
-    font-size: 1.8rem;
-    font-weight: bold;
-    cursor: pointer;
-    color: white;
-  }
-
-  .mobile-title {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.2rem;
-    font-weight: bold;
-    text-align: center;
-    white-space: nowrap;
-  }
-
-  .mobile-nav-overlay {
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(135deg, #6a00ff, #ff007a);
-    z-index: 999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    animation: slideIn 0.3s ease-out;
-  }
-
-  .mobile-nav-overlay ul {
-    list-style: none;
-    color: white;
-    font-weight: bold;
-    font-size: 1.6rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-  }
-
-  .mobile-nav-overlay li {
-    cursor: pointer;
-  }
-
-  .notification-bell-container {
-    position: relative;
-    top: 0;
-    right: 0;
-    margin-left: auto;
-  }
-
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateY(-100%);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+  .postgig-desktop-nav { display: none; }
+  .postgig-hero-title { font-size: 2rem; }
+  .postgig-hero-subtitle { font-size: 1rem; }
 }
