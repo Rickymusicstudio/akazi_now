@@ -1,11 +1,11 @@
 /* =========================================================
-   NotificationsDetail.css — fully scoped (nd-*), standalone
+   NotificationsDetail.css — fully scoped (nd-*), navbar bell
    ========================================================= */
 
-/* Local reset (kept scoped so it won't leak) */
+/* Local reset */
 .nd-container * { box-sizing: border-box; }
 
-/* ===== Page container ===== */
+/* Page container */
 .nd-container {
   display: flex;
   flex-direction: column;
@@ -15,7 +15,7 @@
   font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
 }
 
-/* ===== Desktop nav (independent) ===== */
+/* Desktop nav */
 .nd-desktop-nav {
   position: sticky;
   top: 0;
@@ -25,7 +25,6 @@
   padding: 1rem 2rem;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
 }
 .nd-nav-left-logo {
   font-size: 1.5rem;
@@ -34,23 +33,23 @@
   cursor: pointer;
 }
 .nd-desktop-nav ul {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  margin: 0 auto;              /* center the links between logo and right side */
   display: flex;
   gap: 1rem;
   list-style: none;
-  margin: 0;
   padding: 0;
 }
-.nd-desktop-nav li {
-  cursor: pointer;
-  font-weight: 700;
-  color: #fff;
-}
+.nd-desktop-nav li { cursor: pointer; font-weight: 700; color: #fff; }
 .nd-desktop-nav li:hover { text-decoration: underline; }
 
-/* ===== Hero ===== */
+/* Right area for the bell */
+.nd-desktop-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+/* Hero */
 .nd-hero {
   background-size: cover;
   background-position: center;
@@ -70,7 +69,7 @@
 .nd-hero-title { font-size: 2.5rem; font-weight: 800; }
 .nd-hero-subtitle { font-size: 1.2rem; margin-top: 0.5rem; }
 
-/* ===== Mobile top bar inside hero ===== */
+/* Mobile top bar inside hero (HIDDEN on desktop) */
 .nd-mobile-topbar {
   position: absolute;
   inset: 0 auto auto 0;
@@ -95,7 +94,7 @@
 .nd-mobile-hamburger { font-size: 1.6rem; color: #fff; cursor: pointer; }
 .nd-mobile-title { font-weight: 800; color: #fff; }
 
-/* ===== Mobile overlay nav ===== */
+/* Mobile overlay nav */
 .nd-mobile-nav-overlay {
   position: fixed;
   top: 60px; left: 0; right: 0; bottom: 0;
@@ -128,7 +127,7 @@
 }
 .nd-mobile-nav-overlay li:last-child { border-bottom: none; }
 
-/* ===== Cards section (main + side) ===== */
+/* Cards section */
 .nd-cards-section {
   padding: 2rem;
   display: grid;
@@ -172,7 +171,7 @@
   margin-bottom: .5rem;
 }
 
-/* ===== Footer ===== */
+/* Footer */
 .nd-footer {
   margin-top: auto;
   width: 100%;
@@ -192,13 +191,18 @@
 }
 .nd-footer-links button:hover { text-decoration: underline; }
 
-/* ===== Responsive ===== */
+/* Responsive rules */
+@media (min-width: 769px) {
+  /* Hide the mobile top bar on desktop */
+  .nd-mobile-topbar { display: none; }
+}
 @media (max-width: 1024px) {
   .nd-cards-section { grid-template-columns: 1fr; }
 }
 @media (max-width: 768px) {
+  /* Hide desktop nav on small screens */
   .nd-desktop-nav { display: none; }
+  .nd-card { text-align: center; }
   .nd-hero-title { font-size: 2rem; }
   .nd-hero-subtitle { font-size: 1rem; }
-  .nd-card { text-align: center; }
 }

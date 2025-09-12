@@ -94,9 +94,12 @@ function NotificationsDetail() {
 
   return (
     <div className="nd-container">
-      {/* Desktop Nav */}
+      {/* Desktop Nav (bell moved here on the right) */}
       <div className="nd-desktop-nav">
-        <div className="nd-nav-left-logo" onClick={() => navigate("/")}>AkaziNow</div>
+        <div className="nd-nav-left-logo" onClick={() => navigate("/")}>
+          AkaziNow
+        </div>
+
         <ul>
           <li onClick={() => navigate("/")}>Home</li>
           <li onClick={() => navigate("/gigs")}>Gigs</li>
@@ -107,9 +110,13 @@ function NotificationsDetail() {
           <li onClick={() => navigate("/carpools")}>Car Pooling</li>
           <li onClick={() => closeAndNavigate("/", true)}>Logout</li>
         </ul>
+
+        <div className="nd-desktop-right">
+          <NotificationBell />
+        </div>
       </div>
 
-      {/* Hero */}
+      {/* Hero (mobile topbar only shows on small screens) */}
       <div className="nd-hero" style={{ backgroundImage: `url(${backgroundImage})` }}>
         <div className="nd-mobile-topbar">
           <div className="nd-mobile-left">
@@ -121,6 +128,7 @@ function NotificationsDetail() {
             <FaBars className="nd-mobile-hamburger" onClick={handleHamburgerClick} />
           </div>
           <div className="nd-mobile-title">Notification</div>
+          {/* Bell not shown here on desktop; remains on mobile if you want it hidden, set display:none in CSS */}
           <NotificationBell />
         </div>
 
@@ -157,7 +165,9 @@ function NotificationsDetail() {
               </p>
             </div>
           ) : (
-            <p style={{ textAlign: "center", fontWeight: "bold" }}>Notification not found.</p>
+            <p style={{ textAlign: "center", fontWeight: "bold" }}>
+              Notification not found.
+            </p>
           )}
         </div>
 
