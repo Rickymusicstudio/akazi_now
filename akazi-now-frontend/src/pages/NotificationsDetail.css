@@ -1,85 +1,57 @@
 /* =========================================================
-   NotificationsDetail.css — styled to match Inbox.css
-   (mapped to postgig-* classes used by NotificationsDetail.jsx)
+   NotificationsDetail.css — fully scoped (nd-*), standalone
    ========================================================= */
 
-/* RESET */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { height: 100%; }
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f4f6f8;
-  color: #111827;
-}
+/* Local reset (kept scoped so it won't leak) */
+.nd-container * { box-sizing: border-box; }
 
-/* ===== PAGE CONTAINER ===== */
-.postgig-container {
+/* ===== Page container ===== */
+.nd-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background: #f4f6f8;
+  color: #111827;
+  font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
 }
 
-/* ===== MOBILE TOP BAR (same look as .mobile-top-bar) ===== */
-.postgig-mobile-topbar {
-  width: 100%;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem;
-  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-  color: white;
+/* ===== Desktop nav (independent) ===== */
+.nd-desktop-nav {
   position: sticky;
   top: 0;
-  z-index: 999;
-}
-
-.postgig-mobile-left { display: flex; align-items: center; gap: .5rem; }
-.postgig-mobile-avatar {
-  width: 35px; height: 35px; border-radius: 50%; object-fit: cover;
-}
-.postgig-mobile-hamburger { font-size: 1.5rem; cursor: pointer; color: #fff; }
-.postgig-mobile-title { font-size: 1.2rem; font-weight: bold; color: #fff; }
-
-/* ===== MOBILE NAV DROPDOWN ===== */
-.postgig-mobile-nav-overlay {
-  position: fixed;
-  top: 60px; left: 0; width: 100%;
-  background: #0f2027; color: white;
-  z-index: 20; padding: 1.5rem;
-  animation: notifSlideDown .3s ease;
-}
-@keyframes notifSlideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
-.postgig-mobile-nav-overlay ul { list-style: none; }
-.postgig-mobile-nav-overlay li {
-  padding: 1rem 0;
-  border-bottom: 1px solid rgba(255,255,255,.15);
-  cursor: pointer; font-weight: bold;
-}
-.postgig-mobile-nav-overlay li:last-child { border-bottom: none; }
-
-/* ===== DESKTOP NAV (matches .inbox-desktop-nav) ===== */
-.postgig-desktop-nav {
-  position: sticky; top: 0; z-index: 10;
+  z-index: 10;
   background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-  color: white;
+  color: #fff;
   padding: 1rem 2rem;
-  display: flex; align-items: center; justify-content: flex-start;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
-.postgig-nav-left-logo {
-  font-size: 1.5rem; font-weight: bold; color: #FFD700; cursor: pointer;
+.nd-nav-left-logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #FFD700;
+  cursor: pointer;
 }
-.postgig-desktop-nav ul {
-  position: absolute; left: 50%; transform: translateX(-50%);
-  display: flex; gap: 1rem; list-style: none;
+.nd-desktop-nav ul {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
-.postgig-desktop-nav ul li {
-  cursor: pointer; font-weight: bold; color: white;
+.nd-desktop-nav li {
+  cursor: pointer;
+  font-weight: 700;
+  color: #fff;
 }
-.postgig-desktop-nav ul li:hover { text-decoration: underline; }
+.nd-desktop-nav li:hover { text-decoration: underline; }
 
-/* ===== HERO SECTION (matches .inbox-hero) ===== */
-.postgig-hero {
+/* ===== Hero ===== */
+.nd-hero {
   background-size: cover;
   background-position: center;
   height: 60vh;
@@ -87,28 +59,87 @@ body {
   align-items: center;
   justify-content: center;
   position: relative;
-  color: white;
+  color: #fff;
 }
-.postgig-hero-content {
+.nd-hero-content {
   text-align: center;
   background-color: rgba(0, 0, 0, 0.4);
   padding: 2rem;
   border-radius: 1rem;
 }
-.postgig-hero-title { font-size: 2.5rem; font-weight: bold; }
-.postgig-hero-subtitle { font-size: 1.2rem; margin-top: 0.5rem; }
+.nd-hero-title { font-size: 2.5rem; font-weight: 800; }
+.nd-hero-subtitle { font-size: 1.2rem; margin-top: 0.5rem; }
 
-/* ===== CARDS SECTION (matches .inbox-cards-section) ===== */
-.postgig-services-section {
+/* ===== Mobile top bar inside hero ===== */
+.nd-mobile-topbar {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 60px;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(
+    to right,
+    rgba(15,32,39,.9),
+    rgba(32,58,67,.6),
+    rgba(44,83,100,0)
+  );
+}
+.nd-mobile-left { display: flex; align-items: center; gap: .5rem; }
+.nd-mobile-avatar {
+  width: 35px; height: 35px; border-radius: 50%;
+  object-fit: cover; border: 2px solid #fff;
+}
+.nd-mobile-hamburger { font-size: 1.6rem; color: #fff; cursor: pointer; }
+.nd-mobile-title { font-weight: 800; color: #fff; }
+
+/* ===== Mobile overlay nav ===== */
+.nd-mobile-nav-overlay {
+  position: fixed;
+  top: 60px; left: 0; right: 0; bottom: 0;
+  background: #0f2027;
+  color: #fff;
+  z-index: 30;
+  padding: 1.5rem;
+  overflow-y: auto;
+  animation-duration: .3s;
+  animation-fill-mode: both;
+}
+.nd-slide-down { animation-name: ndSlideDown; }
+.nd-slide-up   { animation-name: ndSlideUp; }
+
+@keyframes ndSlideDown {
+  from { transform: translateY(-10%); opacity: .6; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+@keyframes ndSlideUp {
+  from { transform: translateY(0);     opacity: 1; }
+  to   { transform: translateY(-10%);  opacity: 0; }
+}
+
+.nd-mobile-nav-overlay ul { list-style: none; margin: 0; padding: 0; }
+.nd-mobile-nav-overlay li {
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+  font-weight: 700;
+  cursor: pointer;
+}
+.nd-mobile-nav-overlay li:last-child { border-bottom: none; }
+
+/* ===== Cards section (main + side) ===== */
+.nd-cards-section {
   padding: 2rem;
   display: grid;
-  grid-template-columns: 1fr 340px; /* main + side card */
+  grid-template-columns: 1fr 340px;
   gap: 1.25rem;
   align-items: start;
 }
 
-.postgig-form-card {
-  background: white;
+/* Main card */
+.nd-card {
+  background: #fff;
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
@@ -116,36 +147,33 @@ body {
   width: 100%;
   margin: 0 auto;
   text-align: left;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
 }
 
-/* Secondary/info card (optional) */
-.postgig-sticker-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 16px rgba(0,0,0,.05);
-  width: 100%;
-  text-align: left;
-  display: flex; flex-direction: column; gap: .75rem;
-}
-.postgig-info-card-content h3 { font-size: 1.2rem; font-weight: bold; }
-.postgig-info-card-image { width: 100%; height: auto; display: block; }
-
-/* ===== NOTIFICATION DETAIL CARD ===== */
-.notifdetail-card {
-  background: white;
+/* Message box inside card */
+.nd-message {
+  background: #f9fafb;
   border-radius: 12px;
   padding: 1rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.04);
 }
-.notifdetail-message { margin: 0.2rem 0; font-weight: 600; color: #111827; }
-.notifdetail-time { font-size: 0.9rem; color: #6b7280; }
+.nd-message-text { margin-bottom: .25rem; color: #111827; }
+.nd-message-time { color: #6b7280; font-size: .9rem; }
 
-/* ===== FOOTER (kept simple) ===== */
-.postgig-footer {
+/* Side card */
+.nd-side-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+}
+.nd-side-content h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: .5rem;
+}
+
+/* ===== Footer ===== */
+.nd-footer {
   margin-top: auto;
   width: 100%;
   background: #eef2f7;
@@ -153,23 +181,24 @@ body {
   text-align: center;
   padding: 1.25rem 1rem;
 }
-.postgig-footer-links { margin-top: .4rem; }
-.postgig-footer-links button {
-  background: none; border: none; color: #374151;
-  margin: 0 .5rem; font-weight: 600; cursor: pointer;
+.nd-footer-links { margin-top: .4rem; }
+.nd-footer-links button {
+  background: none;
+  border: none;
+  color: #374151;
+  margin: 0 .5rem;
+  font-weight: 600;
+  cursor: pointer;
 }
-.postgig-footer-links button:hover { text-decoration: underline; }
+.nd-footer-links button:hover { text-decoration: underline; }
 
-/* ===== RESPONSIVE ===== */
+/* ===== Responsive ===== */
 @media (max-width: 1024px) {
-  .postgig-services-section {
-    grid-template-columns: 1fr;
-  }
+  .nd-cards-section { grid-template-columns: 1fr; }
 }
-
 @media (max-width: 768px) {
-  .postgig-desktop-nav { display: none; }
-  .postgig-hero-content .postgig-hero-title { font-size: 2rem; }
-  .postgig-hero-content .postgig-hero-subtitle { font-size: 1rem; }
-  .postgig-form-card { text-align: center; }
+  .nd-desktop-nav { display: none; }
+  .nd-hero-title { font-size: 2rem; }
+  .nd-hero-subtitle { font-size: 1rem; }
+  .nd-card { text-align: center; }
 }
