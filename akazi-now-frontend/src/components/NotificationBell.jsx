@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { FaBell } from "react-icons/fa";
@@ -8,6 +8,12 @@ export default function NotificationBell() {
   const [notifications, setNotifications] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
+
+  // ✅ unique channel name per mount prevents duplicate-subscribe crash
+  const channelName = useMemo(
+    () => `notifications-bell-${Math.random().toString(36).slice(2)}`,
+    []
+  );
 
   const loadNotifications = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -24,7 +30,6 @@ export default function NotificationBell() {
       return;
     }
 
-    // enrich with sender name and item title
     const listingIds = [...new Set(notes.map(n => n.related_listing_id).filter(Boolean))];
     const senderIds  = [...new Set(notes.map(n => n.sender_id).filter(Boolean))];
 
@@ -40,21 +45,21 @@ export default function NotificationBell() {
     const listingMap = Object.fromEntries((listingsRes.data || []).map(l => [l.id, l.title]));
     const senderMap  = Object.fromEntries((sendersRes.data || []).map(u => [u.auth_user_id, u.full_name]));
 
-    const merged = notes.map(n => ({
-      ...n,
-      itemTitle: n.related_listing_id ? (listingMap[n.related_listing_id] || "Item") : null,
-      senderName: n.sender_id ? (senderMap[n.sender_id] || "User") : null,
-    }));
-
-    setNotifications(merged);
+    setNotifications(
+      notes.map(n => ({
+        ...n,
+        itemTitle: n.related_listing_id ? (listingMap[n.related_listing_id] || "Item") : null,
+        senderName: n.sender_id ? (senderMap[n.sender_id] || "User") : null,
+      }))
+    );
   };
 
   useEffect(() => {
     loadNotifications();
 
-    // ✅ realtime channel with cleanup to avoid duplicate subscribe
+    // ✅ subscribe with unique channel + cleanup
     const channel = supabase
-      .channel("notifications-bell")
+      .channel(channelName)
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "notifications" },
@@ -65,7 +70,7 @@ export default function NotificationBell() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [channelName]);
 
   const handleNotificationClick = async (note) => {
     await supabase.from("notifications").update({ status: "read" }).eq("id", note.id);
