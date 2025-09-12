@@ -1,4 +1,3 @@
-// src/pages/Isoko.jsx
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -6,11 +5,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import backgroundImage from "../assets/kcc_bg_clean.png";
 import defaultAvatar from "../assets/avatar.png";
 import NotificationBell from "../components/NotificationBell.jsx";
-import { FaBars, FaCalendarCheck } from "react-icons/fa";
+import { FaBars, FaCalendarCheck, FaEnvelope } from "react-icons/fa";
 
 import "./Isoko.css";
 
-/** Links shown in the center nav / mobile overlay */
 const ISOKO_LINKS = [
   { to: "/",                             label: "Home",        key: "home" },
   { to: "/isoko/categories/electronics", label: "Electronics", key: "electronics" },
@@ -25,18 +23,15 @@ function Isoko() {
   const [authUser, setAuthUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
 
-  // Mobile nav state (exactly like Gigs)
   const [mobileNavVisible, setMobileNavVisible] = useState(false);
   const [slideDirection, setSlideDirection] = useState("");
   const mobileNavRef = useRef(null);
 
-  // Lightbox for image preview
   const [lightboxUrl, setLightboxUrl] = useState(null);
 
-  // Interest modal
   const [interestOpen, setInterestOpen] = useState(false);
   const [interestMsg, setInterestMsg] = useState("Hi! I'm interested in this item. Is it still available?");
-  const [interestTarget, setInterestTarget] = useState(null); // { sellerAuthId, listingId }
+  const [interestTarget, setInterestTarget] = useState(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -61,10 +56,7 @@ function Isoko() {
     fetchListings();
     fetchUserAndProfile();
 
-    // Keep auth state in sync
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_evt, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_evt, session) => {
       const user = session?.user || null;
       setAuthUser(user);
       if (user) {
@@ -82,20 +74,13 @@ function Isoko() {
     return () => subscription?.unsubscribe();
   }, []);
 
-  /** Fetch listings (flat), then pull seller profiles in a 2nd query and merge in. */
   const fetchListings = async () => {
     const { data: rows, error } = await supabase
       .from("market_listings")
-      .select(
-        "id,title,description,price,currency,intent,category,location,first_image_url,created_at,user_id"
-      )
+      .select("id,title,description,price,currency,intent,category,location,first_image_url,created_at,user_id")
       .order("created_at", { ascending: false });
 
-    if (error) {
-      console.error("market_listings select error:", error);
-      setListings([]);
-      return;
-    }
+    if (error) { console.error("market_listings select error:", error); setListings([]); return; }
 
     const userIds = [...new Set(rows.map(r => r.user_id).filter(Boolean))];
 
@@ -105,11 +90,8 @@ function Isoko() {
         .from("users")
         .select("auth_user_id, full_name, image_url")
         .in("auth_user_id", userIds);
-
       if (!sellerErr && sellers) {
-        sellerMap = Object.fromEntries(
-          sellers.map(s => [s.auth_user_id, s])
-        );
+        sellerMap = Object.fromEntries(sellers.map(s => [s.auth_user_id, s]));
       }
     }
 
@@ -117,16 +99,14 @@ function Isoko() {
       ...r,
       seller_name: sellerMap[r.user_id]?.full_name || "Anonymous",
       seller_avatar: sellerMap[r.user_id]?.image_url || null,
-      _variant: (idx % 3) + 1, // 1..3 for small accent differences
+      _variant: (idx % 3) + 1,
     }));
 
     setListings(merged);
   };
 
   const fetchUserAndProfile = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     setAuthUser(user || null);
     if (!user) return;
     const { data } = await supabase
@@ -137,10 +117,8 @@ function Isoko() {
     setUserProfile(data || null);
   };
 
-  // Mobile overlay swipe-to-close behavior (same as Gigs)
   useEffect(() => {
     let touchStartY = 0;
-
     const handleTouchStart = (e) => { touchStartY = e.touches[0].clientY; };
     const handleTouchMove = (e) => {
       if (!mobileNavVisible) return;
@@ -182,51 +160,51 @@ function Isoko() {
     navigate("/");
   };
 
-  // Lightbox
   const openLightbox = (url) => setLightboxUrl(url);
   const closeLightbox = () => setLightboxUrl(null);
 
-  // Interested flow
   const openInterest = (sellerAuthId, listingId) => {
     setInterestTarget({ sellerAuthId, listingId });
     setInterestMsg("Hi! I'm interested in this item. Is it still available?");
     setInterestOpen(true);
   };
-  const closeInterest = () => {
-    setInterestOpen(false);
-    setInterestTarget(null);
-  };
+  const closeInterest = () => { setInterestOpen(false); setInterestTarget(null); };
 
   const sendInterest = async () => {
-    if (!authUser) {
-      alert("Please sign in to send a message.");
-      navigate("/login");
-      return;
-    }
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { alert("Please sign in to send a message."); navigate("/login"); return; }
     if (!interestTarget) return;
 
-    const msg = interestMsg?.trim() || "I'm interested in your item.";
-    // Insert a minimal notification row (avoid non-existent 'type' column)
-    const { error } = await supabase.from("notifications").insert([
-      {
-        recipient_id: interestTarget.sellerAuthId, // seller's auth_user_id
-        message: msg,
-        read: false,
-        // (Optional) include sender_id if your table has it:
-        // sender_id: authUser.id,
-        // (Optional) if you created a related_listing_id column:
-        // related_listing_id: interestTarget.listingId,
-      },
+    const msg = (interestMsg || "").trim() || "I'm interested in your item.";
+    const sellerId = interestTarget.sellerAuthId;
+    const listingId = interestTarget.listingId;
+
+    const { error: msgErr } = await supabase.from("messages").insert([{
+      sender_id: user.id,
+      receiver_id: sellerId,
+      message: msg
+    }]);
+    if (msgErr) { console.error("Message insert error:", msgErr); alert("Couldn't send your message."); return; }
+
+    const [{ data: listing }, { data: me }] = await Promise.all([
+      supabase.from("market_listings").select("title").eq("id", listingId).single(),
+      supabase.from("users").select("full_name").eq("auth_user_id", user.id).maybeSingle(),
     ]);
+    const title = listing?.title || "your item";
+    const senderName = me?.full_name || "A buyer";
+    const notifText = `${senderName}: “${msg}” — about ${title}`;
 
-    if (error) {
-      console.error("notify insert error:", error);
-      alert("Couldn't send your interest. Please try again.");
-      return;
-    }
+    await supabase.from("notifications").insert([{
+      recipient_id: sellerId,
+      sender_id: user.id,
+      related_listing_id: listingId,
+      message: notifText,
+      status: "unread",
+    }]);
 
-    alert("Interest sent! The seller will see it in Notifications.");
+    alert("Message sent! The seller will be notified.");
     closeInterest();
+    navigate(`/messages?with=${sellerId}&listing=${listingId}`);
   };
 
   return (
@@ -234,15 +212,16 @@ function Isoko() {
       {/* MOBILE TOPBAR */}
       <div className="gigs-mobile-topbar">
         <div className="gigs-mobile-left">
-          <img
-            src={userProfile?.image_url || defaultAvatar}
-            alt="avatar"
-            className="gigs-mobile-avatar"
-          />
+          <img src={userProfile?.image_url || defaultAvatar} alt="avatar" className="gigs-mobile-avatar" />
           <FaBars className="gigs-mobile-hamburger" onClick={handleHamburgerClick} />
         </div>
         <h2 className="gigs-mobile-title">Isoko</h2>
-        <NotificationBell />
+        <div className="nav-icons">
+          <button className="message-button" onClick={() => navigate("/messages")} title="Messages">
+            <FaEnvelope size={20} color="#b8860b" />
+          </button>
+          <NotificationBell />
+        </div>
       </div>
 
       {/* MOBILE OVERLAY NAV */}
@@ -263,9 +242,7 @@ function Isoko() {
                   {item.label}
                 </li>
               ))}
-            <li onClick={() => { setMobileNavVisible(false); navigate("/isoko/post-item"); }}>
-              Post Item
-            </li>
+            <li onClick={() => { setMobileNavVisible(false); navigate("/isoko/post-item"); }}>Post Item</li>
             {!authUser && (
               <>
                 <li onClick={() => { setMobileNavVisible(false); navigate("/login"); }}>Sign In</li>
@@ -279,11 +256,7 @@ function Isoko() {
       {/* DESKTOP NAV */}
       <div className="gigs-desktop-nav">
         <div className="gigs-desktop-nav-inner">
-          <div
-            className="gigs-nav-left-logo"
-            onClick={() => navigate("/")}
-            title="AkaziNow Home"
-          >
+          <div className="gigs-nav-left-logo" onClick={() => navigate("/")} title="AkaziNow Home">
             AkaziNow
           </div>
 
@@ -305,7 +278,7 @@ function Isoko() {
             </ul>
           </nav>
 
-          <div className="gigs-nav-right">
+          <div className="gigs-nav-right nav-icons">
             <button
               className="gigs-auth-button gigs-auth-button--gold"
               onClick={() => navigate("/isoko/post-item")}
@@ -313,6 +286,13 @@ function Isoko() {
             >
               Post Item
             </button>
+
+            <button className="message-button" onClick={() => navigate("/messages")} title="Messages">
+              <FaEnvelope size={20} color="#b8860b" />
+            </button>
+
+            <NotificationBell />
+
             {authUser ? (
               <img
                 src={userProfile?.image_url || defaultAvatar}
@@ -368,19 +348,14 @@ function Isoko() {
       {/* LISTING CARDS */}
       <section className="gigs-cards-section">
         {listings.length > 0 ? (
-          listings.map((l, idx) => (
+          listings.map((l) => (
             <article
               key={l.id}
               className={`isoko-card isoko-card--v${l._variant}`}
               style={{ background: l._variant === 2 ? "#fff8d4" : l._variant === 3 ? "#fdf2f2" : "#eef7ff" }}
             >
-              {/* Seller chip */}
               <header className="isoko-seller">
-                <img
-                  src={l.seller_avatar || defaultAvatar}
-                  alt={l.seller_name}
-                  className="isoko-seller-avatar"
-                />
+                <img src={l.seller_avatar || defaultAvatar} alt={l.seller_name} className="isoko-seller-avatar" />
                 <span className="isoko-seller-name">{l.seller_name}</span>
               </header>
 
@@ -389,31 +364,20 @@ function Isoko() {
                 <p className="isoko-desc">{l.description}</p>
 
                 <div className="isoko-meta">
-                  {l.price != null && (
-                    <div><strong>Price:</strong> {Number(l.price).toLocaleString()} {l.currency || "RWF"}</div>
-                  )}
-                  {l.location && (
-                    <div><strong>Location:</strong> {l.location}</div>
-                  )}
+                  {l.price != null && (<div><strong>Price:</strong> {Number(l.price).toLocaleString()} {l.currency || "RWF"}</div>)}
+                  {l.location && (<div><strong>Location:</strong> {l.location}</div>)}
                   <div><strong>Category:</strong> {l.category}</div>
                   <div><strong>Intent:</strong> {l.intent}</div>
                 </div>
 
                 {l.first_image_url && (
-                  <div
-                    className="isoko-img-wrap"
-                    onClick={() => openLightbox(l.first_image_url)}
-                    title="Click to preview"
-                  >
+                  <div className="isoko-img-wrap" onClick={() => openLightbox(l.first_image_url)} title="Click to preview">
                     <img src={l.first_image_url} alt={l.title} />
                   </div>
                 )}
 
                 <div className="isoko-actions">
-                  <button
-                    className="isoko-btn isoko-btn--interest"
-                    onClick={() => openInterest(l.user_id, l.id)}
-                  >
+                  <button className="isoko-btn isoko-btn--interest" onClick={() => openInterest(l.user_id, l.id)}>
                     Interested
                   </button>
                 </div>
@@ -423,10 +387,7 @@ function Isoko() {
         ) : (
           <p style={{ marginTop: "2rem", fontWeight: "bold" }}>
             No items yet. Be the first to{" "}
-            <span
-              style={{ textDecoration: "underline", cursor: "pointer" }}
-              onClick={() => navigate("/isoko/post-item")}
-            >
+            <span style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => navigate("/isoko/post-item")}>
               post one
             </span>.
           </p>
@@ -462,12 +423,8 @@ function Isoko() {
               placeholder="Write a short note to the seller…"
             />
             <div className="isoko-interest-actions">
-              <button className="isoko-btn isoko-btn--ghost" onClick={closeInterest}>
-                Cancel
-              </button>
-              <button className="isoko-btn isoko-btn--primary" onClick={sendInterest}>
-                Send
-              </button>
+              <button className="isoko-btn isoko-btn--ghost" onClick={closeInterest}>Cancel</button>
+              <button className="isoko-btn isoko-btn--primary" onClick={sendInterest}>Send</button>
             </div>
           </div>
         </div>

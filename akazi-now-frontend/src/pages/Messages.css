@@ -1,7 +1,19 @@
-.msg-container {
+/* Scope all chat styles to the msg page wrapper */
+.msg-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #eef2f7;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px 12px;
+  box-sizing: border-box;
+}
+
+.msg-page .msg-container {
   height: calc(100vh - 120px);
+  width: 100%;
   max-width: 900px;
-  margin: 60px auto;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0,0,0,.06);
@@ -9,7 +21,7 @@
   flex-direction: column;
 }
 
-.msg-thread {
+.msg-page .msg-thread {
   flex: 1;
   padding: 16px;
   overflow-y: auto;
@@ -18,7 +30,7 @@
   border-top-right-radius: 12px;
 }
 
-.msg-bubble {
+.msg-page .msg-bubble {
   max-width: 72%;
   margin: 8px 0;
   padding: 10px 14px;
@@ -27,10 +39,10 @@
   box-shadow: 0 2px 8px rgba(0,0,0,.06);
   word-wrap: break-word;
 }
-.msg-bubble.me   { margin-left: auto; background: #111827; color: #fff; border-bottom-right-radius: 4px; }
-.msg-bubble.them { margin-right: auto; background: #e5e7eb; color: #111827; border-bottom-left-radius: 4px; }
+.msg-page .msg-bubble.me   { margin-left: auto; background: #111827; color: #fff; border-bottom-right-radius: 4px; }
+.msg-page .msg-bubble.them { margin-right: auto; background: #e5e7eb; color: #111827; border-bottom-left-radius: 4px; }
 
-.msg-inputbar {
+.msg-page .msg-inputbar {
   display: flex;
   gap: 8px;
   padding: 10px;
@@ -39,7 +51,7 @@
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
 }
-.msg-inputbar input {
+.msg-page .msg-inputbar input {
   flex: 1;
   border: 1px solid #d1d5db;
   border-radius: 10px;
@@ -47,9 +59,9 @@
   font-size: 1rem;
   outline: none;
 }
-.msg-inputbar input:focus { border-color: #9ca3af; }
-.msg-inputbar button {
+.msg-page .msg-inputbar input:focus { border-color: #9ca3af; }
+.msg-page .msg-inputbar button {
   background: #111827; color: #fff; border: none;
   border-radius: 10px; padding: 10px 14px; font-weight: 800; cursor: pointer;
 }
-.msg-inputbar button:hover { opacity: .92; }
+.msg-page .msg-inputbar button:hover { opacity: .92; }
