@@ -197,36 +197,61 @@ function Isoko() {
     setInterestTarget(null);
   };
 
+  /**
+   * NEW: sendInterest sends a message (messages table you already have),
+   * then creates a notification with sender name + item title,
+   * and finally navigates to the chat (/messages?with=<seller>&listing=<id>)
+   */
   const sendInterest = async () => {
-    if (!authUser) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
       alert("Please sign in to send a message.");
       navigate("/login");
       return;
     }
     if (!interestTarget) return;
 
-    const msg = interestMsg?.trim() || "I'm interested in your item.";
-    // Insert a minimal notification row (avoid non-existent 'type' column)
-    const { error } = await supabase.from("notifications").insert([
-      {
-        recipient_id: interestTarget.sellerAuthId, // seller's auth_user_id
-        message: msg,
-        read: false,
-        // (Optional) include sender_id if your table has it:
-        // sender_id: authUser.id,
-        // (Optional) if you created a related_listing_id column:
-        // related_listing_id: interestTarget.listingId,
-      },
-    ]);
+    const msg = (interestMsg || "").trim() || "I'm interested in your item.";
+    const sellerId = interestTarget.sellerAuthId;
+    const listingId = interestTarget.listingId; // market_listings.id
 
-    if (error) {
-      console.error("notify insert error:", error);
-      alert("Couldn't send your interest. Please try again.");
+    // 1) Insert a chat message
+    const { error: msgErr } = await supabase.from("messages").insert([{
+      sender_id: user.id,
+      receiver_id: sellerId,
+      message: msg
+    }]);
+
+    if (msgErr) {
+      console.error("Message insert error:", msgErr);
+      alert("Couldn't send your message. Please try again.");
       return;
     }
 
-    alert("Interest sent! The seller will see it in Notifications.");
+    // 2) Build a richer notification "<Name>: “msg” — about <Item>"
+    const [{ data: listing }, { data: me }] = await Promise.all([
+      supabase.from("market_listings").select("title").eq("id", listingId).single(),
+      supabase.from("users").select("full_name").eq("auth_user_id", user.id).maybeSingle(),
+    ]);
+
+    const title = listing?.title || "your item";
+    const senderName = me?.full_name || "A buyer";
+    const notifText = `${senderName}: “${msg}” — about ${title}`;
+
+    // 3) Insert notification for the seller
+    await supabase.from("notifications").insert([{
+      recipient_id: sellerId,
+      sender_id: user.id,
+      related_listing_id: listingId,
+      message: notifText,
+      status: "unread",
+    }]);
+
+    alert("Message sent! The seller will be notified.");
     closeInterest();
+
+    // 4) Open chat with seller; listing param is just context for future use
+    navigate(`/messages?with=${sellerId}&listing=${listingId}`);
   };
 
   return (
@@ -368,7 +393,7 @@ function Isoko() {
       {/* LISTING CARDS */}
       <section className="gigs-cards-section">
         {listings.length > 0 ? (
-          listings.map((l, idx) => (
+          listings.map((l) => (
             <article
               key={l.id}
               className={`isoko-card isoko-card--v${l._variant}`}
