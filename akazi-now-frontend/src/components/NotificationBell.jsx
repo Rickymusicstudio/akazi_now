@@ -9,20 +9,6 @@ export default function NotificationBell() {
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    loadNotifications();
-    // Optional: live updates
-    const channel = supabase
-      .channel("notifications-bell")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "notifications" },
-        () => loadNotifications()
-      )
-      .subscribe();
-    return () => supabase.removeChannel(channel);
-  }, []);
-
   const loadNotifications = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
@@ -63,16 +49,31 @@ export default function NotificationBell() {
     setNotifications(merged);
   };
 
+  useEffect(() => {
+    loadNotifications();
+
+    // ✅ realtime channel with cleanup to avoid duplicate subscribe
+    const channel = supabase
+      .channel("notifications-bell")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "notifications" },
+        () => loadNotifications()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
   const handleNotificationClick = async (note) => {
-    // mark as read
     await supabase.from("notifications").update({ status: "read" }).eq("id", note.id);
 
-    // Deep-link to chat with sender (if available)
     if (note.sender_id) {
       const listingQuery = note.related_listing_id ? `&listing=${note.related_listing_id}` : "";
       navigate(`/messages?with=${note.sender_id}${listingQuery}`);
     } else {
-      // fallback: open inbox if no sender id available
       navigate("/inbox");
     }
     setShowDropdown(false);

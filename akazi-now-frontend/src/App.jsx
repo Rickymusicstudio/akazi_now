@@ -40,6 +40,9 @@ import Isoko from "./pages/Isoko";
 import PostIsoko from "./pages/PostIsoko";
 import IsokoCategory from "./pages/IsokoCategory";
 
+/* ✅ Messages (chat) */
+import MessagesThread from "./pages/MessagesThread";
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
 
@@ -181,6 +184,16 @@ function App() {
           element={
             <ProtectedRoute>
               <Settings />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ✅ Messages (chat thread) — uses ?with=<otherUserId> */}
+        <Route
+          path="/messages"
+          element={
+            <ProtectedRoute>
+              <MessagesThread />
             </ProtectedRoute>
           }
         />

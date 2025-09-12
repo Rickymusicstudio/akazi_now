@@ -10,21 +10,23 @@ function useQuery() {
 
 export default function MessagesThread() {
   const q = useQuery();
-  const otherUserId = q.get("with");        // required
-  // const listingId = q.get("listing");    // optional context (not used for filtering yet)
+  const otherUserId = q.get("with");
+  // const listingId = q.get("listing"); // optional context for future
 
   const [me, setMe] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const listRef = useRef(null);
 
+  // initial fetch + mark read + realtime
   useEffect(() => {
+    let channel;
+
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user || !otherUserId) return;
       setMe(user);
 
-      // initial fetch (conversation = sender/receiver pair)
       const { data: rows } = await supabase
         .from("messages")
         .select("*")
@@ -33,7 +35,7 @@ export default function MessagesThread() {
 
       setMessages(rows || []);
 
-      // mark my incoming as read
+      // mark incoming as read
       if (rows?.length) {
         const unreadIds = rows.filter(r => r.read === false && r.receiver_id === user.id).map(r => r.id);
         if (unreadIds.length) {
@@ -41,15 +43,14 @@ export default function MessagesThread() {
         }
       }
 
-      // realtime inserts
-      const chan = supabase
+      // ✅ realtime with cleanup
+      channel = supabase
         .channel(`messages-${user.id}-${otherUserId}`)
         .on(
           "postgres_changes",
           { event: "INSERT", schema: "public", table: "messages" },
           (payload) => {
             const m = payload.new;
-            // only push when this row belongs to this pair
             if (
               (m.sender_id === user.id && m.receiver_id === otherUserId) ||
               (m.sender_id === otherUserId && m.receiver_id === user.id)
@@ -59,9 +60,11 @@ export default function MessagesThread() {
           }
         )
         .subscribe();
-
-      return () => supabase.removeChannel(chan);
     })();
+
+    return () => {
+      if (channel) supabase.removeChannel(channel);
+    };
   }, [otherUserId]);
 
   useEffect(() => {
@@ -77,11 +80,7 @@ export default function MessagesThread() {
       receiver_id: otherUserId,
       message: text
     }]);
-
-    if (error) {
-      console.error(error);
-      return;
-    }
+    if (error) { console.error(error); return; }
 
     setInput("");
 
