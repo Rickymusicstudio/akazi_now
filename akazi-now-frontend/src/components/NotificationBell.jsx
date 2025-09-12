@@ -11,71 +11,53 @@ function NotificationBell() {
 
   useEffect(() => {
     loadNotifications();
+    // Optional: live updates via channel (uncomment if you want realtime)
+    // const channel = supabase
+    //   .channel("notifications_changes")
+    //   .on(
+    //     "postgres_changes",
+    //     { event: "*", schema: "public", table: "notifications" },
+    //     () => loadNotifications()
+    //   )
+    //   .subscribe();
+    // return () => { supabase.removeChannel(channel); };
   }, []);
 
   const loadNotifications = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    // Fetch notifications for this user (only the needed fields)
+    // Match your actual columns: id, message, status, created_at, application_id
     const { data: notes, error } = await supabase
       .from("notifications")
-      .select("id,message,read,created_at,related_listing_id")
+      .select("id,message,status,created_at,application_id")
       .eq("recipient_id", user.id)
       .order("created_at", { ascending: false });
 
     if (error || !notes) return;
-
-    // Collect unique listing IDs and fetch their titles
-    const listingIds = [
-      ...new Set(notes.map((n) => n.related_listing_id).filter(Boolean)),
-    ];
-
-    let listingMap = {};
-    if (listingIds.length > 0) {
-      const { data: listings } = await supabase
-        .from("market_listings")
-        .select("id,title")
-        .in("id", listingIds);
-
-      if (listings) {
-        listingMap = Object.fromEntries(listings.map((l) => [l.id, l]));
-      }
-    }
-
-    // Merge: attach itemTitle if present
-    const merged = notes.map((n) => ({
-      ...n,
-      itemTitle: n.related_listing_id
-        ? listingMap[n.related_listing_id]?.title || "Item"
-        : null,
-    }));
-
-    setNotifications(merged);
+    setNotifications(notes);
   };
 
   const handleNotificationClick = async (note) => {
-    // Mark as read (best-effort)
-    await supabase.from("notifications").update({ read: true }).eq("id", note.id);
+    // Mark as read using 'status'
+    await supabase.from("notifications").update({ status: "read" }).eq("id", note.id);
 
-    // ➜ Go to the notification detail page
+    // Go to detail page
     navigate(`/notifications/${note.id}`);
     setShowDropdown(false);
   };
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = notifications.filter((n) => n.status === "unread").length;
 
   return (
     <div className="notification-bell-container">
       <button
         className="notification-bell-button"
-        onClick={() => setShowDropdown(!showDropdown)}
+        onClick={() => setShowDropdown((s) => !s)}
         aria-label="Notifications"
       >
         <FaBell color="#b8860b" size={20} />
-        {unreadCount > 0 && (
-          <span className="notification-count">{unreadCount}</span>
-        )}
+        {unreadCount > 0 && <span className="notification-count">{unreadCount}</span>}
       </button>
 
       {showDropdown && (
@@ -90,13 +72,10 @@ function NotificationBell() {
                 onClick={() => handleNotificationClick(note)}
                 role="button"
                 tabIndex={0}
-                onKeyDown={(e) => (e.key === "Enter" ? handleNotificationClick(note) : null)}
+                onKeyDown={(e) => e.key === "Enter" && handleNotificationClick(note)}
               >
-                {note.itemTitle && (
-                  <p className="notification-item-title">
-                    <strong>{note.itemTitle}</strong>
-                  </p>
-                )}
+                {/* Title placeholder: once you add related_listing_id + join, place it here */}
+                {/* <p className="notification-item-title"><strong>{note.itemTitle}</strong></p> */}
                 <p className="notification-message">{note.message}</p>
                 <span className="notification-time">
                   {new Date(note.created_at).toLocaleString()}
